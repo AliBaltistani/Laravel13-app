@@ -26,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(195);
 
+        // Register Setting as a global alias for Blade templates
+        if (!class_exists('Setting')) {
+            class_alias(\App\Models\Setting::class, 'Setting');
+        }
+
         // Register @setting('key') Blade directive
         Blade::directive('setting', function ($expression) {
             return "<?php echo e(app(\App\Services\SettingService::class)->get({$expression})); ?>";
