@@ -49,16 +49,16 @@ Route::get('/blog', fn() => view('pages.placeholder', ['title' => 'Blog']))->nam
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login']);
-    Route::post('/register', [RegisterController::class, 'register'])->name('register');
+    Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register')->middleware('throttle:3,1');
     Route::get('/forgot-password', [ForgotPasswordController::class, 'showForm'])->name('password.request');
-    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('password.email')->middleware('throttle:3,1');
     Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showForm'])->name('password.reset');
     Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 });
 
 Route::post('/logout', function () {
-    auth()->logout();
+    \Illuminate\Support\Facades\Auth::guard('web')->logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
     return redirect('/');

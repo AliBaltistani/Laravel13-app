@@ -145,7 +145,7 @@ class Product extends Model
     }
 
     // Helpers
-    public function getPrimaryImageAttribute()
+    public function getMainImageAttribute()
     {
         return $this->images->where('is_primary', true)->first()
             ?? $this->images->first();
