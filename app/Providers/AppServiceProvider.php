@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Services\SettingService;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -11,7 +14,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(SettingService::class, function () {
+            return new SettingService();
+        });
     }
 
     /**
@@ -19,6 +24,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Schema::defaultStringLength(191);
+        Schema::defaultStringLength(195);
+
+        // Register @setting('key') Blade directive
+        Blade::directive('setting', function ($expression) {
+            return "<?php echo e(app(\App\Services\SettingService::class)->get({$expression})); ?>";
+        });
     }
 }
