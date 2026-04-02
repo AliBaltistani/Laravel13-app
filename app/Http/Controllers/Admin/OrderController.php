@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\OrderStatusChanged;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderStatusHistory;
@@ -44,6 +45,7 @@ class OrderController extends Controller
             'comment' => 'nullable|string|max:500',
         ]);
 
+        $oldStatus = $order->status;
         $order->update(['status' => $request->status]);
 
         OrderStatusHistory::create([
@@ -54,6 +56,15 @@ class OrderController extends Controller
             'is_customer_notified' => $request->boolean('notify_customer'),
             'created_by' => auth()->id(),
         ]);
+
+        // Fire event for email & in-app notifications (Phase 10)
+        event(new OrderStatusChanged(
+            $order,
+            $oldStatus,
+            $request->status,
+            $request->boolean('notify_customer'),
+            $request->comment ?? ''
+        ));
 
         return back()->with('success', 'Order status updated to ' . ucfirst($request->status) . '.');
     }
@@ -77,6 +88,7 @@ class OrderController extends Controller
         );
 
         if ($order->status !== 'shipped') {
+            $oldStatus = $order->status;
             $order->update(['status' => 'shipped', 'shipped_at' => now()]);
             OrderStatusHistory::create([
                 'order_id' => $order->id,
@@ -86,6 +98,15 @@ class OrderController extends Controller
                 'is_customer_notified' => true,
                 'created_by' => auth()->id(),
             ]);
+
+            // Fire shipped event (Phase 10)
+            event(new OrderStatusChanged(
+                $order,
+                $oldStatus,
+                'shipped',
+                true,
+                'Your order has been shipped with tracking: ' . $request->tracking_number
+            ));
         }
 
         return back()->with('success', 'Tracking information updated.');

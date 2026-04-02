@@ -14,7 +14,8 @@ class OrderStatusChanged
         public Order $order,
         public string $oldStatus,
         public string $newStatus,
-        public bool $notifyCustomer = true
+        public bool $notifyCustomer = true,
+        public string $comment = ''
     ) {
     }
 }

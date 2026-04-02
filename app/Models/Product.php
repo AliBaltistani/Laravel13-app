@@ -197,4 +197,56 @@ class Product extends Model
     {
         return $this->approvedReviews()->count();
     }
+
+    /**
+     * Generate Product JSON-LD structured data (Phase 9-B).
+     */
+    public function jsonLd(): array
+    {
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            'name' => $this->name,
+            'description' => strip_tags($this->short_description ?? $this->description ?? ''),
+            'sku' => $this->sku,
+            'url' => route('product.show', $this->slug),
+            'offers' => [
+                '@type' => 'Offer',
+                'price' => number_format($this->effectivePrice(), 2, '.', ''),
+                'priceCurrency' => 'USD',
+                'availability' => $this->isInStock()
+                    ? 'https://schema.org/InStock'
+                    : 'https://schema.org/OutOfStock',
+                'url' => route('product.show', $this->slug),
+            ],
+        ];
+
+        // Brand
+        if ($this->brand) {
+            $schema['brand'] = [
+                '@type' => 'Brand',
+                'name' => $this->brand->name,
+            ];
+        }
+
+        // Image
+        $mainImage = $this->mainImage;
+        if ($mainImage) {
+            $schema['image'] = asset('storage/' . $mainImage->image_path);
+        }
+
+        // Aggregate rating
+        $reviewCount = $this->reviewCount();
+        if ($reviewCount > 0) {
+            $schema['aggregateRating'] = [
+                '@type' => 'AggregateRating',
+                'ratingValue' => $this->averageRating(),
+                'reviewCount' => $reviewCount,
+                'bestRating' => 5,
+                'worstRating' => 1,
+            ];
+        }
+
+        return $schema;
+    }
 }

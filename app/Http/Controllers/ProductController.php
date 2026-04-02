@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Services\SeoService;
 
 class ProductController extends Controller
 {
@@ -22,6 +23,18 @@ class ProductController extends Controller
                 'approvedReviews.user',
             ])
             ->firstOrFail();
+
+        // SEO — Phase 9-A/9-B: Product-specific meta + JSON-LD
+        $seo = app(SeoService::class);
+        $mainImage = $product->mainImage;
+        $seo->setTitle($product->meta_title ?: $product->name)
+            ->setDescription($product->meta_description ?: strip_tags($product->short_description ?? ''))
+            ->setCanonical(route('product.show', $product->slug))
+            ->setJsonLd($product->jsonLd());
+
+        if ($mainImage) {
+            $seo->setImage(asset('storage/' . $mainImage->image_path));
+        }
 
         // Increment view count
         $product->increment('view_count');

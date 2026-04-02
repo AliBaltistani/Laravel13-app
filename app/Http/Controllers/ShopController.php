@@ -7,12 +7,22 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Tag;
+use App\Services\SeoService;
 use Illuminate\Http\Request;
 
 class ShopController extends Controller
 {
     public function index(Request $request)
     {
+        // SEO — Phase 9-A
+        app(SeoService::class)
+            ->setTitle('Shop')
+            ->setDescription('Browse our collection of products')
+            ->setJsonLd(SeoService::breadcrumbSchema([
+                ['name' => 'Home', 'url' => url('/')],
+                ['name' => 'Shop'],
+            ]));
+
         $query = Product::active()->with(['images', 'category', 'brand', 'flashSaleProducts.flashSale', 'approvedReviews']);
 
         $query = $this->applyFilters($query, $request);

@@ -1,58 +1,233 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Porto eCommerce — Laravel 13 LTS
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A full-featured eCommerce platform built with **Laravel 13 LTS**, **Livewire v4**, and the **Porto HTML Template**, following a service-oriented architecture with role-based admin panel.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Requirements
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **PHP:** 8.2+
+- **MySQL:** 8.0+ / MariaDB 10.6+
+- **Composer:** 2.x
+- **Node.js:** 18+ (for asset compilation)
+- **PHP Extensions:** OpenSSL, PDO, Mbstring, Tokenizer, XML, Ctype, JSON, BCMath, GD/Imagick
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Installation
 
 ```bash
-composer require laravel/boost --dev
+# 1. Clone the repository
+git clone <repo-url> porto-ecommerce
+cd porto-ecommerce
 
-php artisan boost:install
+# 2. Install PHP dependencies
+composer install
+
+# 3. Create environment file
+cp .env.example .env
+php artisan key:generate
+
+# 4. Configure database in .env
+# DB_DATABASE=porto_ecommerce
+# DB_USERNAME=root
+# DB_PASSWORD=
+
+# 5. Run migrations and seeders
+php artisan migrate --seed
+
+# 6. Create storage symlink
+php artisan storage:link
+
+# 7. Start development server
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Architecture Overview
 
-## Contributing
+### Service Layer
+All business logic is centralized in `app/Services/`:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Service | Purpose |
+|---------|---------|
+| `CartService` | Cart management (guest/user), merge, pricing |
+| `OrderService` | Order placement, stock management, invoices |
+| `PaymentService` | Stripe & PayPal payment processing |
+| `SettingService` | Database-driven settings with caching |
+| `SeoService` | Fluent SEO metadata per page |
+| `ImageService` | Multi-size image upload with WebP support |
 
-## Code of Conduct
+### Frontend Stack
+- **Blade Templates** — Porto HTML theme integration
+- **Livewire v4** — Real-time interactivity (cart, filters, checkout)
+- **Porto CSS/JS** — No custom build step needed
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Events & Listeners
+| Event | Listeners |
+|-------|-----------|
+| `UserRegistered` | `SendWelcomeEmail` |
+| `OrderPlaced` | `SendOrderConfirmationEmail`, `SendNewOrderAdminNotification` |
+| `OrderStatusChanged` | `SendOrderStatusEmail` (+ in-app notification) |
 
-## Security Vulnerabilities
+### Queue Configuration
+Emails and notifications use two named queues:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+# Run queue workers
+php artisan queue:work --queue=emails,notifications
+```
+
+For production, use Supervisor with the config below:
+
+```ini
+[program:porto-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /path/to/artisan queue:work database --queue=emails,notifications --sleep=3 --tries=3 --max-time=3600
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=www-data
+numprocs=2
+redirect_stderr=true
+stdout_logfile=/path/to/storage/logs/worker.log
+```
+
+### Scheduled Tasks
+The scheduler runs the following tasks (add to crontab):
+
+```bash
+* * * * * cd /path-to-project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+| Task | Schedule |
+|------|----------|
+| Expire flash sales | Hourly |
+| Expire coupons | Hourly |
+| Low stock alert email | Daily at 6:00 AM |
+| Prune old contact messages | Weekly (Sunday 2:00 AM) |
+
+## Admin Panel
+
+Access at `/admin` with admin credentials. Features include:
+
+- **Dashboard** — Revenue, orders, customers, product analytics
+- **Products** — CRUD with variants, images, attributes, bulk actions
+- **Categories** — Nested categories with icons
+- **Brands** — Full brand management
+- **Orders** — Status management, tracking, invoice generation
+- **Customers** — User management with status toggle
+- **Coupons** — Percentage/fixed with conditions and limits
+- **Flash Sales** — Time-limited deals with countdown
+- **Blog** — Posts, categories, comments moderation
+- **CMS Pages** — Dynamic page management
+- **Banners & Sliders** — Homepage visual management
+- **Shipping Zones** — Zone-based shipping rates
+- **Reviews** — Moderation with bulk approve
+- **Newsletter** — Subscriber management and broadcasts
+- **Settings** — General, SEO, payment, email, social, appearance
+- **Reports** — Sales, products, inventory with CSV export
+
+## SEO Features
+
+- Dynamic meta title/description with site name suffix
+- Open Graph and Twitter Card tags
+- JSON-LD structured data (Product, Article, Organization, BreadcrumbList, LocalBusiness)
+- XML Sitemap at `/sitemap.xml` (cached 24h, auto-invalidated)
+- Editable `robots.txt` from admin settings
+- Google Analytics integration from settings
+- Canonical URLs
+
+## Payment Methods
+
+| Method | Status |
+|--------|--------|
+| Cash on Delivery | Built-in |
+| Bank Transfer | Built-in |
+| Stripe | Via Payment Intents API (requires API keys in `.env`) |
+| PayPal | Via Orders API v2 (requires API keys in `.env`) |
+
+### Payment Configuration (.env)
+```env
+STRIPE_KEY=pk_test_...
+STRIPE_SECRET=sk_test_...
+PAYPAL_CLIENT_ID=...
+PAYPAL_SECRET=...
+PAYPAL_MODE=sandbox
+```
+
+## Email Templates
+
+All emails use a Porto-branded inline CSS layout. Configure SMTP in `.env`:
+
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.example.com
+MAIL_PORT=587
+MAIL_USERNAME=your@email.com
+MAIL_PASSWORD=secret
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=noreply@example.com
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+## Testing
+
+```bash
+# Run full test suite
+php artisan test
+
+# Run with parallel execution
+php artisan test --parallel
+
+# Verify routes resolve
+php artisan route:list
+
+# Verify Blade compilation
+php artisan view:cache
+php artisan view:clear
+```
+
+## Production Deployment
+
+```bash
+# 1. Set APP_ENV=production, APP_DEBUG=false in .env
+
+# 2. Cache configuration
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan event:cache
+
+# 3. Run migrations
+php artisan migrate --force
+
+# 4. Set proper file permissions
+chmod -R 755 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+
+# 5. Ensure storage link exists
+php artisan storage:link
+```
+
+## Directory Structure
+
+```
+app/
+├── Events/           # UserRegistered, OrderPlaced, OrderStatusChanged
+├── Http/
+│   ├── Controllers/  # Web + Admin controllers
+│   ├── Middleware/    # IsAdmin
+│   └── Requests/     # Form request validation
+├── Jobs/             # SendContactNotification, SendContactAutoReply
+├── Listeners/        # SendWelcomeEmail, SendOrderConfirmationEmail, etc.
+├── Livewire/         # CartPage, CheckoutPage, ShopFilter, AddToCart, etc.
+├── Mail/             # 9 Mailable classes with Blade templates
+├── Models/           # Eloquent models with relationships
+├── Notifications/    # OrderStatusNotification (database channel)
+├── Observers/        # Product, Category, Post, Page (cache invalidation)
+├── Providers/        # AppServiceProvider, EventServiceProvider
+└── Services/         # CartService, OrderService, PaymentService, etc.
+```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Proprietary. All rights reserved.

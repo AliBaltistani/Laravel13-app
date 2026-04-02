@@ -63,4 +63,51 @@ class Post extends Model
     {
         return $query->where('is_published', true)->where('published_at', '<=', now());
     }
+
+    // Alias for eager loading compatibility
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function postCategory(): BelongsTo
+    {
+        return $this->belongsTo(PostCategory::class, 'post_category_id');
+    }
+
+    /**
+     * Generate Article JSON-LD structured data (Phase 9-B).
+     */
+    public function jsonLd(): array
+    {
+        $siteName = Setting::get('general.site_name', config('app.name'));
+
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Article',
+            'headline' => $this->title,
+            'description' => $this->excerpt ?? strip_tags(substr($this->content ?? '', 0, 160)),
+            'url' => route('blog.show', $this->slug),
+            'datePublished' => $this->published_at?->toIso8601String(),
+            'dateModified' => $this->updated_at?->toIso8601String(),
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => $siteName,
+                'logo' => Setting::get('general.logo') ? asset('storage/' . Setting::get('general.logo')) : '',
+            ],
+        ];
+
+        if ($this->user) {
+            $schema['author'] = [
+                '@type' => 'Person',
+                'name' => $this->user->name,
+            ];
+        }
+
+        if ($this->image) {
+            $schema['image'] = asset('storage/' . $this->image);
+        }
+
+        return $schema;
+    }
 }

@@ -2,6 +2,16 @@
 
 namespace App\Providers;
 
+use App\Models\Category;
+use App\Models\Page;
+use App\Models\Post;
+use App\Models\Product;
+use App\Observers\CategoryObserver;
+use App\Observers\PageObserver;
+use App\Observers\PostObserver;
+use App\Observers\ProductObserver;
+use App\Services\CartService;
+use App\Services\SeoService;
 use App\Services\SettingService;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
@@ -14,8 +24,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Settings service — Phase 1-D
         $this->app->singleton(SettingService::class, function () {
             return new SettingService();
+        });
+
+        // Cart service — Phase 5-A
+        $this->app->singleton(CartService::class, function () {
+            return new CartService();
+        });
+
+        // SEO service — Phase 9-A (scoped per request, not singleton)
+        $this->app->scoped(SeoService::class, function () {
+            return new SeoService();
         });
     }
 
@@ -35,5 +56,11 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('setting', function ($expression) {
             return "<?php echo e(app(\App\Services\SettingService::class)->get({$expression})); ?>";
         });
+
+        // Register model observers — Phase 9-F
+        Product::observe(ProductObserver::class);
+        Category::observe(CategoryObserver::class);
+        Post::observe(PostObserver::class);
+        Page::observe(PageObserver::class);
     }
 }

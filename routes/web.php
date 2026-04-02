@@ -10,7 +10,9 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,11 +24,16 @@ use Illuminate\Support\Facades\Route;
 // Home
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// SEO Routes (Phase 9-C, 9-D)
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', [RobotsController::class, 'index'])->name('robots');
+
 // Authentication
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login']);
-    Route::post('/register', [RegisterController::class, 'register'])->name('register');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+    Route::get('/register', [RegisterController::class, 'showForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
     Route::get('/forgot-password', [ForgotPasswordController::class, 'showForm'])->name('password.request');
     Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
     Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showForm'])->name('password.reset');
@@ -49,6 +56,14 @@ Route::post('/product/quick-view/{product}', [ShopController::class, 'quickView'
 Route::get('/cart', fn() => view('pages.cart'))->name('cart');
 Route::get('/checkout', fn() => view('pages.checkout'))->name('checkout');
 Route::get('/checkout/success/{orderNumber}', [CheckoutController::class, 'success'])->name('checkout.success');
+Route::get('/checkout/failure', [CheckoutController::class, 'failure'])->name('checkout.failure');
+
+// PayPal payment callbacks (Phase 5-F)
+Route::get('/checkout/paypal/return/{orderNumber}', [CheckoutController::class, 'paypalReturn'])->name('checkout.paypal.return');
+Route::get('/checkout/paypal/cancel/{orderNumber}', [CheckoutController::class, 'paypalCancel'])->name('checkout.paypal.cancel');
+
+// Stripe Webhook (Phase 5-E) — no CSRF
+Route::post('/webhook/stripe', [CheckoutController::class, 'stripeWebhook'])->name('webhook.stripe')->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
 
 // Wishlist (standalone page)
 Route::get('/wishlist', function () {

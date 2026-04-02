@@ -2,10 +2,11 @@
 
 namespace App\Livewire;
 
+use App\Models\Setting;
 use App\Services\CartService;
 use App\Services\OrderService;
+use App\Services\PaymentService;
 use App\Models\ShippingMethod;
-use App\Models\ShippingZone;
 use App\Models\UserAddress;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
@@ -41,6 +42,9 @@ class CheckoutPage extends Component
     public $payment_method = 'cod';
     public $customer_notes = '';
     public $saved_address_id = null;
+
+    // Stripe
+    public $stripe_payment_method_id = null;
 
     public $errorMessage = '';
     public $processing = false;
@@ -149,18 +153,94 @@ class CheckoutPage extends Component
         $orderService = app(OrderService::class);
         $result = $orderService->placeOrder($cart, $data);
 
-        if ($result['success']) {
-            $this->dispatch('cartUpdated');
-            return redirect()->route('checkout.success', $result['order']->order_number);
+        if (!$result['success']) {
+            $this->errorMessage = $result['message'];
+            $this->processing = false;
+            return;
         }
 
-        $this->errorMessage = $result['message'];
-        $this->processing = false;
+        $order = $result['order'];
+
+        // Handle payment based on method
+        if ($this->payment_method === 'stripe') {
+            return $this->processStripePayment($order);
+        }
+
+        if ($this->payment_method === 'paypal') {
+            return $this->processPayPalPayment($order);
+        }
+
+        // COD or Bank Transfer — order is placed, redirect to success
+        $this->dispatch('cartUpdated');
+        return redirect()->route('checkout.success', $order->order_number);
+    }
+
+    /**
+     * Process Stripe payment after order is placed.
+     */
+    private function processStripePayment($order)
+    {
+        if (!$this->stripe_payment_method_id) {
+            $this->errorMessage = 'Please enter your card details.';
+            $this->processing = false;
+            return;
+        }
+
+        $paymentService = app(PaymentService::class);
+        $result = $paymentService->chargeStripe($order, $this->stripe_payment_method_id);
+
+        if ($result['success']) {
+            $this->dispatch('cartUpdated');
+            return redirect()->route('checkout.success', $order->order_number);
+        }
+
+        // Payment failed — redirect to failure page
+        session(['checkout_error' => $result['message'], 'failed_order' => $order->order_number]);
+        return redirect()->route('checkout.failure');
+    }
+
+    /**
+     * Process PayPal payment — redirect to PayPal for approval.
+     */
+    private function processPayPalPayment($order)
+    {
+        $paymentService = app(PaymentService::class);
+        $result = $paymentService->createPayPalOrder($order);
+
+        if ($result['success'] && !empty($result['approval_url'])) {
+            return redirect()->away($result['approval_url']);
+        }
+
+        session(['checkout_error' => $result['message'], 'failed_order' => $order->order_number]);
+        return redirect()->route('checkout.failure');
     }
 
     private function getShippingMethods()
     {
         return ShippingMethod::where('is_active', true)->orderBy('sort_order')->get();
+    }
+
+    /**
+     * Get enabled payment methods from settings.
+     */
+    private function getEnabledPaymentMethods(): array
+    {
+        $methods = [];
+
+        if (Setting::get('payment.cod_enabled', true)) {
+            $methods['cod'] = 'Cash on Delivery';
+        }
+        if (Setting::get('payment.bank_transfer_enabled', false)) {
+            $methods['bank_transfer'] = 'Bank Transfer';
+        }
+        if (Setting::get('payment.stripe_enabled', false)) {
+            $methods['stripe'] = 'Credit / Debit Card (Stripe)';
+        }
+        if (Setting::get('payment.paypal_enabled', false)) {
+            $methods['paypal'] = 'PayPal';
+        }
+
+        return $methods;
     }
 
     public function render()
@@ -178,6 +258,10 @@ class CheckoutPage extends Component
             'coupon' => $cart->getCart()->coupon,
             'shippingMethods' => $shippingMethods,
             'savedAddresses' => $savedAddresses,
+            'enabledPaymentMethods' => $this->getEnabledPaymentMethods(),
+            'stripePublishableKey' => Setting::get('payment.stripe_publishable_key', config('services.stripe.key')),
+            'codInstructions' => Setting::get('payment.cod_instructions', ''),
+            'bankTransferDetails' => Setting::get('payment.bank_transfer_details', ''),
         ]);
     }
 }

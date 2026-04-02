@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\Tag;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class ProductSeeder extends Seeder
 {
@@ -70,32 +71,32 @@ class ProductSeeder extends Seeder
         $colorGroup = AttributeGroup::create(['name' => 'Color', 'display_type' => 'color', 'sort_order' => 0]);
         $colors = ['Black' => '#000000', 'White' => '#FFFFFF', 'Red' => '#FF0000', 'Blue' => '#0088CC', 'Grey' => '#999999'];
         foreach ($colors as $name => $value) {
-            Attribute::create(['attribute_group_id' => $colorGroup->id, 'name' => $name, 'value' => $value]);
+            Attribute::create(['attribute_group_id' => $colorGroup->id, 'name' => $name, 'slug' => Str::slug($name), 'value' => $value]);
         }
 
         $sizeGroup = AttributeGroup::create(['name' => 'Size', 'display_type' => 'select', 'sort_order' => 1]);
         foreach (['XS', 'S', 'M', 'L', 'XL', 'XXL'] as $size) {
-            Attribute::create(['attribute_group_id' => $sizeGroup->id, 'name' => $size, 'value' => $size]);
+            Attribute::create(['attribute_group_id' => $sizeGroup->id, 'name' => $size, 'slug' => Str::slug($size), 'value' => $size]);
         }
 
         // Create Products (using Porto demo images)
         $products = [
-            ['name' => 'Black Grey Headset', 'price' => 49.00, 'compare_price' => 59.00, 'category' => 'Headphones', 'brand' => 'Sony', 'featured' => true, 'new' => true, 'img' => 'product-1'],
-            ['name' => 'Battery Charger', 'price' => 29.00, 'category' => 'Electronics', 'brand' => 'Samsung', 'featured' => true, 'img' => 'product-2'],
-            ['name' => 'Brown Leather Bag', 'price' => 89.00, 'compare_price' => 120.00, 'category' => 'Accessories', 'brand' => 'Porto', 'featured' => true, 'new' => true, 'img' => 'product-3'],
-            ['name' => 'Casual Note Bag', 'price' => 65.00, 'category' => 'Accessories', 'brand' => 'Porto', 'featured' => true, 'img' => 'product-4'],
-            ['name' => 'Porto Extended Camera', 'price' => 299.00, 'compare_price' => 399.00, 'category' => 'Cameras', 'brand' => 'Canon', 'featured' => true, 'img' => 'product-5'],
-            ['name' => 'Blue BackPack', 'price' => 55.00, 'category' => 'Accessories', 'brand' => 'Nike', 'featured' => true, 'new' => true, 'img' => 'product-6'],
-            ['name' => 'Computer Mouse', 'price' => 19.00, 'category' => 'Electronics', 'brand' => 'Apple', 'featured' => true, 'img' => 'product-7'],
-            ['name' => 'Casual Blue Shoes', 'price' => 79.00, 'compare_price' => 99.00, 'category' => 'Shoes', 'brand' => 'Nike', 'featured' => true, 'img' => 'product-8'],
-            ['name' => 'Wireless Speaker', 'price' => 99.00, 'compare_price' => 129.00, 'category' => 'Speakers', 'brand' => 'Sony', 'new' => true, 'img' => 'product-9'],
-            ['name' => 'Smart Watch Pro', 'price' => 199.00, 'compare_price' => 249.00, 'category' => 'Electronics', 'brand' => 'Apple', 'featured' => true, 'img' => 'product-10'],
-            ['name' => 'Running Shoes Elite', 'price' => 120.00, 'category' => 'Shoes', 'brand' => 'Adidas', 'new' => true, 'img' => 'product-11'],
-            ['name' => 'Vintage Desk Lamp', 'price' => 45.00, 'category' => 'Lighting', 'brand' => 'Porto', 'img' => 'product-12'],
-            ['name' => 'Fitness Tracker Band', 'price' => 39.00, 'compare_price' => 59.00, 'category' => 'Fitness', 'brand' => 'Samsung', 'featured' => true, 'new' => true, 'img' => 'product-1'],
-            ['name' => 'Portable Bluetooth Speaker', 'price' => 35.00, 'category' => 'Speakers', 'brand' => 'Sony', 'img' => 'product-2'],
-            ['name' => 'Classic Leather Wallet', 'price' => 42.00, 'category' => 'Accessories', 'brand' => 'Porto', 'img' => 'product-3'],
-            ['name' => 'Gaming Headset RGB', 'price' => 89.00, 'compare_price' => 120.00, 'category' => 'Gaming', 'brand' => 'Sony', 'featured' => true, 'img' => 'product-4'],
+            ['name' => 'Black Grey Headset', 'slug' => 'black-grey-headset', 'price' => 49.00, 'compare_price' => 59.00, 'category' => 'Headphones', 'brand' => 'Sony', 'featured' => true, 'new' => true, 'img' => 'product-1'],
+            ['name' => 'Battery Charger', 'slug' => 'battery-charger', 'price' => 29.00, 'category' => 'Electronics', 'brand' => 'Samsung', 'featured' => true, 'img' => 'product-2'],
+            ['name' => 'Brown Leather Bag', 'slug' => 'brown-leather-bag' , 'price' => 89.00, 'compare_price' => 120.00, 'category' => 'Accessories', 'brand' => 'Porto', 'featured' => true, 'new' => true, 'img' => 'product-3'],
+            ['name' => 'Casual Note Bag', 'slug' => 'casual-note-bag' , 'price' => 65.00, 'category' => 'Accessories', 'brand' => 'Porto', 'featured' => true, 'img' => 'product-4'],
+            ['name' => 'Porto Extended Camera', 'slug' => 'proto-extended-camera' , 'price' => 299.00, 'compare_price' => 399.00, 'category' => 'Cameras', 'brand' => 'Canon', 'featured' => true, 'img' => 'product-5'],
+            ['name' => 'Blue BackPack', 'slug' => 'blue-blackPack' , 'price' => 55.00, 'category' => 'Accessories', 'brand' => 'Nike', 'featured' => true, 'new' => true, 'img' => 'product-6'],
+            ['name' => 'Computer Mouse', 'slug' => 'computer-mouse' , 'price' => 19.00, 'category' => 'Electronics', 'brand' => 'Apple', 'featured' => true, 'img' => 'product-7'],
+            ['name' => 'Casual Blue Shoes', 'slug' => 'casual-blue-shoes' , 'price' => 79.00, 'compare_price' => 99.00, 'category' => 'Shoes', 'brand' => 'Nike', 'featured' => true, 'img' => 'product-8'],
+            ['name' => 'Wireless Speaker', 'slug' => 'wireless-speaker' , 'price' => 99.00, 'compare_price' => 129.00, 'category' => 'Speakers', 'brand' => 'Sony', 'new' => true, 'img' => 'product-9'],
+            ['name' => 'Smart Watch Pro', 'slug' => 'smart-watch-pro' , 'price' => 199.00, 'compare_price' => 249.00, 'category' => 'Electronics', 'brand' => 'Apple', 'featured' => true, 'img' => 'product-10'],
+            ['name' => 'Running Shoes Elite', 'slug' => 'running-shoes-elite' , 'price' => 120.00, 'category' => 'Shoes', 'brand' => 'Adidas', 'new' => true, 'img' => 'product-11'],
+            ['name' => 'Vintage Desk Lamp', 'slug' => 'vintage-desk-lamp' , 'price' => 45.00, 'category' => 'Lighting', 'brand' => 'Porto', 'img' => 'product-12'],
+            ['name' => 'Fitness Tracker Band', 'slug' => 'fitness-tracker-band' , 'price' => 39.00, 'compare_price' => 59.00, 'category' => 'Fitness', 'brand' => 'Samsung', 'featured' => true, 'new' => true, 'img' => 'product-1'],
+            ['name' => 'Portable Bluetooth Speaker', 'slug' => 'protable-bluetooth-speaker' , 'price' => 35.00, 'category' => 'Speakers', 'brand' => 'Sony', 'img' => 'product-2'],
+            ['name' => 'Classic Leather Wallet', 'slug' => 'classic-leather-wallet' , 'price' => 42.00, 'category' => 'Accessories', 'brand' => 'Porto', 'img' => 'product-3'],
+            ['name' => 'Gaming Headset RGB', 'slug' => 'gaming-headset-rgb' , 'price' => 89.00, 'compare_price' => 120.00, 'category' => 'Gaming', 'brand' => 'Sony', 'featured' => true, 'img' => 'product-4'],
         ];
 
         $allBrands = Brand::all()->keyBy('name');

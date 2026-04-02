@@ -6,9 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('meta_title', Setting::get('seo.meta_title', 'Porto Shop'))</title>
-    <meta name="description" content="@yield('meta_description', Setting::get('seo.meta_description', ''))">
-    <meta name="keywords" content="@yield('meta_keywords', '')">
+    {{-- SEO Head — Phase 9-A: Dynamic title, meta, OG, Twitter, JSON-LD, GA --}}
+    <x-seo.head />
     <meta name="author" content="{{ Setting::get('general.site_name', 'Porto Shop') }}">
 
     {{-- Favicon --}}

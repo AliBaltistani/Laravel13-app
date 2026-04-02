@@ -3,14 +3,16 @@
 namespace App\Listeners;
 
 use App\Events\UserRegistered;
+use App\Mail\WelcomeMail;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class SendWelcomeEmail implements ShouldQueue
 {
+    public $queue = 'emails';
+
     public function handle(UserRegistered $event): void
     {
-        // TODO: Send welcome email notification
-        Log::info('Welcome email queued for: ' . $event->user->email);
+        Mail::to($event->user->email)->send(new WelcomeMail($event->user));
     }
 }
