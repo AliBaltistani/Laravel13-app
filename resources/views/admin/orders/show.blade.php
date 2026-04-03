@@ -37,24 +37,24 @@
                                 </div>
                             </td>
                             <td class="text-muted">{{ $item->product_sku }}</td>
-                            <td>${{ number_format($item->unit_price, 2) }}</td>
+                            <td>@price($item->unit_price)</td>
                             <td>{{ $item->quantity }}</td>
-                            <td class="font-weight-bold">${{ number_format($item->total, 2) }}</td>
+                            <td class="font-weight-bold">@price($item->total)</td>
                         </tr>
                         @endforeach
                     </tbody>
                     <tfoot>
-                        <tr><td colspan="4" class="text-right">Subtotal:</td><td class="font-weight-bold">${{ number_format($order->subtotal, 2) }}</td></tr>
+                        <tr><td colspan="4" class="text-right">Subtotal:</td><td class="font-weight-bold">@price($order->subtotal)</td></tr>
                         @if($order->discount_amount > 0)
-                        <tr><td colspan="4" class="text-right">Discount ({{ $order->coupon_code }}):</td><td class="text-success">-${{ number_format($order->discount_amount, 2) }}</td></tr>
+                        <tr><td colspan="4" class="text-right">Discount ({{ $order->coupon_code }}):</td><td class="text-success">-@price($order->discount_amount)</td></tr>
                         @endif
                         @if($order->shipping_amount > 0)
-                        <tr><td colspan="4" class="text-right">Shipping ({{ $order->shipping_method_name }}):</td><td>${{ number_format($order->shipping_amount, 2) }}</td></tr>
+                        <tr><td colspan="4" class="text-right">Shipping ({{ $order->shipping_method_name }}):</td><td>@price($order->shipping_amount)</td></tr>
                         @endif
                         @if($order->tax_amount > 0)
-                        <tr><td colspan="4" class="text-right">Tax:</td><td>${{ number_format($order->tax_amount, 2) }}</td></tr>
+                        <tr><td colspan="4" class="text-right">Tax:</td><td>@price($order->tax_amount)</td></tr>
                         @endif
-                        <tr><td colspan="4" class="text-right font-weight-bold" style="font-size:16px;">Total:</td><td class="font-weight-bold" style="font-size:16px;">${{ number_format($order->total, 2) }}</td></tr>
+                        <tr><td colspan="4" class="text-right font-weight-bold" style="font-size:16px;">Total:</td><td class="font-weight-bold" style="font-size:16px;">@price($order->total)</td></tr>
                     </tfoot>
                 </table>
             </div>

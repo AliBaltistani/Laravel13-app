@@ -3,7 +3,7 @@
 --}}
 @php
     $wPrimaryImg = $product->primaryImage;
-    $wImgPath = $wPrimaryImg ? asset('storage/' . $wPrimaryImg->image_path) : asset('themes/porto/images/products/product-1.jpg');
+    $wImgPath = $wPrimaryImg ? asset('storage/' . $wPrimaryImg->image_path) : asset('images/no-image.svg');
     $wRating = $product->averageRating();
     $wRatingPercent = ($wRating / 5) * 100;
 @endphp
@@ -26,9 +26,9 @@
         </div>
         <div class="price-box">
             @if($product->compare_price && $product->compare_price > $product->price)
-                <span class="old-price">${{ number_format($product->compare_price, 2) }}</span>
+                <span class="old-price">@price($product->compare_price)</span>
             @endif
-            <span class="product-price">${{ number_format($product->price, 2) }}</span>
+            <span class="product-price">@price($product->price)</span>
         </div>
     </div>
 </div>

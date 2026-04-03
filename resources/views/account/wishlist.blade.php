@@ -28,7 +28,7 @@
                         $product = $item->product;
                         if (!$product) continue;
                         $img = $product->images->where('is_primary', true)->first() ?? $product->images->first();
-                        $imgPath = $img ? asset('storage/' . $img->image_path) : asset('themes/porto/images/products/product-1.jpg');
+                        $imgPath = $img ? asset('storage/' . $img->image_path) : asset('images/no-image.svg');
                     @endphp
                     <tr>
                         <td class="thumbnail-col">
@@ -48,9 +48,9 @@
                         </td>
                         <td class="price-box">
                             @if($product->compare_price && $product->compare_price > $product->price)
-                                <span class="old-price">${{ number_format($product->compare_price, 2) }}</span>
+                                <span class="old-price">@price($product->compare_price)</span>
                             @endif
-                            <span class="product-price">${{ number_format($product->effectivePrice(), 2) }}</span>
+                            <span class="product-price">@price($product->effectivePrice())</span>
                         </td>
                         <td>
                             @if($product->isInStock())

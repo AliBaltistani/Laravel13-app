@@ -55,20 +55,20 @@
     <tr>
         <td>{{ $item->product_name }}@if($item->variant_name) <small>({{ $item->variant_name }})</small>@endif</td>
         <td>{{ $item->product_sku }}</td>
-        <td>${{ number_format($item->unit_price, 2) }}</td>
+        <td>@price($item->unit_price)</td>
         <td>{{ $item->quantity }}</td>
-        <td style="text-align:right;">${{ number_format($item->total, 2) }}</td>
+        <td style="text-align:right;">@price($item->total)</td>
     </tr>
     @endforeach
     </tbody>
 </table>
 
 <table class="totals">
-    <tr><td>Subtotal:</td><td style="text-align:right;">${{ number_format($order->subtotal, 2) }}</td></tr>
-    @if($order->discount_amount > 0)<tr><td>Discount:</td><td style="text-align:right;color:green;">-${{ number_format($order->discount_amount, 2) }}</td></tr>@endif
-    @if($order->shipping_amount > 0)<tr><td>Shipping:</td><td style="text-align:right;">${{ number_format($order->shipping_amount, 2) }}</td></tr>@endif
-    @if($order->tax_amount > 0)<tr><td>Tax:</td><td style="text-align:right;">${{ number_format($order->tax_amount, 2) }}</td></tr>@endif
-    <tr class="grand"><td>Total:</td><td style="text-align:right;">${{ number_format($order->total, 2) }}</td></tr>
+    <tr><td>Subtotal:</td><td style="text-align:right;">@price($order->subtotal)</td></tr>
+    @if($order->discount_amount > 0)<tr><td>Discount:</td><td style="text-align:right;color:green;">-@price($order->discount_amount)</td></tr>@endif
+    @if($order->shipping_amount > 0)<tr><td>Shipping:</td><td style="text-align:right;">@price($order->shipping_amount)</td></tr>@endif
+    @if($order->tax_amount > 0)<tr><td>Tax:</td><td style="text-align:right;">@price($order->tax_amount)</td></tr>@endif
+    <tr class="grand"><td>Total:</td><td style="text-align:right;">@price($order->total)</td></tr>
 </table>
 
 @if($order->admin_notes)<div style="margin-top:20px;"><h3 style="font-size:14px;color:#666;">Notes</h3><p>{{ $order->admin_notes }}</p></div>@endif

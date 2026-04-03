@@ -42,7 +42,7 @@
                             </div>
                         @empty
                             <div class="product-item">
-                                <img class="product-single-image" src="{{ asset('themes/porto/images/products/product-1.jpg') }}" width="468" height="468" alt="{{ $product->name }}">
+                                <img class="product-single-image" src="{{ asset('images/no-image.svg') }}" width="468" height="468" alt="{{ $product->name }}">
                             </div>
                         @endforelse
                     </div>
@@ -76,9 +76,9 @@
 
                 <div class="price-box">
                     @if($hasDiscount)
-                        <span class="old-price">${{ number_format($product->compare_price, 2) }}</span>
+                        <span class="old-price">@price($product->compare_price)</span>
                     @endif
-                    <span class="new-price">${{ number_format($product->effectivePrice(), 2) }}</span>
+                    <span class="new-price">@price($product->effectivePrice())</span>
                 </div>
 
                 @if($product->short_description)

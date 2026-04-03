@@ -55,19 +55,18 @@
                 <div class="col-lg-3 col-sm-6">
                     <div class="widget">
                         <h4 class="widget-title">Popular Tags</h4>
+                        @php
+                            $footerTags = \App\Models\Tag::take(12)->get();
+                        @endphp
+                        @if($footerTags->count())
                         <div class="tagcloud">
-                            @php
-                                $footerTags = \App\Models\Tag::take(12)->get();
-                            @endphp
-                            @forelse($footerTags as $tag)
+                            @foreach($footerTags as $tag)
                                 <a href="{{ url('/shop?tag=' . $tag->slug) }}">{{ $tag->name }}</a>
-                            @empty
-                                <a href="#">Fashion</a>
-                                <a href="#">Accessories</a>
-                                <a href="#">Electronics</a>
-                                <a href="#">Shoes</a>
-                            @endforelse
+                            @endforeach
                         </div>
+                        @else
+                            <p class="text-muted">No tags yet.</p>
+                        @endif
                     </div>
                 </div>
 

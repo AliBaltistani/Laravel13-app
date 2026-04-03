@@ -17,7 +17,7 @@
     <td><a href="{{ route('admin.customers.show', $c) }}" class="font-weight-bold text-dark">{{ $c->name }}</a></td>
     <td>{{ $c->email }}</td>
     <td>{{ $c->orders_count }}</td>
-    <td class="font-weight-bold">${{ number_format($c->orders_sum_total ?? 0, 2) }}</td>
+    <td class="font-weight-bold">@price($c->orders_sum_total ?? 0)</td>
     <td>{{ $c->created_at->format('M d, Y') }}</td>
     <td>{!! $c->is_active ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-danger">Banned</span>' !!}</td>
     <td>

@@ -32,28 +32,28 @@
                                         <tr>
                                             <td>{{ $item->product_name }}</td>
                                             <td class="text-center">{{ $item->quantity }}</td>
-                                            <td class="text-right">${{ number_format($item->total, 2) }}</td>
+                                            <td class="text-right">@price($item->total)</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <td colspan="2"><strong>Subtotal</strong></td>
-                                        <td class="text-right">${{ number_format($order->subtotal, 2) }}</td>
+                                        <td class="text-right">@price($order->subtotal)</td>
                                     </tr>
                                     @if($order->discount_amount > 0)
                                     <tr>
                                         <td colspan="2">Discount {{ $order->coupon_code ? '('.$order->coupon_code.')' : '' }}</td>
-                                        <td class="text-right text-success">-${{ number_format($order->discount_amount, 2) }}</td>
+                                        <td class="text-right text-success">-@price($order->discount_amount)</td>
                                     </tr>
                                     @endif
                                     <tr>
                                         <td colspan="2">Shipping ({{ $order->shipping_method_name }})</td>
-                                        <td class="text-right">${{ number_format($order->shipping_amount, 2) }}</td>
+                                        <td class="text-right">@price($order->shipping_amount)</td>
                                     </tr>
                                     <tr>
                                         <td colspan="2"><strong>Total</strong></td>
-                                        <td class="text-right"><strong>${{ number_format($order->total, 2) }}</strong></td>
+                                        <td class="text-right"><strong>@price($order->total)</strong></td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -66,7 +66,7 @@
                 @if($order->payment_method === 'bank_transfer')
                 <div class="alert alert-info mb-3">
                     <strong>Bank Transfer Instructions:</strong><br>
-                    Please transfer <strong>${{ number_format($order->total, 2) }}</strong> to our bank account.<br>
+                    Please transfer <strong>@price($order->total)</strong> to our bank account.<br>
                     Use your order number <strong>{{ $order->order_number }}</strong> as payment reference.<br>
                     Your order will be processed once payment is confirmed.
                 </div>

@@ -41,7 +41,7 @@
                         @endphp
                         <span class="badge badge-{{ $badgeColor }}">{{ ucfirst($order->status) }}</span>
                     </td>
-                    <td>${{ number_format($order->total, 2) }} <small class="text-muted">({{ $order->items_count ?? $order->items()->count() }} items)</small></td>
+                    <td>@price($order->total) <small class="text-muted">({{ $order->items_count ?? $order->items()->count() }} items)</small></td>
                     <td>
                         <a href="{{ route('account.orders.show', $order->order_number) }}" class="btn btn-sm btn-outline-primary">View</a>
                         @if($order->status === 'pending')

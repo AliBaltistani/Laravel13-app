@@ -57,7 +57,7 @@
                         @if($item->product_image)
                             <img src="{{ asset('storage/' . $item->product_image) }}" width="50" height="50" alt="{{ $item->product_name }}">
                         @else
-                            <img src="{{ asset('themes/porto/images/products/product-1.jpg') }}" width="50" height="50" alt="product">
+                            <img src="{{ asset('images/no-image.svg') }}" width="50" height="50" alt="product">
                         @endif
                     </td>
                     <td>
@@ -65,36 +65,36 @@
                         @if($item->variant_name) <small class="text-muted d-block">{{ $item->variant_name }}</small> @endif
                         <small class="text-muted">SKU: {{ $item->product_sku }}</small>
                     </td>
-                    <td>${{ number_format($item->unit_price, 2) }}</td>
+                    <td>@price($item->unit_price)</td>
                     <td>{{ $item->quantity }}</td>
-                    <td class="text-right">${{ number_format($item->total, 2) }}</td>
+                    <td class="text-right">@price($item->total)</td>
                 </tr>
                 @endforeach
             </tbody>
             <tfoot>
                 <tr>
                     <td colspan="4" class="text-right"><strong>Subtotal</strong></td>
-                    <td class="text-right">${{ number_format($order->subtotal, 2) }}</td>
+                    <td class="text-right">@price($order->subtotal)</td>
                 </tr>
                 @if($order->discount_amount > 0)
                 <tr>
                     <td colspan="4" class="text-right">Discount {{ $order->coupon_code ? '('.$order->coupon_code.')' : '' }}</td>
-                    <td class="text-right text-success">-${{ number_format($order->discount_amount, 2) }}</td>
+                    <td class="text-right text-success">-@price($order->discount_amount)</td>
                 </tr>
                 @endif
                 <tr>
                     <td colspan="4" class="text-right">Shipping</td>
-                    <td class="text-right">${{ number_format($order->shipping_amount, 2) }}</td>
+                    <td class="text-right">@price($order->shipping_amount)</td>
                 </tr>
                 @if($order->tax_amount > 0)
                 <tr>
                     <td colspan="4" class="text-right">Tax</td>
-                    <td class="text-right">${{ number_format($order->tax_amount, 2) }}</td>
+                    <td class="text-right">@price($order->tax_amount)</td>
                 </tr>
                 @endif
                 <tr>
                     <td colspan="4" class="text-right"><strong>Total</strong></td>
-                    <td class="text-right"><strong>${{ number_format($order->total, 2) }}</strong></td>
+                    <td class="text-right"><strong>@price($order->total)</strong></td>
                 </tr>
             </tfoot>
         </table>

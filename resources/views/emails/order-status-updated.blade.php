@@ -8,5 +8,5 @@
 @if($comment)
 <p style="font-size: 14px; background: #f8f8f8; padding: 12px; border-radius: 4px;">{{ $comment }}</p>
 @endif
-<p style="font-size: 14px;"><strong>Order Total:</strong> ${{ number_format($order->total, 2) }}</p>
+<p style="font-size: 14px;"><strong>Order Total:</strong> {{ \App\Helpers\CurrencyHelper::format($order->total) }}</p>
 @endsection

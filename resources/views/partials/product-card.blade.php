@@ -3,7 +3,7 @@
 --}}
 @php
     $primaryImg = $product->primaryImage;
-    $imgPath = $primaryImg ? asset('storage/' . $primaryImg->image_path) : asset('themes/porto/images/products/product-1.jpg');
+    $imgPath = $primaryImg ? asset('storage/' . $primaryImg->image_path) : asset('images/no-image.svg');
     $secondImg = $product->images->where('is_primary', false)->first();
     $secondImgPath = $secondImg ? asset('storage/' . $secondImg->image_path) : null;
     $avgRating = $product->averageRating();
@@ -30,10 +30,7 @@
             @endif
         </div>
         <div class="btn-icon-group">
-            <button class="btn-icon btn-add-cart product-type-simple" title="Add To Cart"
-                onclick="Livewire.dispatch('addToCart', { productId: {{ $product->id }} })">
-                <i class="icon-shopping-cart"></i>
-            </button>
+            @livewire('add-to-cart', ['productId' => $product->id, 'type' => 'card'], key('cart-btn-'.$product->id))
         </div>
         <a href="{{ url('/product/' . $product->slug) }}" class="btn-quickview" title="Quick View">Quick View</a>
         @if($flashSale)
@@ -50,10 +47,7 @@
                     <a href="{{ url('/shop/category/' . $product->category->slug) }}" class="product-category">{{ $product->category->name }}</a>
                 @endif
             </div>
-            <button class="btn-icon-wish" title="Add to Wishlist"
-                onclick="Livewire.dispatch('toggleWishlist', { productId: {{ $product->id }} })">
-                <i class="icon-heart"></i>
-            </button>
+            @livewire('wishlist-toggle', ['productId' => $product->id], key('wishlist-card-'.$product->id))
         </div>
         <h3 class="product-title">
             <a href="{{ url('/product/' . $product->slug) }}">{{ $product->name }}</a>
@@ -66,9 +60,9 @@
         </div>
         <div class="price-box">
             @if($hasDiscount)
-                <span class="old-price">${{ number_format($product->compare_price, 2) }}</span>
+                <span class="old-price">@price($product->compare_price)</span>
             @endif
-            <span class="product-price">${{ number_format($product->effectivePrice(), 2) }}</span>
+            <span class="product-price">@price($product->effectivePrice())</span>
         </div>
     </div>
 </div>

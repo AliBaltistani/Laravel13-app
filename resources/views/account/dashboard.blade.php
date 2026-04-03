@@ -30,7 +30,7 @@
                     <td>#{{ $order->order_number }}</td>
                     <td>{{ $order->created_at->format('M d, Y') }}</td>
                     <td><span class="badge badge-{{ $order->status_badge_color }}">{{ ucfirst($order->status) }}</span></td>
-                    <td>${{ number_format($order->total, 2) }}</td>
+                    <td>@price($order->total)</td>
                     <td><a href="#" class="btn btn-sm btn-primary">View</a></td>
                 </tr>
                 @endforeach

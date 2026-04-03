@@ -3,7 +3,7 @@
     <div class="header-top @yield('header-top-class')">
         <div class="container">
             <div class="header-left d-none d-sm-block">
-                <p class="top-message text-uppercase mb-0">FREE Returns. Standard Shipping Orders $99+</p>
+                <p class="top-message text-uppercase mb-0">{{ Setting::get('header.top_message', 'FREE Returns. Standard Shipping Orders $99+') }}</p>
             </div>
 
             <div class="header-right header-dropdowns ml-0 ml-sm-auto w-sm-100">
@@ -21,28 +21,6 @@
                             @else
                                 <li><a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Log Out</a></li>
                             @endguest
-                        </ul>
-                    </div>
-                </div>
-
-                <span class="separator"></span>
-
-                <div class="header-dropdown">
-                    <a href="#"><i class="flag-us flag"></i>ENG</a>
-                    <div class="header-menu">
-                        <ul>
-                            <li><a href="#"><i class="flag-us flag mr-2"></i>ENG</a></li>
-                            <li><a href="#"><i class="flag-fr flag mr-2"></i>FRA</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="header-dropdown mr-auto mr-sm-3 mr-md-0">
-                    <a href="#">USD</a>
-                    <div class="header-menu">
-                        <ul>
-                            <li><a href="#">EUR</a></li>
-                            <li><a href="#">USD</a></li>
                         </ul>
                     </div>
                 </div>
@@ -73,7 +51,11 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <a href="{{ url('/') }}" class="logo">
-                    <img src="{{ asset('themes/porto/images/logo.png') }}" width="111" height="44" alt="{{ Setting::get('general.site_name', 'Porto Logo') }}">
+                    @if(Setting::get('appearance.logo'))
+                        <img src="{{ asset('storage/' . Setting::get('appearance.logo')) }}" width="111" height="44" alt="{{ Setting::get('general.site_name', 'Porto Shop') }}">
+                    @else
+                        <img src="{{ asset('themes/porto/images/logo.png') }}" width="111" height="44" alt="{{ Setting::get('general.site_name', 'Porto Shop') }}">
+                    @endif
                 </a>
             </div>
 
@@ -104,10 +86,12 @@
                 </div>
 
                 {{-- Phone --}}
+                @if(Setting::get('contact.phone'))
                 <div class="header-contact d-none d-lg-flex pl-4 pr-4">
                     <img alt="phone" src="{{ asset('themes/porto/images/phone.png') }}" width="30" height="30" class="pb-1">
-                    <h6><span>Call us now</span><a href="tel:{{ Setting::get('contact.phone', '+1 234 567 890') }}" class="text-dark font1">{{ Setting::get('contact.phone', '+1 234 567 890') }}</a></h6>
+                    <h6><span>Call us now</span><a href="tel:{{ Setting::get('contact.phone') }}" class="text-dark font1">{{ Setting::get('contact.phone') }}</a></h6>
                 </div>
+                @endif
 
                 {{-- User Icon --}}
                 @guest
@@ -183,7 +167,9 @@
                     <li class="{{ request()->is('contact*') ? 'active' : '' }}">
                         <a href="{{ url('/contact') }}">Contact Us</a>
                     </li>
-                    <li class="float-right"><a href="{{ url('/shop') }}" class="pl-5">Special Offer!</a></li>
+                    @if(Setting::get('header.show_special_offer', '1') === '1' && Setting::get('header.special_offer_text'))
+                        <li class="float-right"><a href="{{ Setting::get('header.special_offer_url', '/shop') }}" class="pl-5">{{ Setting::get('header.special_offer_text', 'Special Offer!') }}</a></li>
+                    @endif
                 </ul>
             </nav>
         </div>

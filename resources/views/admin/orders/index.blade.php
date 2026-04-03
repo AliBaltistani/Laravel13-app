@@ -72,7 +72,7 @@
                         <td><span class="badge-status badge-{{ $order->status }}">{{ ucfirst($order->status) }}</span></td>
                         <td><span class="badge-status badge-{{ $order->payment_status }}">{{ ucfirst($order->payment_status) }}</span></td>
                         <td>{{ ucfirst($order->payment_method ?? '—') }}</td>
-                        <td class="font-weight-bold">${{ number_format($order->total, 2) }}</td>
+                        <td class="font-weight-bold">@price($order->total)</td>
                         <td>{{ $order->created_at->format('M d, Y') }}<br><small class="text-muted">{{ $order->created_at->format('H:i') }}</small></td>
                         <td><a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a></td>
                     </tr>

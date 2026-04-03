@@ -13,11 +13,13 @@ class AddToCart extends Component
     public $maxQty = 999;
     public $message = '';
     public $messageType = '';
+    public $type = 'single';
 
-    public function mount($productId, $maxQty = 999)
+    public function mount($productId, $maxQty = 999, $type = 'single')
     {
         $this->productId = $productId;
         $this->maxQty = $maxQty;
+        $this->type = $type;
     }
 
     public function increment()

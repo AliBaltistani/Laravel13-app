@@ -57,6 +57,11 @@ class AppServiceProvider extends ServiceProvider
             return "<?php echo e(app(\App\Services\SettingService::class)->get({$expression})); ?>";
         });
 
+        // Register @price($amount) Blade directive — formats with admin currency
+        Blade::directive('price', function ($expression) {
+            return "<?php echo \App\Helpers\CurrencyHelper::format({$expression}); ?>";
+        });
+
         // Register model observers — Phase 9-F
         Product::observe(ProductObserver::class);
         Category::observe(CategoryObserver::class);

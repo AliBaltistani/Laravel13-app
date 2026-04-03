@@ -174,7 +174,7 @@
                                     <h3 class="product-title">{{ $item->product->name }} × <span class="product-qty">{{ $item->quantity }}</span></h3>
                                 </td>
                                 <td class="price-col">
-                                    <span>${{ number_format($item->unit_price * $item->quantity, 2) }}</span>
+                                    <span>@price($item->unit_price * $item->quantity)</span>
                                 </td>
                             </tr>
                         @endforeach
@@ -182,12 +182,12 @@
                     <tfoot>
                         <tr class="cart-subtotal">
                             <td><h4>Subtotal</h4></td>
-                            <td class="price-col"><span>${{ number_format($subtotal, 2) }}</span></td>
+                            <td class="price-col"><span>@price($subtotal)</span></td>
                         </tr>
                         @if($discount > 0)
                             <tr>
                                 <td><h4>Discount</h4></td>
-                                <td class="price-col"><span class="text-success">-${{ number_format($discount, 2) }}</span></td>
+                                <td class="price-col"><span class="text-success">-@price($discount)</span></td>
                             </tr>
                         @endif
 
@@ -207,7 +207,7 @@
                                                 @if($method->type === 'free')
                                                     <span class="text-success">Free</span>
                                                 @else
-                                                    <span>${{ number_format($method->price, 2) }}</span>
+                                                    <span>@price($method->price)</span>
                                                 @endif
                                                 @if($method->estimated_days)
                                                     <small class="text-muted d-block">({{ $method->estimated_days }} days)</small>
@@ -223,35 +223,69 @@
 
                         <tr class="order-total">
                             <td><h4>Total</h4></td>
-                            <td class="price-col"><span>${{ number_format($total, 2) }}</span></td>
+                            <td class="price-col"><span>@price($total)</span></td>
                         </tr>
                     </tfoot>
                 </table>
 
-                {{-- Payment Methods --}}
+                {{-- Payment Methods (Dynamic from Admin Settings) --}}
                 <div class="payment-methods">
                     <h4 class="mb-2">Payment Method</h4>
 
-                    <div class="custom-control custom-radio mb-2">
-                        <input type="radio" class="custom-control-input" name="payment_method" id="payment-cod" value="cod" wire:model="payment_method" checked>
-                        <label class="custom-control-label" for="payment-cod">
-                            <strong>Cash on Delivery</strong>
-                            <small class="d-block text-muted">Pay with cash upon delivery.</small>
-                        </label>
-                    </div>
+                    @forelse($enabledPaymentMethods as $methodKey => $methodLabel)
+                        <div class="custom-control custom-radio mb-2">
+                            <input type="radio" class="custom-control-input" name="payment_method"
+                                   id="payment-{{ $methodKey }}" value="{{ $methodKey }}"
+                                   wire:model.live="payment_method"
+                                   {{ $loop->first && !$payment_method ? 'checked' : '' }}>
+                            <label class="custom-control-label" for="payment-{{ $methodKey }}">
+                                <strong>{{ $methodLabel }}</strong>
 
-                    <div class="custom-control custom-radio mb-2">
-                        <input type="radio" class="custom-control-input" name="payment_method" id="payment-bank" value="bank_transfer" wire:model="payment_method">
-                        <label class="custom-control-label" for="payment-bank">
-                            <strong>Direct Bank Transfer</strong>
-                            <small class="d-block text-muted">Make your payment directly into our bank account.</small>
-                        </label>
-                    </div>
+                                {{-- COD instructions --}}
+                                @if($methodKey === 'cod' && $codInstructions)
+                                    <small class="d-block text-muted">{{ $codInstructions }}</small>
+                                @elseif($methodKey === 'cod')
+                                    <small class="d-block text-muted">Pay with cash upon delivery.</small>
+                                @endif
+
+                                {{-- Bank Transfer details --}}
+                                @if($methodKey === 'bank_transfer' && $bankTransferDetails)
+                                    <small class="d-block text-muted">{!! nl2br(e($bankTransferDetails)) !!}</small>
+                                @elseif($methodKey === 'bank_transfer')
+                                    <small class="d-block text-muted">Make your payment directly into our bank account.</small>
+                                @endif
+
+                                {{-- Stripe --}}
+                                @if($methodKey === 'stripe')
+                                    <small class="d-block text-muted">Pay securely with your credit or debit card.</small>
+                                @endif
+
+                                {{-- PayPal --}}
+                                @if($methodKey === 'paypal')
+                                    <small class="d-block text-muted">You will be redirected to PayPal to complete your payment.</small>
+                                @endif
+                            </label>
+                        </div>
+
+                        {{-- Stripe Card Element --}}
+                        @if($methodKey === 'stripe' && $payment_method === 'stripe')
+                            <div class="stripe-card-wrapper ml-4 mb-3 p-3 border rounded bg-light" id="stripe-card-container">
+                                <div id="stripe-card-element" class="mb-2" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #fff;"></div>
+                                <div id="stripe-card-errors" class="text-danger small"></div>
+                            </div>
+                        @endif
+                    @empty
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                            No payment methods are currently available. Please contact the store administrator.
+                        </div>
+                    @endforelse
                 </div>
 
                 <button type="button" class="btn btn-dark btn-place-order btn-block mt-3"
                         wire:click="placeOrder" wire:loading.attr="disabled"
-                        {{ $processing ? 'disabled' : '' }}>
+                        {{ $processing ? 'disabled' : '' }}
+                        @if(count($enabledPaymentMethods) === 0) disabled @endif>
                     <span wire:loading.remove wire:target="placeOrder">Place Order</span>
                     <span wire:loading wire:target="placeOrder">Processing...</span>
                 </button>
@@ -260,3 +294,66 @@
     </div>
     @endif
 </div>
+
+{{-- Stripe JS (only loaded when Stripe is an enabled payment method) --}}
+@if(isset($enabledPaymentMethods['stripe']))
+@push('scripts')
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    document.addEventListener('livewire:initialized', function() {
+        let stripeKey = @json($stripePublishableKey);
+        if (!stripeKey) return;
+
+        let stripe = Stripe(stripeKey);
+        let elements = stripe.elements();
+        let cardElement = null;
+
+        function mountStripeCard() {
+            let container = document.getElementById('stripe-card-element');
+            if (container && !cardElement) {
+                cardElement = elements.create('card', {
+                    style: {
+                        base: {
+                            fontSize: '14px',
+                            color: '#333',
+                            '::placeholder': { color: '#aab7c4' }
+                        }
+                    }
+                });
+                cardElement.mount('#stripe-card-element');
+                cardElement.on('change', function(event) {
+                    let errorsEl = document.getElementById('stripe-card-errors');
+                    if (errorsEl) {
+                        errorsEl.textContent = event.error ? event.error.message : '';
+                    }
+                });
+            }
+        }
+
+        // Mount on page load if stripe is already selected
+        setTimeout(mountStripeCard, 500);
+
+        // Re-mount when Livewire updates DOM
+        Livewire.hook('morph.updated', () => {
+            setTimeout(mountStripeCard, 200);
+        });
+
+        // Intercept placeOrder to create Stripe payment method first
+        Livewire.on('placeOrder', async () => {
+            let paymentMethod = @this.payment_method;
+            if (paymentMethod === 'stripe' && cardElement) {
+                const { paymentMethod: pm, error } = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: cardElement,
+                });
+                if (error) {
+                    @this.set('errorMessage', error.message);
+                    return false;
+                }
+                @this.set('stripe_payment_method_id', pm.id);
+            }
+        });
+    });
+</script>
+@endpush
+@endif

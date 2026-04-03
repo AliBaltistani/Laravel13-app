@@ -15,17 +15,17 @@
         <tr>
             <td style="border-bottom: 1px solid #eee; font-size: 14px;">{{ $item->product_name }}</td>
             <td align="center" style="border-bottom: 1px solid #eee; font-size: 14px;">{{ $item->quantity }}</td>
-            <td align="right" style="border-bottom: 1px solid #eee; font-size: 14px;">${{ number_format($item->total, 2) }}</td>
+            <td align="right" style="border-bottom: 1px solid #eee; font-size: 14px;">{{ \App\Helpers\CurrencyHelper::format($item->total) }}</td>
         </tr>
         @endforeach
     </tbody>
     <tfoot>
-        <tr><td colspan="2" style="font-size: 14px;"><strong>Subtotal</strong></td><td align="right" style="font-size: 14px;">${{ number_format($order->subtotal, 2) }}</td></tr>
+        <tr><td colspan="2" style="font-size: 14px;"><strong>Subtotal</strong></td><td align="right" style="font-size: 14px;">{{ \App\Helpers\CurrencyHelper::format($order->subtotal) }}</td></tr>
         @if($order->discount_amount > 0)
-        <tr><td colspan="2" style="font-size: 14px; color: #28a745;">Discount</td><td align="right" style="font-size: 14px; color: #28a745;">-${{ number_format($order->discount_amount, 2) }}</td></tr>
+        <tr><td colspan="2" style="font-size: 14px; color: #28a745;">Discount</td><td align="right" style="font-size: 14px; color: #28a745;">-{{ \App\Helpers\CurrencyHelper::format($order->discount_amount) }}</td></tr>
         @endif
-        <tr><td colspan="2" style="font-size: 14px;">Shipping</td><td align="right" style="font-size: 14px;">${{ number_format($order->shipping_amount, 2) }}</td></tr>
-        <tr><td colspan="2" style="font-size: 16px; font-weight: bold; border-top: 2px solid #ddd; padding-top: 8px;">Total</td><td align="right" style="font-size: 16px; font-weight: bold; border-top: 2px solid #ddd; padding-top: 8px;">${{ number_format($order->total, 2) }}</td></tr>
+        <tr><td colspan="2" style="font-size: 14px;">Shipping</td><td align="right" style="font-size: 14px;">{{ \App\Helpers\CurrencyHelper::format($order->shipping_amount) }}</td></tr>
+        <tr><td colspan="2" style="font-size: 16px; font-weight: bold; border-top: 2px solid #ddd; padding-top: 8px;">Total</td><td align="right" style="font-size: 16px; font-weight: bold; border-top: 2px solid #ddd; padding-top: 8px;">{{ \App\Helpers\CurrencyHelper::format($order->total) }}</td></tr>
     </tfoot>
 </table>
 

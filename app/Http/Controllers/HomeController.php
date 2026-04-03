@@ -39,6 +39,8 @@ class HomeController extends Controller
 
         $banners = Banner::active()->position('home-mid')->orderBy('sort_order')->get();
 
+        $sidebarBanners = Banner::active()->position('home-sidebar')->orderBy('sort_order')->get();
+
         $topRated = Product::active()
             ->with(['images', 'category'])
             ->withAvg('approvedReviews', 'rating')
@@ -57,7 +59,7 @@ class HomeController extends Controller
 
         return view('home', compact(
             'slider', 'featuredProducts', 'newArrivals', 'flashSale',
-            'brands', 'banners', 'topRated', 'bestSelling', 'latestProducts'
+            'brands', 'banners', 'sidebarBanners', 'topRated', 'bestSelling', 'latestProducts'
         ));
     }
 }

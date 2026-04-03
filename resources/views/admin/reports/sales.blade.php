@@ -15,8 +15,8 @@
 
 <div class="row mb-4">
     <div class="col-sm-6 col-xl-3 mb-3"><div class="stat-card"><div class="stat-icon bg-primary-soft"><i class="fas fa-shopping-bag"></i></div><div class="stat-info"><h3>{{ $stats->total_orders ?? 0 }}</h3><p>Total Orders</p></div></div></div>
-    <div class="col-sm-6 col-xl-3 mb-3"><div class="stat-card"><div class="stat-icon bg-success-soft"><i class="fas fa-dollar-sign"></i></div><div class="stat-info"><h3>${{ number_format($stats->total_revenue ?? 0, 2) }}</h3><p>Total Revenue</p></div></div></div>
-    <div class="col-sm-6 col-xl-3 mb-3"><div class="stat-card"><div class="stat-icon bg-warning-soft"><i class="fas fa-receipt"></i></div><div class="stat-info"><h3>${{ number_format($stats->avg_order ?? 0, 2) }}</h3><p>Avg Order Value</p></div></div></div>
+    <div class="col-sm-6 col-xl-3 mb-3"><div class="stat-card"><div class="stat-icon bg-success-soft"><i class="fas fa-dollar-sign"></i></div><div class="stat-info"><h3>@price($stats->total_revenue ?? 0)</h3><p>Total Revenue</p></div></div></div>
+    <div class="col-sm-6 col-xl-3 mb-3"><div class="stat-card"><div class="stat-icon bg-warning-soft"><i class="fas fa-receipt"></i></div><div class="stat-info"><h3>@price($stats->avg_order ?? 0)</h3><p>Avg Order Value</p></div></div></div>
     <div class="col-sm-6 col-xl-3 mb-3"><div class="stat-card"><div class="stat-icon bg-danger-soft"><i class="fas fa-users"></i></div><div class="stat-info"><h3>{{ $stats->unique_customers ?? 0 }}</h3><p>Unique Customers</p></div></div></div>
 </div>
 
@@ -24,7 +24,7 @@
 <thead><tr><th>Date</th><th>Orders</th><th>Revenue</th></tr></thead>
 <tbody>
 @forelse($dailyData as $d)
-<tr><td>{{ $d->date }}</td><td>{{ $d->orders }}</td><td class="font-weight-bold">${{ number_format($d->revenue, 2) }}</td></tr>
+<tr><td>{{ $d->date }}</td><td>{{ $d->orders }}</td><td class="font-weight-bold">@price($d->revenue)</td></tr>
 @empty<tr><td colspan="3" class="text-center text-muted py-4">No data for this period.</td></tr>@endforelse
 </tbody></table></div></div>
 @endsection

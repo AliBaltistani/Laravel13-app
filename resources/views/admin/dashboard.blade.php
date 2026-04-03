@@ -9,7 +9,7 @@
         <div class="stat-card">
             <div class="stat-icon bg-primary-soft"><i class="fas fa-dollar-sign"></i></div>
             <div class="stat-info">
-                <h3>${{ number_format($todayRevenue, 2) }}</h3>
+                <h3>@price($todayRevenue)</h3>
                 <p>Today's Revenue</p>
             </div>
         </div>
@@ -99,7 +99,7 @@
                                 <td>{{ $order->user?->name ?? 'Guest' }}</td>
                                 <td><span class="badge-status badge-{{ $order->status }}">{{ ucfirst($order->status) }}</span></td>
                                 <td><span class="badge-status badge-{{ $order->payment_status }}">{{ ucfirst($order->payment_status) }}</span></td>
-                                <td class="font-weight-bold">${{ number_format($order->total, 2) }}</td>
+                                <td class="font-weight-bold">@price($order->total)</td>
                                 <td>{{ $order->created_at->format('M d, H:i') }}</td>
                             </tr>
                             @empty

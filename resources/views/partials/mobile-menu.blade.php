@@ -44,7 +44,9 @@
             </ul>
 
             <ul class="mobile-menu mt-2 mb-2">
-                <li class="border-0"><a href="{{ url('/shop') }}">Special Offer!</a></li>
+                @if(Setting::get('header.show_special_offer', '1') === '1' && Setting::get('header.special_offer_text'))
+                <li class="border-0"><a href="{{ Setting::get('header.special_offer_url', '/shop') }}">{{ Setting::get('header.special_offer_text', 'Special Offer!') }}</a></li>
+                @endif
             </ul>
 
             <ul class="mobile-menu">

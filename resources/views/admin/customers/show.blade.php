@@ -11,7 +11,7 @@
             <p class="text-muted mb-3">{{ $user->phone ?? 'No phone' }}</p>
             <div class="row text-center">
                 <div class="col-4"><h5 class="mb-0">{{ $user->orders_count ?? $user->orders->count() }}</h5><small class="text-muted">Orders</small></div>
-                <div class="col-4"><h5 class="mb-0">${{ number_format($totalSpent, 2) }}</h5><small class="text-muted">Spent</small></div>
+                <div class="col-4"><h5 class="mb-0">@price($totalSpent)</h5><small class="text-muted">Spent</small></div>
                 <div class="col-4"><h5 class="mb-0">{{ $user->created_at->format('M Y') }}</h5><small class="text-muted">Joined</small></div>
             </div>
             <hr>
@@ -36,7 +36,7 @@
                 <td><a href="{{ route('admin.orders.show', $o) }}" class="text-primary font-weight-bold">#{{ $o->order_number }}</a></td>
                 <td><span class="badge-status badge-{{ $o->status }}">{{ ucfirst($o->status) }}</span></td>
                 <td><span class="badge-status badge-{{ $o->payment_status }}">{{ ucfirst($o->payment_status) }}</span></td>
-                <td class="font-weight-bold">${{ number_format($o->total, 2) }}</td>
+                <td class="font-weight-bold">@price($o->total)</td>
                 <td>{{ $o->created_at->format('M d, Y') }}</td>
             </tr>
             @empty<tr><td colspan="5" class="text-center text-muted py-4">No orders.</td></tr>@endforelse

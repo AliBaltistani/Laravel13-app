@@ -119,9 +119,9 @@
                             <td class="text-muted">{{ $product->sku ?? '—' }}</td>
                             <td>{{ $product->category?->name ?? '—' }}</td>
                             <td class="font-weight-bold">
-                                ${{ number_format($product->price, 2) }}
+                                @price($product->price)
                                 @if($product->compare_price)
-                                <br><small class="text-muted text-decoration-line-through">${{ number_format($product->compare_price, 2) }}</small>
+                                <br><small class="text-muted text-decoration-line-through">@price($product->compare_price)</small>
                                 @endif
                             </td>
                             <td>

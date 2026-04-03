@@ -11,7 +11,10 @@ class MiniCart extends Component
     public $subtotal = 0;
     public $itemCount = 0;
 
-    protected $listeners = ['cartUpdated' => 'refreshCart'];
+    protected $listeners = [
+        'cartUpdated' => 'refreshCart',
+        'addToCart' => 'handleAddToCart'
+    ];
 
     public function mount()
     {
@@ -24,6 +27,17 @@ class MiniCart extends Component
         $this->cartItems = $cart->getItems()->take(3)->toArray();
         $this->subtotal = $cart->getSubtotal();
         $this->itemCount = $cart->getItemCount();
+    }
+
+    public function handleAddToCart($data)
+    {
+        $productId = $data['productId'] ?? null;
+        if ($productId) {
+            $cart = app(CartService::class);
+            $result = $cart->addItem($productId, null, 1);
+            $this->refreshCart();
+            $this->dispatch('cartUpdated');
+        }
     }
 
     public function removeItem($cartItemId)

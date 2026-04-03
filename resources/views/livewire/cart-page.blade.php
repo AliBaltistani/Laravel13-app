@@ -16,7 +16,7 @@
                 @foreach($items as $item)
                     @php
                         $img = $item->product->images->where('is_primary', true)->first() ?? $item->product->images->first();
-                        $imgPath = $img ? asset('storage/' . $img->image_path) : asset('themes/porto/images/products/product-1.jpg');
+                        $imgPath = $img ? asset('storage/' . $img->image_path) : asset('images/no-image.svg');
                     @endphp
                     <tr>
                         <td class="thumbnail-col">
@@ -34,7 +34,7 @@
                                 <span class="text-muted small">{{ $item->variant->name }}</span>
                             @endif
                         </td>
-                        <td>${{ number_format($item->unit_price, 2) }}</td>
+                        <td>@price($item->unit_price)</td>
                         <td class="qty-col">
                             <div class="product-single-qty">
                                 <input class="horizontal-quantity form-control" type="number"
@@ -42,7 +42,7 @@
                                        wire:change="updateQuantity({{ $item->id }}, $event.target.value)">
                             </div>
                         </td>
-                        <td class="text-right">${{ number_format($item->unit_price * $item->quantity, 2) }}</td>
+                        <td class="text-right">@price($item->unit_price * $item->quantity)</td>
                         <td class="action-col">
                             <button class="btn-remove" title="Remove Product" wire:click="removeItem({{ $item->id }})">
                                 <i class="fas fa-times"></i>
@@ -90,19 +90,19 @@
                         <tbody>
                             <tr>
                                 <td>Subtotal</td>
-                                <td>${{ number_format($subtotal, 2) }}</td>
+                                <td>@price($subtotal)</td>
                             </tr>
                             @if($discount > 0)
                                 <tr>
                                     <td>Discount</td>
-                                    <td class="text-success">-${{ number_format($discount, 2) }}</td>
+                                    <td class="text-success">-@price($discount)</td>
                                 </tr>
                             @endif
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td>Total</td>
-                                <td>${{ number_format($total, 2) }}</td>
+                                <td>@price($total)</td>
                             </tr>
                         </tfoot>
                     </table>
