@@ -23,7 +23,7 @@ class PageController extends Controller
             ->setTitle($page->meta_title ?: $page->title)
             ->setDescription($page->meta_description ?: strip_tags(substr($page->content ?? '', 0, 160)));
 
-        return view('pages.page', compact('page'));
+        return view('pages.show', compact('page'));
     }
 
     /**
