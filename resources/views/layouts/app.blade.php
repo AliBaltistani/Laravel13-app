@@ -127,6 +127,42 @@
         .owl-item .product-default.inner-quickview:hover figure .btn-quickview {
             visibility: visible !important; opacity: 0.85 !important;
         }
+
+        /* Fix: New Arrivals sidebar product widgets overlapping */
+        .sidebar-home .product-col .product-default,
+        .widget-products .product-col .product-default {
+            margin-bottom: 2px !important;
+            position: relative !important;
+            display: flex !important;
+            clear: both !important;
+        }
+        .sidebar-home .product-col,
+        .widget-products .product-col {
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        .product-col .product-default.left-details figure {
+            flex-shrink: 0;
+        }
+
+        /* Fix: Banners appear-animate not triggering — force visible */
+        .banners-container .banner.appear-animate,
+        .banners-container.appear-animate {
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: none !important;
+        }
+        .banners-container .banner {
+            min-height: 120px;
+            background: #f5f6f8;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .banners-container .banner .banner-layer {
+            position: relative;
+            z-index: 2;
+            padding: 15px;
+        }
     </style>
 </head>
 

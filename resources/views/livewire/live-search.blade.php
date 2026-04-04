@@ -1,7 +1,7 @@
 {{-- Live Search Livewire Component --}}
-<div>
+<div style="flex: 1; display: flex; align-items: center;">
     {{-- Porto Search Bar (matches original Porto HTML structure exactly) --}}
-    <div class="header-icon header-search header-search-inline header-search-category w-lg-max text-right mt-0">
+    <div class="header-icon header-search header-search-inline header-search-category text-right mt-0" style="flex: 1;">
         <a href="#" class="search-toggle" role="button"><i class="icon-search-3"></i></a>
         <form wire:submit.prevent="submitSearch">
             <div class="header-search-wrapper">

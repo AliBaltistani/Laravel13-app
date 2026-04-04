@@ -73,13 +73,14 @@
                 'dots': false,
                 'margin': 20,
                 'loop': false,
+                'items': 1,
                 'responsive': {
                     '480': { 'items': 2 },
                     '768': { 'items': 3 }
                 }
             }">
                 @foreach($banners as $banner)
-                <div class="banner banner-hover-shadow d-flex align-items-center mb-2 w-100 appear-animate" data-animation-name="fadeInUpShorter" data-animation-delay="200">
+                <div class="banner banner-hover-shadow d-flex align-items-center mb-2 w-100" data-animation-delay="200">
                     @if($banner->image)
                     <figure class="w-100">
                         <img src="{{ asset('storage/' . $banner->image) }}" style="background-color: #dadada;" alt="{{ $banner->title }}">
