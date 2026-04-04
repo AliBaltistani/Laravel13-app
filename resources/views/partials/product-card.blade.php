@@ -30,9 +30,12 @@
             @endif
         </div>
         <div class="btn-icon-group">
-            @livewire('add-to-cart', ['productId' => $product->id, 'type' => 'card'], key('cart-btn-'.$product->id))
+            <button class="btn-icon btn-add-cart product-type-simple" title="Add To Cart"
+                onclick="event.preventDefault(); Livewire.dispatch('addToCart', { productId: {{ $product->id }} })">
+                <i class="icon-shopping-cart"></i>
+            </button>
         </div>
-        <a href="{{ url('/product/' . $product->slug) }}" class="btn-quickview" title="Quick View">Quick View</a>
+        <a href="{{ route('product.quick-view', $product->slug) }}" class="btn-quickview" title="Quick View">Quick View</a>
         @if($flashSale)
         <div class="product-countdown-container">
             <span class="product-countdown-title">offer ends in:</span>
@@ -47,7 +50,13 @@
                     <a href="{{ url('/shop/category/' . $product->category->slug) }}" class="product-category">{{ $product->category->name }}</a>
                 @endif
             </div>
-            @livewire('wishlist-toggle', ['productId' => $product->id], key('wishlist-card-'.$product->id))
+            @php
+                $inWishlist = \Illuminate\Support\Facades\Auth::check() && \App\Models\Wishlist::where('user_id', auth()->id())->where('product_id', $product->id)->exists();
+            @endphp
+            <button class="btn-icon-wish {{ $inWishlist ? 'added-wishlist' : '' }}" title="Add to Wishlist"
+                onclick="event.preventDefault(); this.classList.toggle('added-wishlist'); this.querySelector('i').style.color = this.classList.contains('added-wishlist') ? '#e74c3c' : ''; Livewire.dispatch('toggleWishlist', { productId: {{ $product->id }} });">
+                <i class="icon-heart" style="{{ $inWishlist ? 'color: #e74c3c;' : '' }}"></i>
+            </button>
         </div>
         <h3 class="product-title">
             <a href="{{ url('/product/' . $product->slug) }}">{{ $product->name }}</a>

@@ -50,7 +50,7 @@ Route::get('/shop/search', [ShopController::class, 'search'])->name('shop.search
 
 // Product
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
-Route::post('/product/quick-view/{product}', [ShopController::class, 'quickView'])->name('product.quick-view');
+Route::get('/product/quick-view/{product:slug}', [ShopController::class, 'quickView'])->name('product.quick-view');
 
 // Cart & Checkout
 Route::get('/cart', fn() => view('pages.cart'))->name('cart');
