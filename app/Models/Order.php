@@ -79,6 +79,11 @@ class Order extends Model
         return $this->hasMany(OrderStatusHistory::class)->orderByDesc('created_at');
     }
 
+    public function statusHistories(): HasMany
+    {
+        return $this->statusHistory();
+    }
+
     public function shipments(): HasMany
     {
         return $this->hasMany(Shipment::class);
