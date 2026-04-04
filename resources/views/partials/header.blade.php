@@ -3,7 +3,9 @@
     <div class="header-top @yield('header-top-class')">
         <div class="container">
             <div class="header-left d-none d-sm-block">
-                <p class="top-message text-uppercase mb-0">{{ Setting::get('header.top_message', 'FREE Returns. Standard Shipping Orders $99+') }}</p>
+                @if(Setting::get('header.top_message'))
+                    <p class="top-message text-uppercase mb-0">{{ Setting::get('header.top_message') }}</p>
+                @endif
             </div>
 
             <div class="header-right header-dropdowns ml-0 ml-sm-auto w-sm-100">
@@ -60,30 +62,8 @@
             </div>
 
             <div class="header-right w-lg-max">
-                {{-- Search Bar --}}
-                <div class="header-icon header-search header-search-inline header-search-category w-lg-max text-right mt-0">
-                    <a href="#" class="search-toggle" role="button"><i class="icon-search-3"></i></a>
-                    <form action="{{ url('/shop') }}" method="get">
-                        <div class="header-search-wrapper">
-                            <input type="search" class="form-control" name="q" id="q" placeholder="Search..." required>
-                            <div class="select-custom">
-                                <select id="cat" name="category">
-                                    <option value="">All Categories</option>
-                                    @php
-                                        $headerCategories = \App\Models\Category::active()->root()->ordered()->get();
-                                    @endphp
-                                    @foreach($headerCategories as $cat)
-                                        <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
-                                        @foreach($cat->children()->active()->ordered()->get() as $child)
-                                            <option value="{{ $child->slug }}">- {{ $child->name }}</option>
-                                        @endforeach
-                                    @endforeach
-                                </select>
-                            </div>
-                            <button class="btn icon-magnifier p-0" type="submit"></button>
-                        </div>
-                    </form>
-                </div>
+                {{-- Live Search Bar (Livewire — OLX-style autocomplete with category filter) --}}
+                @livewire('live-search')
 
                 {{-- Phone --}}
                 @if(Setting::get('contact.phone'))
@@ -103,8 +83,8 @@
                 {{-- Wishlist Icon --}}
                 <a href="{{ url('/wishlist') }}" class="header-icon" title="Wishlist"><i class="icon-wishlist-2"></i></a>
 
-                {{-- Mini Cart --}}
-                @include('partials.mini-cart')
+                {{-- Mini Cart (Livewire — auto-updates on addToCart/cartUpdated events) --}}
+                @livewire('mini-cart')
             </div>
         </div>
     </div>
@@ -120,6 +100,7 @@
                     </li>
                     <li class="{{ request()->is('shop*') ? 'active' : '' }}">
                         <a href="{{ url('/shop') }}">Categories</a>
+                        @php $headerCategories = \App\Models\Category::active()->root()->ordered()->get(); @endphp
                         @if($headerCategories->count())
                         <div class="megamenu megamenu-fixed-width megamenu-3cols">
                             <div class="row">

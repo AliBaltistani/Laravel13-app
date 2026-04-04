@@ -51,6 +51,9 @@ class AddToCart extends Component
 
         if ($result['success']) {
             $this->dispatch('cartUpdated');
+            $this->dispatch('notify', message: $result['message'], type: 'success');
+        } else {
+            $this->dispatch('notify', message: $result['message'], type: 'error');
         }
     }
 

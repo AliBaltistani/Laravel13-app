@@ -7,18 +7,26 @@
                     <div class="widget">
                         <h4 class="widget-title">Contact Info</h4>
                         <ul class="contact-info">
+                            @if(Setting::get('contact.address'))
                             <li>
-                                <span class="contact-info-label">Address:</span>{{ Setting::get('contact.address', '123 Street Name, City') }}
+                                <span class="contact-info-label">Address:</span>{{ Setting::get('contact.address') }}
                             </li>
+                            @endif
+                            @if(Setting::get('contact.phone'))
                             <li>
-                                <span class="contact-info-label">Phone:</span><a href="tel:{{ Setting::get('contact.phone', '+1 234 567 890') }}">{{ Setting::get('contact.phone', '+1 234 567 890') }}</a>
+                                <span class="contact-info-label">Phone:</span><a href="tel:{{ Setting::get('contact.phone') }}">{{ Setting::get('contact.phone') }}</a>
                             </li>
+                            @endif
+                            @if(Setting::get('contact.email'))
                             <li>
-                                <span class="contact-info-label">Email:</span> <a href="mailto:{{ Setting::get('contact.email', 'contact@porto.com') }}">{{ Setting::get('contact.email', 'contact@porto.com') }}</a>
+                                <span class="contact-info-label">Email:</span> <a href="mailto:{{ Setting::get('contact.email') }}">{{ Setting::get('contact.email') }}</a>
                             </li>
+                            @endif
+                            @if(Setting::get('contact.working_hours'))
                             <li>
-                                <span class="contact-info-label">Working Days/Hours:</span>{{ Setting::get('contact.working_hours', 'Mon - Fri / 9:00 AM - 5:00 PM') }}
+                                <span class="contact-info-label">Working Days/Hours:</span>{{ Setting::get('contact.working_hours') }}
                             </li>
+                            @endif
                         </ul>
                         <div class="social-icons">
                             @if(Setting::get('social.facebook'))
@@ -90,7 +98,7 @@
         <div class="footer-bottom">
             <div class="container d-sm-flex align-items-center">
                 <div class="footer-left">
-                    <span class="footer-copyright">{{ Setting::get('general.copyright', '© Porto eCommerce. All Rights Reserved.') }}</span>
+                    <span class="footer-copyright">{{ Setting::get('general.copyright', '© ' . date('Y') . ' ' . Setting::get('general.site_name', 'Shop') . '. All Rights Reserved.') }}</span>
                 </div>
 
                 <div class="footer-right ml-auto mt-1 mt-sm-0">

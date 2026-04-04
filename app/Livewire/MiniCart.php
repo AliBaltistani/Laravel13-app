@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Services\CartService;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Wishlist;
@@ -13,17 +14,12 @@ class MiniCart extends Component
     public $subtotal = 0;
     public $itemCount = 0;
 
-    protected $listeners = [
-        'cartUpdated' => 'refreshCart',
-        'addToCart' => 'handleAddToCart',
-        'toggleWishlist' => 'handleToggleWishlist'
-    ];
-
     public function mount()
     {
         $this->refreshCart();
     }
 
+    #[On('cartUpdated')]
     public function refreshCart()
     {
         $cart = app(CartService::class);
@@ -32,25 +28,24 @@ class MiniCart extends Component
         $this->itemCount = $cart->getItemCount();
     }
 
-    public function handleAddToCart($data)
+    #[On('addToCart')]
+    public function handleAddToCart($productId = null)
     {
-        $productId = $data['productId'] ?? null;
         if ($productId) {
             $cart = app(CartService::class);
             $cart->addItem($productId, null, 1);
             $this->refreshCart();
-            $this->dispatch('cartUpdated');
-            $this->dispatch('notify', message: 'Added to Cart successfully!', type: 'success');
+            $this->dispatch('notify', message: 'Added to cart successfully!', type: 'success');
         }
     }
 
-    public function handleToggleWishlist($data)
+    #[On('toggleWishlist')]
+    public function handleToggleWishlist($productId = null)
     {
         if (!Auth::check()) {
             return redirect()->route('login');
         }
 
-        $productId = $data['productId'] ?? null;
         if ($productId) {
             $existing = Wishlist::where('user_id', Auth::id())
                 ->where('product_id', $productId)
@@ -74,7 +69,6 @@ class MiniCart extends Component
     {
         app(CartService::class)->removeItem($cartItemId);
         $this->refreshCart();
-        $this->dispatch('cartUpdated');
     }
 
     public function render()
