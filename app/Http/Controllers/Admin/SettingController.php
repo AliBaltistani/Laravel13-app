@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Services\DynamicMailService;
 use App\Services\SettingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -43,10 +44,16 @@ class SettingController extends Controller
     public function testEmail()
     {
         try {
+            // Apply dynamic SMTP config from database settings
+            app(DynamicMailService::class)->applySmtpConfig();
+
             $adminEmail = auth()->user()->email;
-            Mail::raw('This is a test email from ' . Setting::get('general.site_name', 'Porto Shop'), function ($mail) use ($adminEmail) {
-                $mail->to($adminEmail)->subject('Test Email');
+            $siteName = Setting::get('general.site_name', 'Porto Shop');
+
+            Mail::raw("This is a test email from {$siteName}.\n\nIf you are reading this, your email configuration is working correctly!", function ($mail) use ($adminEmail, $siteName) {
+                $mail->to($adminEmail)->subject("Test Email - {$siteName}");
             });
+
             return back()->with('success', 'Test email sent to ' . $adminEmail);
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to send: ' . $e->getMessage());

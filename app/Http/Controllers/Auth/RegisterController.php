@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegisterRequest;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,16 +20,27 @@ class RegisterController extends Controller
      */
     public function showForm()
     {
-        return view('auth.login'); // Porto uses a combined login/register page
+        // Check if registration is enabled
+        if (!Setting::get('auth.registration_enabled', true)) {
+            abort(403, 'Registration is currently disabled.');
+        }
+
+        return view('auth.register');
     }
 
     /**
      * Handle registration with rate limiting.
-     * Phase 3-A: 3 registration attempts per minute per IP.
-     * Phase 3-B: Fire UserRegistered event, dispatch welcome email via queue.
      */
-    public function register(RegisterRequest $request)
+    public function register(Request $request)
     {
+        // Check if registration is enabled
+        if (!Setting::get('auth.registration_enabled', true)) {
+            abort(403, 'Registration is currently disabled.');
+        }
+
+        $minPassword = (int) Setting::get('auth.password_min_length', 8);
+        $termsRequired = (bool) Setting::get('auth.terms_required', true);
+
         // Rate limiting: 3 registration attempts per minute per IP
         $throttleKey = 'register|' . $request->ip();
 
@@ -37,17 +48,34 @@ class RegisterController extends Controller
             $seconds = RateLimiter::availableIn($throttleKey);
 
             throw ValidationException::withMessages([
-                'register_email' => "Too many registration attempts. Please try again in {$seconds} seconds.",
+                'email' => "Too many registration attempts. Please try again in {$seconds} seconds.",
             ]);
         }
+
+        $rules = [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => "required|string|min:{$minPassword}|confirmed",
+        ];
+
+        if ($termsRequired) {
+            $rules['terms'] = 'required|accepted';
+        }
+
+        $messages = [
+            'terms.required' => 'You must accept the Terms & Conditions.',
+            'terms.accepted' => 'You must accept the Terms & Conditions.',
+        ];
+
+        $request->validate($rules, $messages);
 
         RateLimiter::hit($throttleKey);
 
         $user = User::create([
             'name' => $request->name,
             'first_name' => $request->name,
-            'email' => $request->register_email,
-            'password' => Hash::make($request->register_password),
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
             'is_active' => true,
         ]);
 

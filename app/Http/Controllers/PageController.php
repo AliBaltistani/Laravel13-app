@@ -67,4 +67,28 @@ class PageController extends Controller
 
         return back()->with('success', 'Thank you! Your message has been sent. We\'ll get back to you as soon as possible.');
     }
+
+    /**
+     * Terms & Conditions page.
+     */
+    public function terms()
+    {
+        app(SeoService::class)
+            ->setTitle('Terms & Conditions')
+            ->setDescription('Read our terms and conditions before using our website and services.');
+
+        return view('pages.terms');
+    }
+
+    /**
+     * Privacy Policy page.
+     */
+    public function privacy()
+    {
+        app(SeoService::class)
+            ->setTitle('Privacy Policy')
+            ->setDescription('Read our privacy policy to understand how we collect, use, and protect your personal data.');
+
+        return view('pages.privacy');
+    }
 }

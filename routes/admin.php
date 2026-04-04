@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\NewsletterController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,13 @@ use App\Http\Controllers\Admin\ReportController;
 
 // Dashboard
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+// Admin Profile & Password
+Route::get('profile', [ProfileController::class, 'index'])->name('profile');
+Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+Route::delete('profile/avatar', [ProfileController::class, 'removeAvatar'])->name('profile.remove-avatar');
+Route::get('profile/password', [ProfileController::class, 'showPasswordForm'])->name('profile.password');
+Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('password.update');
 
 // Products
 Route::resource('products', ProductController::class);

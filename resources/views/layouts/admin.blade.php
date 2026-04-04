@@ -683,19 +683,30 @@
 
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-toggle="dropdown">
-                    <div class="admin-avatar">
-                        {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
-                    </div>
+                    @if(auth()->user()->avatar)
+                        <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="Avatar"
+                             style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+                    @else
+                        <div class="admin-avatar">
+                            {{ strtoupper(substr(auth()->user()->first_name ?? auth()->user()->name ?? 'A', 0, 1)) }}
+                        </div>
+                    @endif
                     <span class="d-none d-md-inline-block ml-2 text-dark font-weight-bold" style="font-size:13px;">
-                        {{ auth()->user()->name ?? 'Admin' }}
+                        {{ auth()->user()->full_name ?? auth()->user()->name ?? 'Admin' }}
                     </span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="{{ route('admin.profile') }}">
+                        <i class="fas fa-user mr-2"></i> My Profile
+                    </a>
+                    <a class="dropdown-item" href="{{ route('admin.profile.password') }}">
+                        <i class="fas fa-key mr-2"></i> Change Password
+                    </a>
                     <a class="dropdown-item" href="{{ route('admin.settings.index') }}">
                         <i class="fas fa-cog mr-2"></i> Settings
                     </a>
                     <div class="dropdown-divider"></div>
-                    <form method="POST" action="{{ route('logout') }}">
+                    <form method="POST" action="{{ route('admin.logout') }}">
                         @csrf
                         <button type="submit" class="dropdown-item text-danger">
                             <i class="fas fa-sign-out-alt mr-2"></i> Logout

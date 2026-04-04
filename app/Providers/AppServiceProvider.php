@@ -11,6 +11,7 @@ use App\Observers\PageObserver;
 use App\Observers\PostObserver;
 use App\Observers\ProductObserver;
 use App\Services\CartService;
+use App\Services\DynamicMailService;
 use App\Services\SeoService;
 use App\Services\SettingService;
 use Illuminate\Support\Facades\Blade;
@@ -67,5 +68,14 @@ class AppServiceProvider extends ServiceProvider
         Category::observe(CategoryObserver::class);
         Post::observe(PostObserver::class);
         Page::observe(PageObserver::class);
+
+        // Apply dynamic SMTP configuration from admin settings
+        try {
+            if (Schema::hasTable('settings')) {
+                app(DynamicMailService::class)->applySmtpConfig();
+            }
+        } catch (\Exception $e) {
+            // Silently fail during migrations or when DB is not ready
+        }
     }
 }

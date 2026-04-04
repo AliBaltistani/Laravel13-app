@@ -1,28 +1,30 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use App\Models\Setting;
 
-class LoginController extends Controller
+class AuthController extends Controller
 {
     /**
-     * Show the login form.
+     * Show admin login form.
      */
     public function showLoginForm()
     {
-        return view('auth.login');
+        if (Auth::check() && Auth::user()->hasAnyRole(['super_admin', 'admin', 'manager', 'editor', 'support'])) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return view('admin.auth.login');
     }
 
     /**
-     * Handle a login request with rate limiting.
+     * Handle admin login.
      */
     public function login(Request $request)
     {
@@ -31,38 +33,33 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
-        $maxAttempts = (int) Setting::get('auth.login_max_attempts', 5);
-
-        // Rate limiting per IP+email
+        // Rate limiting
         $throttleKey = Str::transliterate(
-            Str::lower($request->input('email')) . '|' . $request->ip()
+            Str::lower($request->input('email')) . '|admin|' . $request->ip()
         );
 
-        if (RateLimiter::tooManyAttempts($throttleKey, $maxAttempts)) {
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
-
             throw ValidationException::withMessages([
-                'email' => trans('auth.throttle', [
-                    'seconds' => $seconds,
-                    'minutes' => ceil($seconds / 60),
-                ]),
+                'email' => "Too many login attempts. Please try again in {$seconds} seconds.",
             ]);
         }
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $user = Auth::user();
 
-            // If user has admin role, redirect to admin login
-            if ($user->hasAnyRole(['super_admin', 'admin', 'manager', 'editor', 'support'])) {
+            // Check if user has admin roles
+            if (!$user->hasAnyRole(['super_admin', 'admin', 'manager', 'editor', 'support'])) {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-                return redirect()->route('admin.login')
-                    ->with('info', 'Please use the admin login page to access the admin panel.');
+                return back()->withErrors([
+                    'email' => 'You do not have permission to access the admin panel.',
+                ])->onlyInput('email');
             }
 
-            // Check if user account is active
+            // Check if account is active
             if (!$user->is_active) {
                 Auth::logout();
                 $request->session()->invalidate();
@@ -76,11 +73,7 @@ class LoginController extends Controller
             RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
 
-            // Merge guest cart into user cart
-            $sessionId = $request->session()->getId();
-            app(CartService::class)->mergeGuestCart($sessionId, Auth::id());
-
-            return redirect()->intended(route('account.dashboard'));
+            return redirect()->intended(route('admin.dashboard'));
         }
 
         RateLimiter::hit($throttleKey);
@@ -91,7 +84,7 @@ class LoginController extends Controller
     }
 
     /**
-     * Handle logout.
+     * Handle admin logout.
      */
     public function logout(Request $request)
     {
@@ -100,6 +93,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('home');
+        return redirect()->route('admin.login');
     }
 }
