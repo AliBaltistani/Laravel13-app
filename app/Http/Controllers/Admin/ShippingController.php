@@ -60,4 +60,45 @@ class ShippingController extends Controller
         $methods = $shippingZone->methods()->orderBy('sort_order')->get();
         return view('admin.shipping.methods', compact('shippingZone', 'methods'));
     }
+
+    // Shipping Method CRUD
+    public function storeMethod(Request $request)
+    {
+        $data = $request->validate([
+            'shipping_zone_id' => 'required|exists:shipping_zones,id',
+            'name' => 'required|string|max:255',
+            'type' => 'required|in:flat_rate,free,weight_based',
+            'price' => 'nullable|numeric|min:0',
+            'min_order_amount' => 'nullable|numeric|min:0',
+            'max_order_amount' => 'nullable|numeric|min:0',
+            'estimated_days' => 'nullable|integer|min:0',
+            'is_active' => 'boolean',
+            'sort_order' => 'nullable|integer',
+        ]);
+        ShippingMethod::create($data);
+        return back()->with('success', 'Shipping method added.');
+    }
+
+    public function updateMethod(Request $request, ShippingMethod $shippingMethod)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|in:flat_rate,free,weight_based',
+            'price' => 'nullable|numeric|min:0',
+            'min_order_amount' => 'nullable|numeric|min:0',
+            'max_order_amount' => 'nullable|numeric|min:0',
+            'estimated_days' => 'nullable|integer|min:0',
+            'is_active' => 'boolean',
+            'sort_order' => 'nullable|integer',
+        ]);
+        $shippingMethod->update($data);
+        return back()->with('success', 'Shipping method updated.');
+    }
+
+    public function destroyMethod(ShippingMethod $shippingMethod)
+    {
+        $zoneId = $shippingMethod->shipping_zone_id;
+        $shippingMethod->delete();
+        return redirect()->route('admin.shipping-zones.show', $zoneId)->with('success', 'Shipping method deleted.');
+    }
 }

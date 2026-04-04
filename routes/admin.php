@@ -92,6 +92,9 @@ Route::delete('sliders/{slider}/slides/{slide}', [SliderController::class, 'dest
 
 // Shipping
 Route::resource('shipping-zones', ShippingController::class);
+Route::post('shipping-methods', [ShippingController::class, 'storeMethod'])->name('shipping-methods.store');
+Route::put('shipping-methods/{shippingMethod}', [ShippingController::class, 'updateMethod'])->name('shipping-methods.update');
+Route::delete('shipping-methods/{shippingMethod}', [ShippingController::class, 'destroyMethod'])->name('shipping-methods.destroy');
 
 // Reviews
 Route::get('reviews', [ReviewController::class, 'index'])->name('reviews.index');
