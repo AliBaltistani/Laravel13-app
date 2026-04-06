@@ -30,14 +30,27 @@
     <link rel="stylesheet" href="{{ asset('themes/porto/vendor/simple-line-icons/css/simple-line-icons.min.css') }}">
 
     {{-- Admin Custom Styles --}}
+    {{-- Admin Dynamic Colors from Appearance settings --}}
+    @php
+        $adminPrimary    = \App\Models\Setting::get('appearance.admin_primary', '#0d6efd');
+        $adminSidebarBg  = \App\Models\Setting::get('appearance.admin_sidebar_bg', '#1e2a3a');
+        $adminSidebarTxt = \App\Models\Setting::get('appearance.admin_sidebar_text', '#a8b6c7');
+        $adminTopbarBg   = \App\Models\Setting::get('appearance.admin_topbar_bg', '#ffffff');
+        // Auto-derive darker/border shades from sidebar bg
+        $sidebarRgb = sscanf($adminSidebarBg, '#%02x%02x%02x');
+        $darkerBg   = sprintf('#%02x%02x%02x', max(0,$sidebarRgb[0]-15), max(0,$sidebarRgb[1]-15), max(0,$sidebarRgb[2]-15));
+        $borderBg   = sprintf('#%02x%02x%02x', min(255,$sidebarRgb[0]+20), min(255,$sidebarRgb[1]+20), min(255,$sidebarRgb[2]+20));
+    @endphp
     <style>
         :root {
             --admin-sidebar-width: 260px;
             --admin-sidebar-collapsed: 60px;
-            --admin-primary: #0d6efd;
-            --admin-dark: #1e2a3a;
-            --admin-darker: #151f2b;
-            --admin-border: #2d3d50;
+            --admin-primary: {{ $adminPrimary }};
+            --admin-dark: {{ $adminSidebarBg }};
+            --admin-darker: {{ $darkerBg }};
+            --admin-border: {{ $borderBg }};
+            --admin-sidebar-text: {{ $adminSidebarTxt }};
+            --admin-topbar-bg: {{ $adminTopbarBg }};
         }
 
         body.admin-body {
@@ -106,7 +119,7 @@
             display: flex;
             align-items: center;
             padding: 9px 14px;
-            color: #a8b6c7;
+            color: var(--admin-sidebar-text);
             font-size: 13.5px;
             font-weight: 500;
             border-radius: 6px;
@@ -171,7 +184,7 @@
             left: var(--admin-sidebar-width);
             right: 0;
             height: 60px;
-            background: #fff;
+            background: var(--admin-topbar-bg);
             z-index: 1040;
             display: flex;
             align-items: center;

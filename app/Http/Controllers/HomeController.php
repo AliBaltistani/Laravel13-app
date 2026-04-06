@@ -57,9 +57,13 @@ class HomeController extends Controller
             ->latest()
             ->take(3)->get();
 
+        // Instagram feed images (Demo8) — admin-managed banners at position 'home-instagram'
+        $instagramImages = Banner::active()->position('home-instagram')->orderBy('sort_order')->get();
+
         return view('home', compact(
             'slider', 'featuredProducts', 'newArrivals', 'flashSale',
-            'brands', 'banners', 'sidebarBanners', 'topRated', 'bestSelling', 'latestProducts'
+            'brands', 'banners', 'sidebarBanners', 'topRated', 'bestSelling',
+            'latestProducts', 'instagramImages'
         ));
     }
 }

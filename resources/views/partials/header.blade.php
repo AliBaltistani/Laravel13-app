@@ -1,43 +1,54 @@
-<header class="header @yield('header-class')">
-    {{-- Header Top Bar --}}
-    <div class="header-top @yield('header-top-class')">
-        <div class="container">
-            <div class="header-left d-none d-sm-block">
-                @if(Setting::get('header.top_message'))
-                    <p class="top-message text-uppercase mb-0">{{ Setting::get('header.top_message') }}</p>
-                @endif
-            </div>
-
-            <div class="header-right header-dropdowns ml-0 ml-sm-auto w-sm-100">
-                <div class="header-dropdown dropdown-expanded d-none d-lg-block">
-                    <a href="#">Links</a>
+<header class="header">
+    {{-- Header Top Bar (Demo8) --}}
+    <div class="header-top">
+        <div class="header-row container">
+            <div class="header-left">
+                <div class="header-dropdown">
+                    <a href="#" class="pl-0">{{ Setting::get('general.currency_code', 'USD') }}</a>
                     <div class="header-menu">
                         <ul>
-                            <li><a href="{{ route('account.dashboard') }}">My Account</a></li>
-                            <li><a href="{{ url('/about') }}">About Us</a></li>
-                            <li><a href="{{ url('/blog') }}">Blog</a></li>
-                            <li><a href="{{ url('/wishlist') }}">My Wishlist</a></li>
-                            <li><a href="{{ url('/cart') }}">Cart</a></li>
-                            @guest
-                                <li><a href="{{ route('login') }}" class="login-link">Log In</a></li>
-                            @else
-                                <li><a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Log Out</a></li>
-                            @endguest
+                            <li><a href="#">{{ Setting::get('general.currency_code', 'USD') }}</a></li>
                         </ul>
                     </div>
                 </div>
 
-                <span class="separator"></span>
-
-                <div class="social-icons">
+                <div class="header-dropdown mr-auto mr-sm-3 mr-md-0">
+                    <a href="#">ENG</a>
+                    <div class="header-menu">
+                        <ul>
+                            <li><a href="#">ENG</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="wel-msg text-uppercase d-none d-lg-block">
+                    {{ Setting::get('header.top_message', 'FREE Returns. Standard Shipping Orders $99+') }}
+                </div>
+                <span class="separator d-none d-xl-block"></span>
+                <ul class="top-links mega-menu show-arrow d-none d-sm-inline-block">
+                    <li class="item-menu narrow"><a href="{{ route('account.dashboard') }}">My Account</a></li>
+                    <li class="item-menu narrow"><a href="{{ url('/about') }}">About Us</a></li>
+                    <li class="item-menu narrow"><a href="{{ url('/blog') }}">Blog</a></li>
+                    <li class="item-menu narrow"><a href="{{ url('/cart') }}">Cart</a></li>
+                    <li class="item-menu">
+                        @guest
+                            <a class="login" href="{{ route('login') }}">Log In</a>
+                        @else
+                            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Log Out</a>
+                        @endguest
+                    </li>
+                </ul>
+                <span class="separator d-none d-xl-block"></span>
+                <div class="share-links d-none d-xl-block">
                     @if(Setting::get('social.facebook'))
-                        <a href="{{ Setting::get('social.facebook') }}" class="social-icon social-facebook icon-facebook" target="_blank"></a>
+                        <a target="_blank" rel="nofollow" class="share-facebook icon-facebook" href="{{ Setting::get('social.facebook') }}" title="Facebook"></a>
                     @endif
                     @if(Setting::get('social.twitter'))
-                        <a href="{{ Setting::get('social.twitter') }}" class="social-icon social-twitter icon-twitter" target="_blank"></a>
+                        <a target="_blank" rel="nofollow" class="share-twitter icon-twitter" href="{{ Setting::get('social.twitter') }}" title="Twitter"></a>
                     @endif
                     @if(Setting::get('social.instagram'))
-                        <a href="{{ Setting::get('social.instagram') }}" class="social-icon social-instagram icon-instagram" target="_blank"></a>
+                        <a target="_blank" rel="nofollow" class="share-instagram icon-instagram" href="{{ Setting::get('social.instagram') }}" title="Instagram"></a>
                     @endif
                 </div>
             </div>
@@ -45,56 +56,57 @@
     </div>
     {{-- End .header-top --}}
 
-    {{-- Header Middle (Sticky) --}}
+    {{-- Header Middle (Sticky) — Demo8: Phone left, Logo center, Icons right --}}
     <div class="header-middle sticky-header" data-sticky-options="{'mobile': true}">
         <div class="container">
-            <div class="header-left col-lg-2 w-auto pl-0">
-                <button class="mobile-menu-toggler text-primary mr-2" type="button">
+            <div class="header-left d-lg-block d-none">
+                @if(Setting::get('contact.phone'))
+                <div class="header-contact d-none d-lg-flex align-items-center pl-1 mr-lg-5 pr-xl-2">
+                    <i class="icon-phone-2"></i>
+                    <h6>Call us now<a href="tel:{{ Setting::get('contact.phone') }}" class="text-dark font1">{{ Setting::get('contact.phone') }}</a></h6>
+                </div>
+                @endif
+            </div>
+
+            <div class="header-center">
+                <button class="mobile-menu-toggler" type="button">
                     <i class="fas fa-bars"></i>
                 </button>
                 <a href="{{ url('/') }}" class="logo">
                     @if(Setting::get('appearance.logo'))
-                        <img src="{{ asset('storage/' . Setting::get('appearance.logo')) }}" width="111" height="44" alt="{{ Setting::get('general.site_name', 'Porto Shop') }}">
+                        <img src="{{ asset('storage/' . Setting::get('appearance.logo')) }}" alt="{{ Setting::get('general.site_name', 'Porto Shop') }}" width="104" height="41" />
                     @else
-                        <img src="{{ asset('themes/porto/images/logo.png') }}" width="111" height="44" alt="{{ Setting::get('general.site_name', 'Porto Shop') }}">
+                        <img src="{{ asset('themes/porto/images/logo.png') }}" alt="{{ Setting::get('general.site_name', 'Porto Shop') }}" width="104" height="41" />
                     @endif
                 </a>
             </div>
 
-            <div class="header-right w-lg-max">
-                {{-- Live Search Bar (Livewire — OLX-style autocomplete with category filter) --}}
-                @livewire('live-search')
-
-                {{-- Phone --}}
-                @if(Setting::get('contact.phone'))
-                <div class="header-contact d-none d-lg-flex pl-4 pr-4">
-                    <img alt="phone" src="{{ asset('themes/porto/images/phone.png') }}" width="30" height="30" class="pb-1">
-                    <h6><span>Call us now</span><a href="tel:{{ Setting::get('contact.phone') }}" class="text-dark font1">{{ Setting::get('contact.phone') }}</a></h6>
-                </div>
-                @endif
-
+            <div class="header-right">
                 {{-- User Icon --}}
                 @guest
-                    <a href="{{ route('login') }}" class="header-icon" title="Login"><i class="icon-user-2"></i></a>
+                    <a href="{{ route('login') }}" class="header-icon header-icon-user"><i class="icon-user-2"></i></a>
                 @else
-                    <a href="{{ route('account.dashboard') }}" class="header-icon" title="My Account"><i class="icon-user-2"></i></a>
+                    <a href="{{ route('account.dashboard') }}" class="header-icon header-icon-user"><i class="icon-user-2"></i></a>
                 @endguest
 
                 {{-- Wishlist Icon --}}
-                <a href="{{ url('/wishlist') }}" class="header-icon" title="Wishlist"><i class="icon-wishlist-2"></i></a>
+                <a href="{{ url('/wishlist') }}" class="header-icon"><i class="icon-wishlist-2"></i></a>
 
-                {{-- Mini Cart (Livewire — auto-updates on addToCart/cartUpdated events) --}}
+                {{-- Search (Demo8 popup style via Livewire) --}}
+                @livewire('live-search')
+
+                {{-- Mini Cart --}}
                 @livewire('mini-cart')
             </div>
         </div>
     </div>
     {{-- End .header-middle --}}
 
-    {{-- Header Bottom - Main Navigation (desktop only) --}}
-    <div class="header-bottom sticky-header d-none d-lg-block" data-sticky-options="{'mobile': false}">
+    {{-- Header Bottom - Main Navigation (Demo8) --}}
+    <div class="header-bottom sticky-header d-none d-lg-flex" data-sticky-options="{'mobile': false}">
         <div class="container">
             <nav class="main-nav w-100">
-                <ul class="menu">
+                <ul class="menu w-100">
                     <li class="{{ request()->is('/') ? 'active' : '' }}">
                         <a href="{{ url('/') }}">Home</a>
                     </li>
@@ -120,7 +132,7 @@
                         </div>
                         @endif
                     </li>
-                    <li class="{{ request()->is('shop*') ? 'active' : '' }}">
+                    <li>
                         <a href="{{ url('/shop') }}">Products</a>
                     </li>
                     <li class="{{ request()->is('about*') || request()->is('contact*') || request()->is('blog*') ? 'active' : '' }}">

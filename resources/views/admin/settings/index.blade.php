@@ -38,6 +38,14 @@
                 @foreach($groups as $i => $group)
                 <div class="tab-pane fade {{ $i === 0 ? 'show active' : '' }}" id="tab-{{ $group }}">
 
+                    {{-- Appearance tab special header --}}
+                    @if($group === 'appearance')
+                    <div class="mb-4 p-3" style="background: rgba(156,39,176,0.05); border-radius: 8px; border: 1px solid rgba(156,39,176,0.12);">
+                        <h6 class="mb-1"><i class="fas fa-palette mr-1" style="color:#9c27b0;"></i> Appearance & Colors</h6>
+                        <p class="text-muted mb-0" style="font-size: 13px;">Customize colors for the frontend store and admin panel. Changes apply instantly after saving.</p>
+                    </div>
+                    @endif
+
                     {{-- Auth tab special header --}}
                     @if($group === 'auth')
                     <div class="mb-4 p-3" style="background: rgba(13,110,253,0.05); border-radius: 8px; border: 1px solid rgba(13,110,253,0.1);">
@@ -63,62 +71,60 @@
                     @endif
 
                     @if(isset($settings[$group]))
-                        @foreach($settings[$group] as $setting)
-                        <div class="form-group row">
-                            <label class="col-md-3 col-form-label font-weight-bold">
-                                {{ $setting->label ?? $setting->key }}
-                                @if($setting->description)
-                                <br><small class="text-muted font-weight-normal">{{ $setting->description }}</small>
-                                @endif
-                            </label>
-                            <div class="col-md-9">
-                                @php $fieldName = str_replace('.', '__', $setting->key); @endphp
+                        @if($group === 'appearance')
+                            {{-- Organized Appearance sections with dividers --}}
+                            @php
+                                $sections = [
+                                    'Branding'         => ['appearance.logo', 'appearance.favicon', 'appearance.asset_version'],
+                                    'Core Colors'      => ['appearance.primary_color', 'appearance.secondary_color', 'appearance.link_color', 'appearance.body_bg_color', 'appearance.body_text_color', 'appearance.heading_color'],
+                                    'Header'           => ['appearance.header_top_bg', 'appearance.header_top_text', 'appearance.header_bg', 'header.top_message', 'header.show_special_offer', 'header.special_offer_text', 'header.special_offer_url'],
+                                    'Navigation Bar'   => ['appearance.nav_bg', 'appearance.nav_text_color', 'appearance.nav_hover_color'],
+                                    'Promo Bar'        => ['appearance.promo_bar_bg', 'appearance.promo_bar_text'],
+                                    'Buttons'          => ['appearance.btn_primary_bg', 'appearance.btn_primary_text'],
+                                    'Sale & Price'     => ['appearance.sale_price_color', 'appearance.sale_badge_bg'],
+                                    'Footer'           => ['appearance.footer_bg', 'appearance.footer_text_color', 'appearance.footer_heading_color', 'appearance.footer_link_color', 'appearance.footer_bottom_bg'],
+                                    'Admin Panel'      => ['appearance.admin_primary', 'appearance.admin_sidebar_bg', 'appearance.admin_sidebar_text', 'appearance.admin_topbar_bg'],
+                                ];
+                                $settingsByKey = $settings[$group]->keyBy('key');
+                                $renderedKeys = [];
+                            @endphp
 
-                                @if($setting->type === 'boolean')
-                                    <div class="custom-control custom-switch mt-2">
-                                        <input type="hidden" name="{{ $fieldName }}" value="0">
-                                        <input type="checkbox" class="custom-control-input" id="s_{{ $fieldName }}" name="{{ $fieldName }}" value="1" {{ $setting->value ? 'checked' : '' }}>
-                                        <label class="custom-control-label" for="s_{{ $fieldName }}">Enabled</label>
-                                    </div>
-                                @elseif($setting->type === 'richtext')
-                                    <textarea name="{{ $fieldName }}" class="form-control richtext-editor" rows="12" id="editor_{{ $fieldName }}">{{ $setting->value }}</textarea>
-                                @elseif($setting->type === 'textarea' || $setting->type === 'json')
-                                    <textarea name="{{ $fieldName }}" class="form-control" rows="4">{{ $setting->value }}</textarea>
-                                @elseif($setting->type === 'number')
-                                    <input type="number" name="{{ $fieldName }}" class="form-control" value="{{ $setting->value }}">
-                                @elseif($setting->type === 'color')
-                                    <input type="color" name="{{ $fieldName }}" class="form-control" value="{{ $setting->value ?? '#0d6efd' }}" style="height:38px;width:100px;">
-                                @elseif($setting->type === 'image')
-                                    @if($setting->value)
-                                    <div class="mb-2">
-                                        <img src="{{ Storage::url($setting->value) }}" alt="" style="max-height:60px;" class="border rounded p-1">
-                                    </div>
+                            @foreach($sections as $sectionTitle => $sectionKeys)
+                                <div class="mb-3 mt-4 pb-1" style="border-bottom: 2px solid #eef0f3;">
+                                    <h6 class="text-uppercase font-weight-bold" style="font-size: 12px; letter-spacing: 1px; color: #6c757d;">
+                                        @switch($sectionTitle)
+                                            @case('Branding') <i class="fas fa-image mr-1"></i> @break
+                                            @case('Core Colors') <i class="fas fa-palette mr-1"></i> @break
+                                            @case('Header') <i class="fas fa-heading mr-1"></i> @break
+                                            @case('Navigation Bar') <i class="fas fa-bars mr-1"></i> @break
+                                            @case('Promo Bar') <i class="fas fa-bullhorn mr-1"></i> @break
+                                            @case('Buttons') <i class="fas fa-mouse-pointer mr-1"></i> @break
+                                            @case('Sale & Price') <i class="fas fa-tag mr-1"></i> @break
+                                            @case('Footer') <i class="fas fa-shoe-prints mr-1"></i> @break
+                                            @case('Admin Panel') <i class="fas fa-cogs mr-1"></i> @break
+                                        @endswitch
+                                        {{ $sectionTitle }}
+                                    </h6>
+                                </div>
+                                @foreach($sectionKeys as $sKey)
+                                    @if(isset($settingsByKey[$sKey]))
+                                        @php $setting = $settingsByKey[$sKey]; $renderedKeys[] = $sKey; @endphp
+                                        @include('admin.settings._field', ['setting' => $setting])
                                     @endif
-                                    <input type="file" name="{{ $fieldName }}" class="form-control-file" accept="image/*">
-                                @elseif($setting->type === 'select')
-                                    @if($setting->key === 'mail.driver')
-                                        <select name="{{ $fieldName }}" class="form-control">
-                                            <option value="log" {{ $setting->value === 'log' ? 'selected' : '' }}>Log (Development)</option>
-                                            <option value="smtp" {{ $setting->value === 'smtp' ? 'selected' : '' }}>SMTP</option>
-                                            <option value="sendmail" {{ $setting->value === 'sendmail' ? 'selected' : '' }}>Sendmail</option>
-                                        </select>
-                                    @elseif($setting->key === 'mail.encryption')
-                                        <select name="{{ $fieldName }}" class="form-control">
-                                            <option value="tls" {{ $setting->value === 'tls' ? 'selected' : '' }}>TLS</option>
-                                            <option value="ssl" {{ $setting->value === 'ssl' ? 'selected' : '' }}>SSL</option>
-                                            <option value="" {{ empty($setting->value) ? 'selected' : '' }}>None</option>
-                                        </select>
-                                    @else
-                                        <input type="text" name="{{ $fieldName }}" class="form-control" value="{{ $setting->value }}">
-                                    @endif
-                                @elseif($setting->key === 'mail.password')
-                                    <input type="password" name="{{ $fieldName }}" class="form-control" value="{{ $setting->value }}" autocomplete="off">
-                                @else
-                                    <input type="text" name="{{ $fieldName }}" class="form-control" value="{{ $setting->value }}">
+                                @endforeach
+                            @endforeach
+
+                            {{-- Render any remaining appearance settings not in sections --}}
+                            @foreach($settings[$group] as $setting)
+                                @if(!in_array($setting->key, $renderedKeys))
+                                    @include('admin.settings._field', ['setting' => $setting])
                                 @endif
-                            </div>
-                        </div>
-                        @endforeach
+                            @endforeach
+                        @else
+                            @foreach($settings[$group] as $setting)
+                                @include('admin.settings._field', ['setting' => $setting])
+                            @endforeach
+                        @endif
                     @else
                         <p class="text-muted py-3">No settings configured for this group yet.</p>
                     @endif
@@ -182,6 +188,17 @@
             }
         });
     }
+
+    // Color picker: sync hex text + preview swatch on change
+    document.querySelectorAll('input[type="color"]').forEach(function(picker) {
+        picker.addEventListener('input', function() {
+            var fieldName = this.name;
+            var hexEl = document.getElementById('hex_' + fieldName);
+            var previewEl = document.getElementById('preview_' + fieldName);
+            if (hexEl) hexEl.value = this.value;
+            if (previewEl) previewEl.style.background = this.value;
+        });
+    });
 </script>
 @endpush
 @endsection

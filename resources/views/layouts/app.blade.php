@@ -10,8 +10,12 @@
     <x-seo.head />
     <meta name="author" content="{{ Setting::get('general.site_name', 'Porto Shop') }}">
 
-    {{-- Favicon --}}
-    <link rel="icon" type="image/x-icon" href="{{ asset('themes/porto/images/icons/favicon.png') }}">
+    {{-- Favicon (dynamic from admin settings) --}}
+    @if(Setting::get('appearance.favicon'))
+        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . Setting::get('appearance.favicon')) }}">
+    @else
+        <link rel="icon" type="image/x-icon" href="{{ asset('themes/porto/images/icons/favicon.png') }}">
+    @endif
 
     {{-- Google Fonts --}}
     <script>
@@ -31,12 +35,9 @@
     {{-- Plugins CSS --}}
     <link rel="stylesheet" href="{{ asset('themes/porto/css/bootstrap.min.css') }}">
 
-    {{-- Main CSS --}}
-    @if(View::hasSection('is_home'))
-        <link rel="stylesheet" href="{{ asset('themes/porto/css/demo1.min.css') }}">
-    @else
-        <link rel="stylesheet" href="{{ asset('themes/porto/css/style.min.css') }}">
-    @endif
+    {{-- Main CSS (Demo8 site-wide) --}}
+    <link rel="stylesheet" href="{{ asset('themes/porto/css/demo8.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('themes/porto/css/animate.min.css') }}">
 
     {{-- Icons --}}
     <link rel="stylesheet" href="{{ asset('themes/porto/vendor/fontawesome-free/css/all.min.css') }}">
@@ -47,11 +48,131 @@
 
     @stack('styles')
 
+    {{-- Appearance: Dynamic Colors from Admin Settings --}}
+    @php
+        $clr = [
+            'primary'         => Setting::get('appearance.primary_color', '#08C'),
+            'secondary'       => Setting::get('appearance.secondary_color', '#e7e7e7'),
+            'bodyBg'          => Setting::get('appearance.body_bg_color', '#ffffff'),
+            'bodyText'        => Setting::get('appearance.body_text_color', '#777777'),
+            'heading'         => Setting::get('appearance.heading_color', '#313131'),
+            'link'            => Setting::get('appearance.link_color', '#08C'),
+            'headerTopBg'     => Setting::get('appearance.header_top_bg', '#f4f4f4'),
+            'headerTopText'   => Setting::get('appearance.header_top_text', '#777777'),
+            'headerBg'        => Setting::get('appearance.header_bg', '#ffffff'),
+            'navBg'           => Setting::get('appearance.nav_bg', '#08C'),
+            'navText'         => Setting::get('appearance.nav_text_color', '#ffffff'),
+            'navHover'        => Setting::get('appearance.nav_hover_color', '#ffffff'),
+            'footerBg'        => Setting::get('appearance.footer_bg', '#222529'),
+            'footerText'      => Setting::get('appearance.footer_text_color', '#aaaaaa'),
+            'footerHeading'   => Setting::get('appearance.footer_heading_color', '#ffffff'),
+            'footerLink'      => Setting::get('appearance.footer_link_color', '#aaaaaa'),
+            'footerBottomBg'  => Setting::get('appearance.footer_bottom_bg', '#1c1e22'),
+            'promoBg'         => Setting::get('appearance.promo_bar_bg', '#08C'),
+            'promoText'       => Setting::get('appearance.promo_bar_text', '#ffffff'),
+            'btnPrimaryBg'    => Setting::get('appearance.btn_primary_bg', '#08C'),
+            'btnPrimaryText'  => Setting::get('appearance.btn_primary_text', '#ffffff'),
+            'salePrice'       => Setting::get('appearance.sale_price_color', '#e92e05'),
+            'saleBadgeBg'     => Setting::get('appearance.sale_badge_bg', '#e92e05'),
+        ];
+    @endphp
+    <style>
+        :root {
+            --porto-primary: {{ $clr['primary'] }};
+            --porto-secondary: {{ $clr['secondary'] }};
+            --porto-body-bg: {{ $clr['bodyBg'] }};
+            --porto-body-text: {{ $clr['bodyText'] }};
+            --porto-heading: {{ $clr['heading'] }};
+            --porto-link: {{ $clr['link'] }};
+            --porto-header-top-bg: {{ $clr['headerTopBg'] }};
+            --porto-header-top-text: {{ $clr['headerTopText'] }};
+            --porto-header-bg: {{ $clr['headerBg'] }};
+            --porto-nav-bg: {{ $clr['navBg'] }};
+            --porto-nav-text: {{ $clr['navText'] }};
+            --porto-nav-hover: {{ $clr['navHover'] }};
+            --porto-footer-bg: {{ $clr['footerBg'] }};
+            --porto-footer-text: {{ $clr['footerText'] }};
+            --porto-footer-heading: {{ $clr['footerHeading'] }};
+            --porto-footer-link: {{ $clr['footerLink'] }};
+            --porto-footer-bottom-bg: {{ $clr['footerBottomBg'] }};
+            --porto-promo-bg: {{ $clr['promoBg'] }};
+            --porto-promo-text: {{ $clr['promoText'] }};
+            --porto-btn-primary-bg: {{ $clr['btnPrimaryBg'] }};
+            --porto-btn-primary-text: {{ $clr['btnPrimaryText'] }};
+            --porto-sale-price: {{ $clr['salePrice'] }};
+            --porto-sale-badge-bg: {{ $clr['saleBadgeBg'] }};
+        }
+
+        /* === Body === */
+        body { background-color: var(--porto-body-bg); color: var(--porto-body-text); }
+        h1, h2, h3, h4, h5, h6 { color: var(--porto-heading); }
+        a { color: var(--porto-link); }
+        a:hover, a:focus { color: var(--porto-primary); }
+
+        /* === Header Top Bar === */
+        .header-top { background: var(--porto-header-top-bg) !important; border-bottom: 1px solid var(--porto-secondary); }
+        .header-top, .header-top a, .header-top .wel-msg { color: var(--porto-header-top-text); }
+        .header-top a:hover { color: var(--porto-primary); }
+
+        /* === Header Middle === */
+        .header-middle { background: var(--porto-header-bg); }
+
+        /* === Header Bottom / Nav Bar === */
+        .header-bottom { background: var(--porto-nav-bg) !important; }
+        .header-bottom .menu > li > a { color: var(--porto-nav-text); }
+        .header-bottom .menu > li:hover > a,
+        .header-bottom .menu > li.active > a { color: var(--porto-nav-hover); }
+
+        /* === Promo / Top-Notice Bar === */
+        .pre-header, .pre-header > div, .top-notice { background: var(--porto-promo-bg) !important; color: var(--porto-promo-text) !important; }
+        .pre-header a, .top-notice a { color: var(--porto-promo-text) !important; text-decoration: underline; }
+
+        /* === Buttons === */
+        .btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+            background-color: var(--porto-btn-primary-bg) !important;
+            border-color: var(--porto-btn-primary-bg) !important;
+            color: var(--porto-btn-primary-text) !important;
+        }
+        .btn-primary:hover { filter: brightness(1.08); }
+
+        /* === Product & Price === */
+        .price-box .product-price, .price-box .new-price { color: var(--porto-primary); }
+        .price-box .old-price { color: #999; }
+        .product-default .product-price { color: var(--porto-primary); }
+        .product-label.label-sale { background: var(--porto-sale-badge-bg); color: #fff; }
+        .product-default .btn-icon:hover,
+        .product-default .btn-quickview:hover { background: var(--porto-primary); }
+
+        /* === Accents & Misc === */
+        .widget-title::after,
+        .section-title::after { background: var(--porto-primary); }
+        .nav-tabs .nav-link.active { border-bottom-color: var(--porto-primary); color: var(--porto-primary); }
+        .widget-newsletter .btn { background: var(--porto-primary); border-color: var(--porto-primary); color: #fff; }
+        .social-icon:hover { background: var(--porto-primary); border-color: var(--porto-primary); color: #fff; }
+
+        /* === Footer === */
+        .footer .footer-middle { background: var(--porto-footer-bg); color: var(--porto-footer-text); }
+        .footer .widget-title { color: var(--porto-footer-heading) !important; }
+        .footer .footer-middle a, .footer .links a { color: var(--porto-footer-link); }
+        .footer .footer-middle a:hover, .footer .links a:hover { color: var(--porto-primary); }
+        .footer .footer-bottom { background: var(--porto-footer-bottom-bg); border-top: 1px solid rgba(255,255,255,0.06); }
+        .footer .footer-copyright { color: var(--porto-footer-text); }
+        .footer .contact-info-label { color: var(--porto-footer-heading); }
+
+        /* === Live Search Dropdown === */
+        #ls-float-box { border-top-color: var(--porto-primary); }
+        .ls-now { color: var(--porto-primary); }
+        .ls-loading { color: var(--porto-primary); }
+        .ls-spinner { border-top-color: var(--porto-primary); }
+        .ls-viewall { color: var(--porto-primary); }
+        .ls-row:hover .ls-title { color: var(--porto-primary); }
+    </style>
+
     {{-- Live Search Dropdown + Product Card Hover CSS --}}
     <style>
         #ls-float-box {
             display: none; position: fixed; background: #fff;
-            border: 1px solid #ddd; border-top: 3px solid #08c;
+            border: 1px solid #ddd; border-top: 3px solid var(--porto-primary);
             border-radius: 0 0 8px 8px;
             box-shadow: 0 12px 40px rgba(0,0,0,0.18);
             z-index: 100000; max-height: 420px; overflow-y: auto;
@@ -64,11 +185,11 @@
         }
         .ls-loading {
             display: flex; align-items: center; justify-content: center;
-            padding: 24px; gap: 10px; color: #08c;
+            padding: 24px; gap: 10px; color: var(--porto-primary);
         }
         .ls-spinner {
             width: 20px; height: 20px; border: 3px solid #e0e0e0;
-            border-top-color: #08c; border-radius: 50%;
+            border-top-color: var(--porto-primary); border-radius: 50%;
             animation: lsSpin 0.7s linear infinite;
         }
         @keyframes lsSpin { to { transform: rotate(360deg); } }
@@ -90,17 +211,17 @@
             font-size: 13px; font-weight: 600; color: #333;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .ls-row:hover .ls-title { color: #08c; }
+        .ls-row:hover .ls-title { color: var(--porto-primary); }
         .ls-catname { font-size: 11px; color: #999; margin-top: 1px; }
         .ls-prices {
             text-align: right; flex-shrink: 0; white-space: nowrap;
             display: flex; flex-direction: column; align-items: flex-end;
         }
-        .ls-now { font-size: 14px; font-weight: 700; color: #08c; }
+        .ls-now { font-size: 14px; font-weight: 700; color: var(--porto-primary); }
         .ls-was { font-size: 11px; color: #bbb; text-decoration: line-through; font-weight: 400; }
         .ls-viewall {
             display: block; text-align: center; padding: 11px;
-            color: #08c; font-weight: 600; font-size: 13px;
+            color: var(--porto-primary); font-weight: 600; font-size: 13px;
             text-decoration: none !important;
             border-top: 1px solid #eee; background: #fafbfc;
             border-radius: 0 0 8px 8px; transition: background 0.15s;

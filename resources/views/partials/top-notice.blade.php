@@ -1,18 +1,14 @@
-{{-- Top Promotional Notice Bar — fully driven by admin settings --}}
+{{-- Pre-header Promotional Bar (Demo8 style) — fully driven by admin settings --}}
 @if(Setting::get('promo.bar_enabled', '0') === '1' && Setting::get('promo.bar_text'))
-<div class="top-notice text-white" style="background-color: {{ Setting::get('promo.bar_bg_color', '#0088cc') }};">
-    <div class="container text-center">
-        <h5 class="d-inline-block mb-0">{!! Setting::get('promo.bar_text') !!}</h5>
-        @if(Setting::get('promo.bar_link1_label'))
-            <a href="{{ Setting::get('promo.bar_link1_url', '#') }}" class="category">{{ Setting::get('promo.bar_link1_label') }}</a>
-        @endif
-        @if(Setting::get('promo.bar_link2_label'))
-            <a href="{{ Setting::get('promo.bar_link2_url', '#') }}" class="category ml-2 mr-3">{{ Setting::get('promo.bar_link2_label') }}</a>
-        @endif
-        @if(Setting::get('promo.bar_note'))
-            <small>{{ Setting::get('promo.bar_note') }}</small>
-        @endif
-        <button title="Close (Esc)" type="button" class="mfp-close">×</button>
+<div class="pre-header">
+    <div>
+        <div class="container">
+            {!! Setting::get('promo.bar_text') !!}
+            @if(Setting::get('promo.bar_note'))
+                <small>{{ Setting::get('promo.bar_note') }}</small>
+            @endif
+        </div>
+        <button class="mfp-close"></button>
     </div>
 </div>
 @endif

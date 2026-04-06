@@ -1,20 +1,30 @@
-{{-- Product Widget (small horizontal card for sidebar columns)
+{{-- Product Widget (Demo8 style — horizontal card with categories + dual images)
     Usage: @include('partials.product-widget', ['product' => $product])
 --}}
 @php
     $wPrimaryImg = $product->primaryImage;
     $wImgPath = $wPrimaryImg ? asset('storage/' . $wPrimaryImg->image_path) : asset('images/no-image.svg');
+    $wSecondImg = $product->images->where('is_primary', false)->first();
+    $wSecondImgPath = $wSecondImg ? asset('storage/' . $wSecondImg->image_path) : null;
     $wRating = $product->averageRating();
     $wRatingPercent = ($wRating / 5) * 100;
 @endphp
 
-<div class="product-default left-details product-widget">
+<div class="product-default left-details product-widget mb-2">
     <figure>
         <a href="{{ url('/product/' . $product->slug) }}">
-            <img src="{{ $wImgPath }}" width="84" height="84" alt="{{ $product->name }}">
+            <img src="{{ $wImgPath }}" width="175" height="175" alt="{{ $product->name }}" />
+            @if($wSecondImgPath)
+                <img src="{{ $wSecondImgPath }}" width="175" height="175" alt="{{ $product->name }}" />
+            @endif
         </a>
     </figure>
     <div class="product-details">
+        @if($product->category)
+        <div class="category-list">
+            <a href="{{ url('/shop/category/' . $product->category->slug) }}" class="product-category">{{ $product->category->name }}</a>
+        </div>
+        @endif
         <h3 class="product-title">
             <a href="{{ url('/product/' . $product->slug) }}">{{ $product->name }}</a>
         </h3>

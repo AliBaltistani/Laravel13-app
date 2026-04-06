@@ -1,4 +1,19 @@
-<div class="product-single-container product-single-default product-quick-view mb-0 custom-scrollbar">
+<style>
+    .quickview-wrapper-custom {
+        padding: 30px;
+        background: #fff;
+        overflow-x: hidden;
+    }
+    .quickview-wrapper-custom .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .quickview-wrapper-custom .col-md-6 {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+</style>
+<div class="product-single-container product-single-default product-quick-view mb-0 custom-scrollbar quickview-wrapper-custom">
     <div class="row">
         <div class="col-md-6 product-single-gallery mb-md-0">
             <div class="product-slider-container">
