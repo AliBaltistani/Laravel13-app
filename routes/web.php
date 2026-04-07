@@ -86,6 +86,7 @@ Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [PageController::class, 'submitContact'])->name('contact.submit');
+Route::get('/promotions', [PageController::class, 'promotions'])->name('promotions');
 
 // Legal Pages
 Route::get('/terms', [PageController::class, 'terms'])->name('terms');

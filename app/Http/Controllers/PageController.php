@@ -91,4 +91,18 @@ class PageController extends Controller
 
         return view('pages.privacy');
     }
+
+    /**
+     * Promotions page to show available public coupons.
+     */
+    public function promotions()
+    {
+        app(SeoService::class)
+            ->setTitle('Current Promotions & Coupons')
+            ->setDescription('View all active promo codes and discounts to save on your next purchase.');
+
+        $coupons = \App\Models\Coupon::where('is_active', true)->get();
+
+        return view('pages.promotions', compact('coupons'));
+    }
 }

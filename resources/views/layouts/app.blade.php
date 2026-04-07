@@ -446,6 +446,8 @@
     });
     </script>
 
+    @livewire('newsletter-popup')
+
     @stack('scripts')
 </body>
 </html>

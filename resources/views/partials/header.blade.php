@@ -135,31 +135,24 @@
                     <li>
                         <a href="{{ url('/shop') }}">Products</a>
                     </li>
-                    <li class="{{ request()->is('about*') || request()->is('contact*') || request()->is('blog*') ? 'active' : '' }}">
-                        <a href="#">Pages</a>
-                        <ul>
-                            <li><a href="{{ url('/wishlist') }}">Wishlist</a></li>
-                            <li><a href="{{ url('/cart') }}">Shopping Cart</a></li>
-                            <li><a href="{{ url('/checkout') }}">Checkout</a></li>
-                            <li><a href="{{ route('account.dashboard') }}">Dashboard</a></li>
-                            <li><a href="{{ url('/about') }}">About Us</a></li>
-                            <li><a href="#">Blog</a>
-                                <ul>
-                                    <li><a href="{{ url('/blog') }}">Blog</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="{{ url('/contact') }}">Contact Us</a></li>
-                            @guest
-                                <li><a href="{{ route('login') }}">Login</a></li>
-                            @endguest
-                        </ul>
-                    </li>
                     <li class="{{ request()->is('blog*') ? 'active' : '' }}">
-                        <a href="{{ url('/blog') }}">Blog</a>
+                        <a href="{{ url('/blog') }}">BLOG</a>
                     </li>
-                    <li class="{{ request()->is('contact*') ? 'active' : '' }}">
-                        <a href="{{ url('/contact') }}">Contact Us</a>
-                    </li>
+                    @foreach(\App\Models\Page::where('is_active', true)->get() as $customPage)
+                        @php
+                            // Handle standard predefined routes vs dynamic pages
+                            if ($customPage->slug === 'about-us') {
+                                $pageUrl = url('/about');
+                            } elseif ($customPage->slug === 'contact') {
+                                $pageUrl = url('/contact');
+                            } else {
+                                $pageUrl = route('page.show', $customPage->slug);
+                            }
+                        @endphp
+                        <li class="{{ request()->fullUrl() == $pageUrl ? 'active' : '' }}">
+                            <a href="{{ $pageUrl }}">{{ strtoupper($customPage->title) }}</a>
+                        </li>
+                    @endforeach
                     @if(Setting::get('header.show_special_offer', '1') === '1' && Setting::get('header.special_offer_text'))
                         <li class="float-right"><a href="{{ Setting::get('header.special_offer_url', '/shop') }}" class="pl-5">{{ Setting::get('header.special_offer_text', 'Special Offer!') }}</a></li>
                     @endif
