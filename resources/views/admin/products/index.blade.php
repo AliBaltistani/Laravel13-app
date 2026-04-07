@@ -146,10 +146,7 @@
                                 <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-outline-primary mr-1" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form method="POST" action="{{ route('admin.products.destroy', $product) }}" class="d-inline" onsubmit="return confirm('Delete this product?')">
-                                    @csrf @method('DELETE')
-                                    <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
-                                </form>
+                                <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" onclick="if(confirm('Delete this product?')) { document.getElementById('delete-form-{{ $product->id }}').submit(); }"><i class="fas fa-trash"></i></button>
                             </td>
                         </tr>
                         @empty
@@ -168,6 +165,12 @@
 </form>
 
 <div class="mt-3">{{ $products->links() }}</div>
+
+@foreach($products as $product)
+    <form id="delete-form-{{ $product->id }}" action="{{ route('admin.products.destroy', $product) }}" method="POST" class="d-none">
+        @csrf @method('DELETE')
+    </form>
+@endforeach
 @endsection
 
 @push('scripts')
