@@ -337,7 +337,8 @@
 
                 {{-- Place Order Button --}}
                 <button type="button" class="btn-place-order-modern"
-                        wire:click="placeOrder" wire:loading.attr="disabled"
+                        id="checkout-button" onclick="processCheckout()"
+                        wire:loading.attr="disabled"
                         {{ $processing ? 'disabled' : '' }}
                         @if(count($enabledPaymentMethods) === 0) disabled @endif>
                     <span wire:loading.remove wire:target="placeOrder">
@@ -400,20 +401,32 @@
             setTimeout(mountStripeCard, 200);
         });
 
-        Livewire.on('placeOrder', async () => {
-            let paymentMethod = @this.payment_method;
+        window.processCheckout = async function() {
+            let paymentMethod = await @this.get('payment_method');
+            
             if (paymentMethod === 'stripe' && cardElement) {
+                // Let the user know it's processing
+                @this.set('processing', true);
+                @this.set('errorMessage', '');
+
                 const { paymentMethod: pm, error } = await stripe.createPaymentMethod({
                     type: 'card',
                     card: cardElement,
                 });
+                
                 if (error) {
                     @this.set('errorMessage', error.message);
+                    @this.set('processing', false);
                     return false;
                 }
-                @this.set('stripe_payment_method_id', pm.id);
+                
+                // Set the payment method token to the component
+                await @this.set('stripe_payment_method_id', pm.id);
             }
-        });
+            
+            // Call the backend to finalize the order
+            @this.call('placeOrder');
+        };
     });
 </script>
 @endpush
