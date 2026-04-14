@@ -138,7 +138,7 @@
                     <li class="{{ request()->is('blog*') ? 'active' : '' }}">
                         <a href="{{ url('/blog') }}">BLOG</a>
                     </li>
-                    @foreach(\App\Models\Page::where('is_active', true)->get() as $customPage)
+                    @foreach(\App\Models\Page::where('is_active', true)->whereNotIn('slug', ['privacy-policy', 'terms-conditions'])->get() as $customPage)
                         @php
                             // Handle standard predefined routes vs dynamic pages
                             if ($customPage->slug === 'about-us') {
