@@ -321,8 +321,18 @@
                         </div>
 
                         {{-- Stripe Card Element --}}
-                        @if($methodKey === 'stripe' && $payment_method === 'stripe')
-                            <div class="p-3 mb-2 border rounded" style="background:#f8f9fb;border-radius:10px !important;" id="stripe-card-container">
+                        @if($methodKey === 'stripe')
+                            <div x-data="{ method: $wire.entangle('payment_method') }"
+                                 x-show="method === 'stripe'"
+                                 wire:ignore
+                                 class="p-3 border rounded mt-2" 
+                                 style="background:#f8f9fb;border-radius:10px !important;" 
+                                 id="stripe-card-container">
+                                
+                                <div id="stripe-loading" class="text-center py-2" style="display:none;">
+                                    <i class="fas fa-spinner fa-spin text-primary"></i> <span class="text-muted small">Loading Secure Payment...</span>
+                                </div>
+                                
                                 <div id="stripe-card-element" class="mb-2" style="padding:12px;border:1.5px solid #e8e8ef;border-radius:8px;background:#fff;"></div>
                                 <div id="stripe-card-errors" class="text-danger small"></div>
                             </div>
@@ -375,6 +385,9 @@
         function mountStripeCard() {
             let container = document.getElementById('stripe-card-element');
             if (container && !cardElement) {
+                let loadingEl = document.getElementById('stripe-loading');
+                if (loadingEl) loadingEl.style.display = 'block';
+
                 cardElement = elements.create('card', {
                     style: {
                         base: {
@@ -386,6 +399,11 @@
                     }
                 });
                 cardElement.mount('#stripe-card-element');
+                
+                cardElement.on('ready', function() {
+                    if (loadingEl) loadingEl.style.display = 'none';
+                });
+
                 cardElement.on('change', function(event) {
                     let errorsEl = document.getElementById('stripe-card-errors');
                     if (errorsEl) {
@@ -395,11 +413,7 @@
             }
         }
 
-        setTimeout(mountStripeCard, 500);
-
-        Livewire.hook('morph.updated', () => {
-            setTimeout(mountStripeCard, 200);
-        });
+        setTimeout(mountStripeCard, 300);
 
         window.processCheckout = async function() {
             let paymentMethod = await @this.get('payment_method');
