@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\StoreProductRequest;
 use App\Http\Requests\Admin\UpdateProductRequest;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\HomepageSection;
 use App\Models\Product;
 use App\Models\Tag;
 use Illuminate\Http\Request;
@@ -62,12 +63,14 @@ class ProductController extends Controller
         $categories = Category::active()->ordered()->get();
         $brands = Brand::active()->ordered()->get();
         $tags = Tag::orderBy('name')->get();
+        $homepageSections = HomepageSection::whereIn('type', ['products', 'widgets'])->ordered()->get();
 
         return view('admin.products.form', [
             'product' => new Product(),
             'categories' => $categories,
             'brands' => $brands,
             'tags' => $tags,
+            'homepageSections' => $homepageSections,
             'isEdit' => false,
         ]);
     }
@@ -94,22 +97,35 @@ class ProductController extends Controller
             }
         }
 
+        // Sync homepage section assignments
+        if ($request->has('homepage_sections')) {
+            $syncData = [];
+            foreach ($request->input('homepage_sections', []) as $sectionId) {
+                $syncData[$sectionId] = ['sort_order' => 0];
+            }
+            $product->homepageSections()->sync($syncData);
+        } else {
+            $product->homepageSections()->detach();
+        }
+
         return redirect()->route('admin.products.index')
             ->with('success', 'Product created successfully.');
     }
 
     public function edit(Product $product)
     {
-        $product->load(['images', 'tags', 'variants.attributes', 'relatedProducts']);
+        $product->load(['images', 'tags', 'variants.attributes', 'relatedProducts', 'homepageSections']);
         $categories = Category::active()->ordered()->get();
         $brands = Brand::active()->ordered()->get();
         $tags = Tag::orderBy('name')->get();
+        $homepageSections = HomepageSection::whereIn('type', ['products', 'widgets'])->ordered()->get();
 
         return view('admin.products.form', [
             'product' => $product,
             'categories' => $categories,
             'brands' => $brands,
             'tags' => $tags,
+            'homepageSections' => $homepageSections,
             'isEdit' => true,
         ]);
     }
@@ -151,6 +167,17 @@ class ProductController extends Controller
                 Storage::disk('public')->delete($img->image_path);
                 $img->delete();
             }
+        }
+
+        // Sync homepage section assignments
+        if ($request->has('homepage_sections')) {
+            $syncData = [];
+            foreach ($request->input('homepage_sections', []) as $sectionId) {
+                $syncData[$sectionId] = ['sort_order' => 0];
+            }
+            $product->homepageSections()->sync($syncData);
+        } else {
+            $product->homepageSections()->detach();
         }
 
         return redirect()->route('admin.products.index')

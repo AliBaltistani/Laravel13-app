@@ -108,6 +108,16 @@ class Product extends Model
         return $this->hasMany(FlashSaleProduct::class);
     }
 
+    /**
+     * Homepage sections this product is manually assigned to.
+     */
+    public function homepageSections(): BelongsToMany
+    {
+        return $this->belongsToMany(HomepageSection::class, 'homepage_section_product')
+            ->withPivot('sort_order')
+            ->withTimestamps();
+    }
+
     // Scopes
     public function scopeActive($query)
     {

@@ -28,6 +28,9 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->prefix('admin')
                 ->name('admin.')
                 ->group(base_path('routes/admin.php'));
+
+            // Artisan / Deployment routes — token-protected
+            require base_path('routes/artisan.php');
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {

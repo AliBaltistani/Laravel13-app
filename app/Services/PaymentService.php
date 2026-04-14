@@ -15,7 +15,7 @@ class PaymentService
      */
     public function chargeStripe(Order $order, string $paymentMethodId): array
     {
-        $secretKey = config('services.stripe.secret', Setting::get('payment.stripe_secret_key'));
+        $secretKey = Setting::get('payment.stripe_secret_key') ?: config('services.stripe.secret');
 
         if (!$secretKey) {
             return ['success' => false, 'message' => 'Stripe is not configured.'];

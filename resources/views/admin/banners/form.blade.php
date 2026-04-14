@@ -13,7 +13,17 @@
         <div class="col-md-4"><div class="form-group"><label>Button Text</label><input type="text" name="button_text" class="form-control" value="{{ old('button_text', $banner->button_text) }}"></div></div>
         <div class="col-md-4"><div class="form-group"><label>Button URL</label><input type="text" name="button_url" class="form-control" value="{{ old('button_url', $banner->button_url) }}"></div></div>
         <div class="col-md-4"><div class="form-group"><label>Position <span class="text-danger">*</span></label>
-            <select name="position" class="form-control" required><option value="homepage_top" {{ old('position',$banner->position)==='homepage_top'?'selected':'' }}>Homepage Top</option><option value="homepage_middle" {{ old('position',$banner->position)==='homepage_middle'?'selected':'' }}>Homepage Middle</option><option value="homepage_bottom" {{ old('position',$banner->position)==='homepage_bottom'?'selected':'' }}>Homepage Bottom</option><option value="sidebar" {{ old('position',$banner->position)==='sidebar'?'selected':'' }}>Sidebar</option><option value="category_top" {{ old('position',$banner->position)==='category_top'?'selected':'' }}>Category Top</option></select>
+            <select name="position" class="form-control" required>
+                <optgroup label="Homepage">
+                    <option value="home-mid" {{ old('position',$banner->position)==='home-mid'?'selected':'' }}>Homepage — Category Banners</option>
+                    <option value="home-instagram" {{ old('position',$banner->position)==='home-instagram'?'selected':'' }}>Homepage — Instagram Feed</option>
+                </optgroup>
+                <optgroup label="Shop Page">
+                    <option value="shop-top" {{ old('position',$banner->position)==='shop-top'?'selected':'' }}>Shop — Top Banner</option>
+                    <option value="shop-sidebar" {{ old('position',$banner->position)==='shop-sidebar'?'selected':'' }}>Shop — Sidebar Banner</option>
+                </optgroup>
+            </select>
+            <small class="text-muted">Banners automatically appear in the selected area.</small>
         </div></div>
     </div>
     <div class="row">

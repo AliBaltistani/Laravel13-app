@@ -29,7 +29,8 @@
                     <h3 class="mb-3">Search results for: "{{ $searchQuery }}"</h3>
                 @endif
 
-                {{-- Toolbar --}}
+                {{-- Shop Top Banner Zone --}}
+                @include('partials.banner-zone', ['position' => 'shop-top', 'limit' => 1])
                 <nav class="toolbox sticky-header" data-sticky-options="{'mobile': true}">
                     <div class="toolbox-left">
                         <a href="#" class="sidebar-toggle">
@@ -212,6 +213,9 @@
                         </div>
                     </div>
                     @endif
+
+                    {{-- Sidebar Banner Zone --}}
+                    @include('partials.banner-zone', ['position' => 'shop-sidebar', 'limit' => 2])
                 </div>
             </aside>
         </div>

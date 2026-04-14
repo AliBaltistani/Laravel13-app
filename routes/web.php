@@ -57,11 +57,13 @@ Route::get('/shop/search', [ShopController::class, 'search'])->name('shop.search
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/product/quick-view/{product:slug}', [ShopController::class, 'quickView'])->name('product.quick-view');
 
-// Cart & Checkout
-Route::get('/cart', fn() => view('pages.cart'))->name('cart');
-Route::get('/checkout', fn() => view('pages.checkout'))->name('checkout');
-Route::get('/checkout/success/{orderNumber}', [CheckoutController::class, 'success'])->name('checkout.success');
-Route::get('/checkout/failure', [CheckoutController::class, 'failure'])->name('checkout.failure');
+// Cart & Checkout (requires authentication)
+Route::middleware('auth')->group(function () {
+    Route::get('/cart', fn() => view('pages.cart'))->name('cart');
+    Route::get('/checkout', fn() => view('pages.checkout'))->name('checkout');
+    Route::get('/checkout/success/{orderNumber}', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('/checkout/failure', [CheckoutController::class, 'failure'])->name('checkout.failure');
+});
 
 // PayPal payment callbacks (Phase 5-F)
 Route::get('/checkout/paypal/return/{orderNumber}', [CheckoutController::class, 'paypalReturn'])->name('checkout.paypal.return');

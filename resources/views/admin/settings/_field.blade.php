@@ -35,6 +35,21 @@
             </div>
             @endif
             <input type="file" name="{{ $fieldName }}" class="form-control-file" accept="image/*">
+        @elseif($setting->type === 'password')
+            {{-- Masked input with reveal toggle for API keys/secrets --}}
+            <div class="input-group">
+                <input type="password" name="{{ $fieldName }}" class="form-control" value="{{ $setting->value }}" autocomplete="off" id="pw_{{ $fieldName }}">
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-secondary" onclick="var el=document.getElementById('pw_{{ $fieldName }}'); el.type=el.type==='password'?'text':'password'; this.innerHTML=el.type==='password'?'<i class=\'fas fa-eye\'></i>':'<i class=\'fas fa-eye-slash\'></i>';">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            @if($setting->value)
+            <small class="text-muted mt-1 d-block"><i class="fas fa-check-circle text-success"></i> Key is configured</small>
+            @else
+            <small class="text-warning mt-1 d-block"><i class="fas fa-exclamation-triangle"></i> Not configured</small>
+            @endif
         @elseif($setting->type === 'select')
             @if($setting->key === 'mail.driver')
                 <select name="{{ $fieldName }}" class="form-control">
@@ -47,6 +62,16 @@
                     <option value="tls" {{ $setting->value === 'tls' ? 'selected' : '' }}>TLS</option>
                     <option value="ssl" {{ $setting->value === 'ssl' ? 'selected' : '' }}>SSL</option>
                     <option value="" {{ empty($setting->value) ? 'selected' : '' }}>None</option>
+                </select>
+            @elseif($setting->key === 'payment.stripe_mode')
+                <select name="{{ $fieldName }}" class="form-control">
+                    <option value="test" {{ $setting->value === 'test' ? 'selected' : '' }}>Test / Sandbox</option>
+                    <option value="live" {{ $setting->value === 'live' ? 'selected' : '' }}>Live / Production</option>
+                </select>
+            @elseif($setting->key === 'payment.paypal_mode')
+                <select name="{{ $fieldName }}" class="form-control">
+                    <option value="sandbox" {{ $setting->value === 'sandbox' ? 'selected' : '' }}>Sandbox (Testing)</option>
+                    <option value="live" {{ $setting->value === 'live' ? 'selected' : '' }}>Live (Production)</option>
                 </select>
             @else
                 <input type="text" name="{{ $fieldName }}" class="form-control" value="{{ $setting->value }}">

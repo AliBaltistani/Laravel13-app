@@ -13,7 +13,7 @@
 <tr>
     <td>@if($b->image)<img src="{{ Storage::url($b->image) }}" style="max-height:40px;border-radius:4px;">@else —@endif</td>
     <td><strong>{{ $b->title ?? 'Untitled' }}</strong>@if($b->subtitle)<br><small class="text-muted">{{ $b->subtitle }}</small>@endif</td>
-    <td><span class="badge badge-info">{{ $b->position }}</span></td>
+    <td>@php $posLabels = ['home-mid'=>'Homepage — Category Banners','home-instagram'=>'Homepage — Instagram Feed','shop-top'=>'Shop — Top Banner','shop-sidebar'=>'Shop — Sidebar Banner']; @endphp<span class="badge badge-info">{{ $posLabels[$b->position] ?? $b->position }}</span></td>
     <td>{{ $b->sort_order }}</td>
     <td>{!! $b->is_active ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-secondary">Inactive</span>' !!}</td>
     <td>

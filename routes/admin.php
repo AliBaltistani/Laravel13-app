@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\NewsletterController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\HomepageSectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,6 +70,9 @@ Route::post('customers/{user}/email', [CustomerController::class, 'sendEmail'])-
 
 // Coupons
 Route::resource('coupons', CouponController::class);
+Route::put('coupons/{coupon}/toggle', [CouponController::class, 'toggleStatus'])->name('coupons.toggle');
+Route::post('coupons/{coupon}/duplicate', [CouponController::class, 'duplicate'])->name('coupons.duplicate');
+Route::post('coupons/bulk-action', [CouponController::class, 'bulkAction'])->name('coupons.bulk');
 
 // Flash Sales
 Route::resource('flash-sales', FlashSaleController::class);
@@ -87,6 +91,20 @@ Route::post('comments/bulk-approve', [CommentController::class, 'bulkApprove'])-
 
 // CMS Pages
 Route::resource('pages', AdminPageController::class);
+Route::delete('pages/{page}/images/{image}', [AdminPageController::class, 'deleteImage'])->name('pages.delete-image');
+Route::delete('pages/{page}/sections/{section}', [AdminPageController::class, 'deleteSection'])->name('pages.delete-section');
+
+// Homepage Builder
+Route::prefix('homepage')->name('homepage.')->group(function () {
+    Route::get('/', [HomepageSectionController::class, 'index'])->name('index');
+    Route::get('{section}/edit', [HomepageSectionController::class, 'edit'])->name('edit');
+    Route::put('{section}', [HomepageSectionController::class, 'update'])->name('update');
+    Route::put('{section}/toggle', [HomepageSectionController::class, 'toggleActive'])->name('toggle');
+    Route::post('reorder', [HomepageSectionController::class, 'reorder'])->name('reorder');
+    Route::get('custom/create', [HomepageSectionController::class, 'createCustom'])->name('custom.create');
+    Route::post('custom', [HomepageSectionController::class, 'storeCustom'])->name('custom.store');
+    Route::delete('{section}', [HomepageSectionController::class, 'destroyCustom'])->name('custom.destroy');
+});
 
 // Banners
 Route::resource('banners', BannerController::class);

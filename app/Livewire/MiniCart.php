@@ -22,6 +22,13 @@ class MiniCart extends Component
     #[On('cartUpdated')]
     public function refreshCart()
     {
+        if (!Auth::check()) {
+            $this->cartItems = [];
+            $this->subtotal = 0;
+            $this->itemCount = 0;
+            return;
+        }
+
         $cart = app(CartService::class);
         $this->cartItems = $cart->getItems()->take(3)->toArray();
         $this->subtotal = $cart->getSubtotal();
@@ -31,6 +38,12 @@ class MiniCart extends Component
     #[On('addToCart')]
     public function handleAddToCart($productId = null)
     {
+        // Require authentication
+        if (!Auth::check()) {
+            $this->dispatch('notify', message: 'Please login to add items to your cart.', type: 'info');
+            return $this->redirect(route('login'), navigate: false);
+        }
+
         if ($productId) {
             $cart = app(CartService::class);
             $cart->addItem($productId, null, 1);

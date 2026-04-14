@@ -107,6 +107,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Artisan Route Token
+    |--------------------------------------------------------------------------
+    |
+    | Secret token used to protect the /artisan/* deployment routes.
+    | Set ARTISAN_ROUTE_TOKEN in your .env to a strong random string.
+    |
+    */
+
+    'artisan_route_token' => env('ARTISAN_ROUTE_TOKEN'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Maintenance Mode Driver
     |--------------------------------------------------------------------------
     |

@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Services\CartService;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class AddToCart extends Component
 {
@@ -43,6 +44,13 @@ class AddToCart extends Component
 
     public function addToCart()
     {
+        // Require authentication before adding to cart
+        if (!Auth::check()) {
+            session()->put('url.intended', url()->previous());
+            $this->dispatch('notify', message: 'Please login to add items to your cart.', type: 'info');
+            return $this->redirect(route('login'), navigate: false);
+        }
+
         $cart = app(CartService::class);
         $result = $cart->addItem($this->productId, $this->variantId, $this->quantity);
 

@@ -14,18 +14,19 @@ class CartService
 {
     /**
      * Get or create the current cart.
+     * Requires authentication — guests cannot have carts.
      */
     public function getCart(): Cart
     {
-        if (Auth::check()) {
-            return Cart::firstOrCreate(
-                ['user_id' => Auth::id()],
-                ['session_id' => Session::getId()]
-            );
+        if (!Auth::check()) {
+            // Return a transient empty cart for non-authenticated users
+            // This prevents errors in rendering but blocks all mutations
+            return new Cart(['session_id' => Session::getId()]);
         }
 
         return Cart::firstOrCreate(
-            ['session_id' => Session::getId(), 'user_id' => null]
+            ['user_id' => Auth::id()],
+            ['session_id' => Session::getId()]
         );
     }
 

@@ -10,7 +10,7 @@
 
     {{-- Tabs Navigation --}}
     <ul class="nav nav-tabs mb-0" role="tablist">
-        @php $groups = ['general','contact','appearance','home','seo','social','payment','shipping','mail','auth','legal','promo']; @endphp
+        @php $groups = ['general','contact','appearance','seo','social','payment','shipping','mail','auth','legal','promo']; @endphp
         @foreach($groups as $i => $group)
         <li class="nav-item">
             <a class="nav-link {{ $i === 0 ? 'active' : '' }}" data-toggle="tab" href="#tab-{{ $group }}">

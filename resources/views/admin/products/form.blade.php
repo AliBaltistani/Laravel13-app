@@ -273,6 +273,33 @@
                     <small class="text-muted">Hold Ctrl/Cmd to select multiple.</small>
                 </div>
             </div>
+
+            {{-- Homepage Sections --}}
+            @if($homepageSections->count())
+            <div class="admin-card mb-3">
+                <div class="card-header"><h5><i class="fas fa-home mr-1"></i> Homepage Placement</h5></div>
+                <div class="card-body">
+                    <p class="text-muted mb-2" style="font-size:12px;">Assign this product to specific homepage sections. Products assigned manually take priority over auto-generated lists.</p>
+                    @php
+                        $assignedSections = $isEdit ? $product->homepageSections->pluck('id')->toArray() : [];
+                    @endphp
+                    @foreach($homepageSections as $hSection)
+                    <div class="custom-control custom-checkbox mb-2">
+                        <input type="checkbox"
+                               class="custom-control-input"
+                               id="hp_section_{{ $hSection->id }}"
+                               name="homepage_sections[]"
+                               value="{{ $hSection->id }}"
+                               {{ in_array($hSection->id, old('homepage_sections', $assignedSections)) ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="hp_section_{{ $hSection->id }}">
+                            {{ $hSection->title }}
+                            <br><small class="text-muted">{{ ucfirst($hSection->type) }} · {{ $hSection->is_active ? 'Active' : 'Hidden' }}</small>
+                        </label>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </form>

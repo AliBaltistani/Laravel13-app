@@ -10,11 +10,9 @@ class SettingsSeeder extends Seeder
     public function run(): void
     {
         $settings = [
-            // General
+            // General (logo & favicon managed under Appearance tab)
             ['key' => 'general.site_name', 'value' => 'Porto Shop', 'group' => 'general', 'type' => 'text', 'label' => 'Site Name'],
             ['key' => 'general.site_tagline', 'value' => 'Online Shopping Store', 'group' => 'general', 'type' => 'text', 'label' => 'Site Tagline'],
-            ['key' => 'general.logo', 'value' => null, 'group' => 'general', 'type' => 'image', 'label' => 'Site Logo'],
-            ['key' => 'general.favicon', 'value' => null, 'group' => 'general', 'type' => 'image', 'label' => 'Favicon'],
             ['key' => 'general.footer_logo', 'value' => null, 'group' => 'general', 'type' => 'image', 'label' => 'Footer Logo'],
             ['key' => 'general.footer_about', 'value' => 'Porto is an optimized eCommerce theme built with quality and care.', 'group' => 'general', 'type' => 'textarea', 'label' => 'Footer About Text'],
             ['key' => 'general.copyright', 'value' => '© Porto eCommerce. All Rights Reserved.', 'group' => 'general', 'type' => 'text', 'label' => 'Copyright Text'],
@@ -29,8 +27,9 @@ class SettingsSeeder extends Seeder
             ['key' => 'contact.subjects', 'value' => '["General Inquiry","Order Support","Returns","Partnership"]', 'group' => 'contact', 'type' => 'json', 'label' => 'Contact Form Subjects'],
 
             // SEO
-            ['key' => 'seo.meta_title', 'value' => 'Porto - Online Shopping Store', 'group' => 'seo', 'type' => 'text', 'label' => 'Default Meta Title'],
-            ['key' => 'seo.meta_description', 'value' => 'Discover amazing products at Porto. Shop fashion, electronics, and more with fast delivery.', 'group' => 'seo', 'type' => 'textarea', 'label' => 'Default Meta Description'],
+            ['key' => 'seo.default_meta_title', 'value' => 'Porto - Online Shopping Store', 'group' => 'seo', 'type' => 'text', 'label' => 'Default Meta Title'],
+            ['key' => 'seo.default_meta_description', 'value' => 'Discover amazing products at Porto. Shop fashion, electronics, and more with fast delivery.', 'group' => 'seo', 'type' => 'textarea', 'label' => 'Default Meta Description'],
+            ['key' => 'seo.default_og_image', 'value' => null, 'group' => 'seo', 'type' => 'image', 'label' => 'Default OG Image', 'description' => 'Fallback image for social media sharing when no specific image is available.'],
             ['key' => 'seo.google_analytics_id', 'value' => '', 'group' => 'seo', 'type' => 'text', 'label' => 'Google Analytics ID'],
             ['key' => 'seo.google_verification', 'value' => '', 'group' => 'seo', 'type' => 'text', 'label' => 'Google Verification Tag'],
             ['key' => 'seo.robots_txt', 'value' => "User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /account/\nDisallow: /cart\nDisallow: /checkout\nSitemap: /sitemap.xml", 'group' => 'seo', 'type' => 'textarea', 'label' => 'Robots.txt Content'],
@@ -44,9 +43,14 @@ class SettingsSeeder extends Seeder
 
             // Payment
             ['key' => 'payment.stripe_enabled', 'value' => '0', 'group' => 'payment', 'type' => 'boolean', 'label' => 'Enable Stripe'],
+            ['key' => 'payment.stripe_mode', 'value' => 'test', 'group' => 'payment', 'type' => 'select', 'label' => 'Stripe Mode'],
             ['key' => 'payment.stripe_publishable_key', 'value' => '', 'group' => 'payment', 'type' => 'text', 'label' => 'Stripe Publishable Key'],
+            ['key' => 'payment.stripe_secret_key', 'value' => '', 'group' => 'payment', 'type' => 'password', 'label' => 'Stripe Secret Key'],
+            ['key' => 'payment.stripe_webhook_secret', 'value' => '', 'group' => 'payment', 'type' => 'password', 'label' => 'Stripe Webhook Secret'],
             ['key' => 'payment.paypal_enabled', 'value' => '0', 'group' => 'payment', 'type' => 'boolean', 'label' => 'Enable PayPal'],
             ['key' => 'payment.paypal_mode', 'value' => 'sandbox', 'group' => 'payment', 'type' => 'select', 'label' => 'PayPal Mode'],
+            ['key' => 'payment.paypal_client_id', 'value' => '', 'group' => 'payment', 'type' => 'text', 'label' => 'PayPal Client ID'],
+            ['key' => 'payment.paypal_secret', 'value' => '', 'group' => 'payment', 'type' => 'password', 'label' => 'PayPal Secret Key'],
             ['key' => 'payment.cod_enabled', 'value' => '1', 'group' => 'payment', 'type' => 'boolean', 'label' => 'Enable Cash on Delivery'],
             ['key' => 'payment.cod_instructions', 'value' => 'Pay with cash upon delivery.', 'group' => 'payment', 'type' => 'textarea', 'label' => 'COD Instructions'],
             ['key' => 'payment.bank_transfer_enabled', 'value' => '0', 'group' => 'payment', 'type' => 'boolean', 'label' => 'Enable Bank Transfer'],
@@ -73,25 +77,7 @@ class SettingsSeeder extends Seeder
             // Promo
             ['key' => 'promo.bar_enabled', 'value' => '1', 'group' => 'promo', 'type' => 'boolean', 'label' => 'Enable Promo Bar'],
             ['key' => 'promo.bar_text', 'value' => 'GET YOUR $50 COUPON NOW', 'group' => 'promo', 'type' => 'text', 'label' => 'Promo Bar Text'],
-            ['key' => 'promo.bar_bg_color', 'value' => '#0088cc', 'group' => 'promo', 'type' => 'color', 'label' => 'Promo Bar Background Color'],
-            ['key' => 'promo.bar_link1_label', 'value' => "Women's", 'group' => 'promo', 'type' => 'text', 'label' => 'Promo Link 1 Label'],
-            ['key' => 'promo.bar_link1_url', 'value' => '/shop/category/women', 'group' => 'promo', 'type' => 'text', 'label' => 'Promo Link 1 URL'],
-            ['key' => 'promo.bar_link2_label', 'value' => "Men's", 'group' => 'promo', 'type' => 'text', 'label' => 'Promo Link 2 Label'],
-            ['key' => 'promo.bar_link2_url', 'value' => '/shop/category/men', 'group' => 'promo', 'type' => 'text', 'label' => 'Promo Link 2 URL'],
-
-            // Home sections
-            ['key' => 'home.show_featured_products', 'value' => '1', 'group' => 'promo', 'type' => 'boolean', 'label' => 'Show Featured Products'],
-            ['key' => 'home.show_new_arrivals', 'value' => '1', 'group' => 'promo', 'type' => 'boolean', 'label' => 'Show New Arrivals'],
-            ['key' => 'home.show_flash_sale', 'value' => '1', 'group' => 'promo', 'type' => 'boolean', 'label' => 'Show Flash Sale'],
-            ['key' => 'home.show_brands', 'value' => '1', 'group' => 'promo', 'type' => 'boolean', 'label' => 'Show Brands'],
-            ['key' => 'home.show_testimonials', 'value' => '1', 'group' => 'promo', 'type' => 'boolean', 'label' => 'Show Testimonials'],
-            ['key' => 'home.featured_products_limit', 'value' => '8', 'group' => 'promo', 'type' => 'number', 'label' => 'Featured Products Limit'],
-            ['key' => 'home.new_arrivals_limit', 'value' => '8', 'group' => 'promo', 'type' => 'number', 'label' => 'New Arrivals Limit'],
-            ['key' => 'home.featured_title', 'value' => 'Featured Products', 'group' => 'promo', 'type' => 'text', 'label' => 'Featured Section Title'],
-            ['key' => 'home.new_arrivals_title', 'value' => 'New Arrivals', 'group' => 'promo', 'type' => 'text', 'label' => 'New Arrivals Section Title'],
-
-            // Footer
-            ['key' => 'footer.service_links', 'value' => '[{"label":"Help & FAQs","url":"/page/faq"},{"label":"Order Tracking","url":"/account/orders"},{"label":"Shipping & Delivery","url":"/page/shipping"},{"label":"Returns","url":"/page/returns"}]', 'group' => 'footer', 'type' => 'json', 'label' => 'Footer Service Links'],
+            ['key' => 'promo.bar_note', 'value' => '', 'group' => 'promo', 'type' => 'text', 'label' => 'Promo Bar Note', 'description' => 'Optional smaller text below the main promo text.'],
 
             // Product tabs
             ['key' => 'product.tab_shipping_content', 'value' => '<p>We deliver to over 100 countries around the world. Standard shipping takes 5-10 business days.</p>', 'group' => 'general', 'type' => 'textarea', 'label' => 'Shipping Tab Content'],
@@ -103,9 +89,6 @@ class SettingsSeeder extends Seeder
 
             // Blog
             ['key' => 'blog.auto_approve_comments', 'value' => '0', 'group' => 'general', 'type' => 'boolean', 'label' => 'Auto Approve Comments'],
-
-            // Google OAuth
-            ['key' => 'google_oauth_enabled', 'value' => '0', 'group' => 'general', 'type' => 'boolean', 'label' => 'Enable Google OAuth'],
 
             // Newsletter
             ['key' => 'footer.newsletter_title', 'value' => 'Subscribe Newsletter', 'group' => 'footer', 'type' => 'text', 'label' => 'Newsletter Title'],

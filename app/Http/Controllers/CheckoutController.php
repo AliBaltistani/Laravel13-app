@@ -56,6 +56,9 @@ class CheckoutController extends Controller
                 ->with('checkout_error', 'Invalid PayPal session.');
         }
 
+        $clientId = Setting::get('payment.paypal_client_id') ?: config('services.paypal.client_id');
+        $secret = Setting::get('payment.paypal_secret') ?: config('services.paypal.secret');
+
         $paymentService = app(PaymentService::class);
         $result = $paymentService->capturePayPalOrder($order, $paypalOrderId);
 
@@ -93,7 +96,31 @@ class CheckoutController extends Controller
     {
         $payload = $request->all();
 
-        // Optionally verify webhook signature with Stripe signing secret
+        // Verify webhook signature if secret is configured
+        $webhookSecret = \App\Models\Setting::get('payment.stripe_webhook_secret');
+        if ($webhookSecret) {
+            $sigHeader = $request->header('Stripe-Signature');
+            try {
+                $rawPayload = $request->getContent();
+                // Manual signature verification without Stripe SDK
+                $timestamp = null;
+                $signature = null;
+                foreach (explode(',', $sigHeader ?? '') as $part) {
+                    [$key, $val] = explode('=', trim($part), 2);
+                    if ($key === 't') $timestamp = $val;
+                    if ($key === 'v1') $signature = $val;
+                }
+                if ($timestamp && $signature) {
+                    $expected = hash_hmac('sha256', "{$timestamp}.{$rawPayload}", $webhookSecret);
+                    if (!hash_equals($expected, $signature)) {
+                        return response()->json(['error' => 'Invalid signature'], 400);
+                    }
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('Stripe webhook signature verification failed', ['error' => $e->getMessage()]);
+            }
+        }
+
         $paymentService = app(PaymentService::class);
         $paymentService->handleStripeWebhook($payload);
 

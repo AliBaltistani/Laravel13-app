@@ -446,7 +446,7 @@
     });
     </script>
 
-    @livewire('newsletter-popup')
+    {{-- Newsletter popup removed — use dedicated coupon management instead --}}
 
     @stack('scripts')
 </body>

@@ -597,6 +597,15 @@
 
             @can('manage_pages')
             <div class="nav-item">
+                <a href="{{ route('admin.homepage.index') }}" class="nav-link {{ request()->routeIs('admin.homepage*') ? 'active' : '' }}">
+                    <i class="fas fa-home"></i>
+                    <span>Homepage Builder</span>
+                </a>
+            </div>
+            @endcan
+
+            @can('manage_pages')
+            <div class="nav-item">
                 <a href="{{ route('admin.pages.index') }}" class="nav-link {{ request()->routeIs('admin.pages*') ? 'active' : '' }}">
                     <i class="fas fa-file-alt"></i>
                     <span>Pages</span>
