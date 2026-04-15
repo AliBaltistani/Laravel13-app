@@ -467,6 +467,13 @@
 
     @livewireStyles
     @stack('styles')
+
+    {{-- Custom CSS --}}
+    @if(\App\Models\Setting::get('custom_code.css'))
+        <style>
+            {!! \App\Models\Setting::get('custom_code.css') !!}
+        </style>
+    @endif
 </head>
 
 <body class="admin-body">
@@ -785,5 +792,12 @@
 
     @livewireScripts
     @stack('scripts')
+
+    {{-- Custom JS --}}
+    @if(\App\Models\Setting::get('custom_code.js'))
+        <script>
+            {!! \App\Models\Setting::get('custom_code.js') !!}
+        </script>
+    @endif
 </body>
 </html>

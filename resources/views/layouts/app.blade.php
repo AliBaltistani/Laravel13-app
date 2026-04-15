@@ -285,6 +285,13 @@
             padding: 15px;
         }
     </style>
+
+    {{-- Custom CSS --}}
+    @if(\App\Models\Setting::get('custom_code.css'))
+        <style>
+            {!! \App\Models\Setting::get('custom_code.css') !!}
+        </style>
+    @endif
 </head>
 
 <body>
@@ -449,5 +456,12 @@
     {{-- Newsletter popup removed — use dedicated coupon management instead --}}
 
     @stack('scripts')
+
+    {{-- Custom JS --}}
+    @if(\App\Models\Setting::get('custom_code.js'))
+        <script>
+            {!! \App\Models\Setting::get('custom_code.js') !!}
+        </script>
+    @endif
 </body>
 </html>
