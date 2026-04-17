@@ -778,12 +778,12 @@
 
     /* ── Stripe ── */
     .ck-stripe-wrapper {
-        margin: -4px 0 10px;
+        /* margin: -4px 0 10px; */
         padding: 20px;
         background: var(--ink-50);
         border: 1.5px solid var(--ink-100);
         border-radius: 0 0 var(--radius-md) var(--radius-md);
-        margin-left: 34px;
+        margin-left: 0px;
     }
     .ck-stripe-loading {
         text-align: center;
