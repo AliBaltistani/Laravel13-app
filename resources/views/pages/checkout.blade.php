@@ -5,19 +5,30 @@
 @section('content')
 <main class="main">
     <div class="container checkout-container">
-        {{-- Modern Progress Bar --}}
-        <div class="checkout-progress-wrapper">
-            <ul class="checkout-progress-bar d-flex justify-content-center flex-wrap">
-                <li>
-                    <a href="{{ url('/cart') }}"><i class="fas fa-shopping-cart mr-1"></i> Shopping Cart</a>
-                </li>
-                <li class="active">
-                    <a href="{{ url('/checkout') }}"><i class="fas fa-credit-card mr-1"></i> Checkout</a>
-                </li>
-                <li class="disabled">
-                    <a href="#"><i class="fas fa-check-circle mr-1"></i> Order Complete</a>
-                </li>
-            </ul>
+        {{-- Modern Step Indicator --}}
+        <div class="ck-progress-wrapper">
+            <div class="ck-progress-bar">
+                <a href="{{ url('/cart') }}" class="ck-progress-step completed">
+                    <span class="ck-progress-step__circle">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span class="ck-progress-step__label">Cart</span>
+                </a>
+                <div class="ck-progress-line active"></div>
+                <div class="ck-progress-step active">
+                    <span class="ck-progress-step__circle">
+                        <span>2</span>
+                    </span>
+                    <span class="ck-progress-step__label">Checkout</span>
+                </div>
+                <div class="ck-progress-line"></div>
+                <div class="ck-progress-step">
+                    <span class="ck-progress-step__circle">
+                        <span>3</span>
+                    </span>
+                    <span class="ck-progress-step__label">Confirmation</span>
+                </div>
+            </div>
         </div>
 
         @livewire('checkout-page')
@@ -27,404 +38,1156 @@
 
 @push('styles')
 <style>
-    /* ═══ Modern Checkout Styles ═══ */
+    /* ════════════════════════════════════════════════════════════
+       DEVOGUE CHECKOUT — Premium Accordion Checkout Redesign
+       ════════════════════════════════════════════════════════════ */
+
     .checkout-container {
-        padding-bottom: 60px;
+        padding-top: 10px;
+        padding-bottom: 80px;
+        max-width: 1200px;
     }
 
-    .checkout-progress-wrapper {
-        margin-top: 20px;
-        margin-bottom: 35px;
+    /* ── Progress Bar ── */
+    .ck-progress-wrapper {
+        margin-top: 36px;
+        margin-bottom: 36px;
+        padding: 0 20px;
     }
-
-    .checkout-progress-bar {
-        font-size: 24px;
-        font-weight: 700;
-        line-height: 1.2;
-        margin: 0;
-        list-style: none;
-        padding: 0;
-        color: #dbdbdb;
-    }
-    
-    .checkout-progress-bar li {
-        position: relative;
-        padding: 0 25px;
-        transition: color .3s ease;
-    }
-    
-    .checkout-progress-bar li::after {
-        color: inherit;
-        content: '\203A';
-        font-size: 32px;
-        line-height: 1;
-        position: absolute;
-        right: -8px;
-        top: 50%;
-        margin-top: -16px;
-    }
-    
-    .checkout-progress-bar li:last-child::after {
-        display: none;
-    }
-    
-    .checkout-progress-bar li a {
-        color: inherit;
-        text-decoration: none;
-    }
-    
-    .checkout-progress-bar li.active, 
-    .checkout-progress-bar li:hover {
-        color: #222;
-    }
-    
-    .checkout-progress-bar li.disabled {
-        pointer-events: none;
-        opacity: 0.8;
-    }
-
-    .checkout-progress-bar li.active a i {
-        color: #667eea;
-    }
-
-    /* ── Billing Section ── */
-    .checkout-billing-card {
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 2px 20px rgba(0,0,0,0.06);
-        padding: 30px;
-        margin-bottom: 24px;
-        border: 1px solid #f0f0f0;
-        transition: box-shadow 0.3s ease;
-    }
-    .checkout-billing-card:hover {
-        box-shadow: 0 4px 30px rgba(0,0,0,0.09);
-    }
-    .checkout-billing-card .section-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 22px;
-        padding-bottom: 14px;
-        border-bottom: 2px solid #f5f6f8;
-    }
-    .checkout-billing-card .section-header .section-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: 10px;
+    .ck-progress-bar {
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-right: 14px;
-        font-size: 18px;
+        gap: 0;
+        max-width: 480px;
+        margin: 0 auto;
+    }
+    .ck-progress-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none !important;
         flex-shrink: 0;
     }
-    .checkout-billing-card .section-header .section-icon.billing {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: #fff;
-    }
-    .checkout-billing-card .section-header .section-icon.shipping-icon {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: #fff;
-    }
-    .checkout-billing-card .section-header .section-icon.notes-icon {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        color: #fff;
-    }
-    .checkout-billing-card .section-header h3 {
-        margin: 0;
-        font-size: 18px;
-        font-weight: 700;
-        color: #1a1a2e;
-        letter-spacing: 0.3px;
-    }
-    .checkout-billing-card .section-header p {
-        margin: 2px 0 0;
-        font-size: 12.5px;
-        color: #999;
-    }
-
-    /* ── Form Enhancements ── */
-    .checkout-billing-card .form-control {
-        border-radius: 8px;
-        border: 1.5px solid #e8e8ef;
-        padding: 10px 14px;
+    .ck-progress-step__circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-sans);
         font-size: 14px;
-        transition: border-color 0.25s, box-shadow 0.25s;
-        background: #fafbfc;
+        font-weight: 700;
+        background: var(--ink-100);
+        color: var(--ink-300);
+        border: 2px solid var(--ink-100);
+        transition: all 0.3s ease;
     }
-    .checkout-billing-card .form-control:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102,126,234,0.12);
-        background: #fff;
+    .ck-progress-step.active .ck-progress-step__circle {
+        background: var(--dv-navy);
+        border-color: var(--dv-navy);
+        color: #fff;
+        box-shadow: 0 4px 14px rgba(43, 54, 116, 0.3);
     }
-    .checkout-billing-card label {
-        font-size: 13px;
+    .ck-progress-step.completed .ck-progress-step__circle {
+        background: #16a34a;
+        border-color: #16a34a;
+        color: #fff;
+    }
+    .ck-progress-step__label {
+        font-family: var(--font-sans);
+        font-size: 11px;
         font-weight: 600;
-        color: #444;
-        margin-bottom: 5px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: var(--ink-300);
     }
-    .checkout-billing-card label abbr.required {
-        color: #f5576c;
-        text-decoration: none;
+    .ck-progress-step.active .ck-progress-step__label {
+        color: var(--dv-navy);
+        font-weight: 700;
     }
-    .checkout-billing-card textarea.form-control {
-        min-height: 100px;
+    .ck-progress-step.completed .ck-progress-step__label {
+        color: #16a34a;
+    }
+    .ck-progress-line {
+        flex: 1;
+        height: 3px;
+        background: var(--ink-100);
+        margin: 0 6px;
+        border-radius: 2px;
+        margin-bottom: 26px;
+        transition: background 0.3s ease;
+    }
+    .ck-progress-line.active {
+        background: linear-gradient(90deg, #16a34a, var(--dv-navy));
     }
 
-    /* ── Saved Address Cards ── */
-    .saved-address-card {
-        border-radius: 10px;
-        border: 2px solid #eee;
-        padding: 14px;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        background: #fafbfc;
+    /* ── Layout ── */
+    .ck-layout {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 32px;
+        align-items: start;
     }
-    .saved-address-card:hover {
-        border-color: #667eea;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102,126,234,0.15);
+
+    /* ── Empty State ── */
+    .ck-empty-state {
+        text-align: center;
+        padding: 80px 20px;
     }
-    .saved-address-card.selected {
-        border-color: #667eea;
-        background: linear-gradient(135deg, rgba(102,126,234,0.05) 0%, rgba(118,75,162,0.05) 100%);
+    .ck-empty-state__icon {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: var(--ink-100);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
     }
-    .saved-address-card .addr-name {
+    .ck-empty-state__icon i {
+        font-size: 40px;
+        color: var(--ink-300);
+    }
+    .ck-empty-state h3 {
+        font-family: var(--font-serif);
+        font-size: 26px;
         font-weight: 700;
-        color: #1a1a2e;
+        color: var(--dv-navy);
+        margin-bottom: 10px;
+    }
+    .ck-empty-state p {
+        color: var(--ink-500);
+        font-size: 15px;
+        line-height: 1.7;
+        margin-bottom: 24px;
+    }
+
+    /* ── Alert ── */
+    .ck-alert {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 16px 20px;
+        border-radius: var(--radius-lg);
+        margin-bottom: 24px;
+        animation: ck-slideDown 0.3s ease;
+    }
+    .ck-alert--error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+    }
+    .ck-alert__icon {
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+    .ck-alert__body {
+        flex: 1;
         font-size: 14px;
     }
-    .saved-address-card .addr-detail {
-        font-size: 12.5px;
-        color: #777;
-        line-height: 1.5;
+    .ck-alert__close {
+        background: none;
+        border: none;
+        color: #991b1b;
+        cursor: pointer;
+        padding: 4px;
+        opacity: 0.5;
+        transition: opacity 0.2s;
+    }
+    .ck-alert__close:hover { opacity: 1; }
+
+    /* ══════════════════════════════════════════════════════
+       ACCORDION STEPS
+       ══════════════════════════════════════════════════════ */
+    .ck-accordion {
+        background: var(--surface);
+        border: 2px solid var(--ink-100);
+        border-radius: var(--radius-lg);
+        margin-bottom: 16px;
+        overflow: hidden;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .ck-accordion.is-active {
+        border-color: var(--dv-navy);
+        box-shadow: 0 4px 24px rgba(43, 54, 116, 0.08);
+    }
+    .ck-accordion.is-completed {
+        border-color: #bbf7d0;
+    }
+    .ck-accordion.is-completed .ck-accordion__header {
+        background: #f0fdf4;
     }
 
-    /* ── Order Summary Card ── */
-    .order-summary-card {
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 2px 20px rgba(0,0,0,0.06);
-        padding: 28px;
-        border: 1px solid #f0f0f0;
-        position: sticky;
-        top: 80px;
+    /* Accordion Header */
+    .ck-accordion__header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        width: 100%;
+        padding: 20px 24px;
+        border: none;
+        background: var(--ink-50);
+        cursor: pointer;
+        transition: background 0.2s ease;
+        text-align: left;
     }
-    .order-summary-card h3.order-title {
-        font-size: 16px;
+    .ck-accordion__header:hover {
+        background: var(--ink-100);
+    }
+    .ck-accordion.is-active .ck-accordion__header {
+        background: linear-gradient(135deg, rgba(43,54,116,0.03), rgba(43,54,116,0.06));
+    }
+
+    .ck-accordion__step-badge {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-sans);
+        font-size: 15px;
         font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        color: #1a1a2e;
-        margin-bottom: 18px;
-        padding-bottom: 12px;
-        border-bottom: 2px solid #f5f6f8;
+        background: var(--ink-100);
+        color: var(--ink-500);
+        flex-shrink: 0;
+        transition: all 0.3s ease;
     }
-    .order-summary-card .order-item {
+    .ck-accordion.is-active .ck-accordion__step-badge {
+        background: var(--dv-navy);
+        color: #fff;
+        box-shadow: 0 4px 14px rgba(43, 54, 116, 0.25);
+    }
+    .ck-accordion__step-badge.completed {
+        background: #16a34a !important;
+        color: #fff !important;
+    }
+
+    .ck-accordion__title-wrap {
+        flex: 1;
+    }
+    .ck-accordion__title {
+        font-family: var(--font-sans);
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--ink-900);
+        margin: 0;
+        line-height: 1.3;
+    }
+    .ck-accordion__subtitle {
+        font-size: 13px;
+        color: var(--ink-500);
+        margin: 2px 0 0;
+        font-weight: 400;
+    }
+
+    .ck-accordion__toggle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ink-300);
+        transition: all 0.3s ease;
+    }
+    .ck-accordion.is-active .ck-accordion__toggle {
+        transform: rotate(180deg);
+        color: var(--dv-navy);
+    }
+
+    /* Accordion Body */
+    .ck-accordion__content {
+        padding: 24px 28px 28px;
+    }
+
+    .ck-accordion__footer {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 0;
-        border-bottom: 1px solid #f5f5f5;
-    }
-    .order-summary-card .order-item:last-child {
-        border-bottom: none;
-    }
-    .order-summary-card .order-item .item-name {
-        font-size: 13.5px;
-        color: #333;
-        font-weight: 500;
-        flex: 1;
-    }
-    .order-summary-card .order-item .item-name .item-qty {
-        display: inline-block;
-        background: #667eea;
-        color: #fff;
-        border-radius: 4px;
-        font-size: 11px;
-        padding: 1px 6px;
-        margin-left: 4px;
-        font-weight: 600;
-    }
-    .order-summary-card .order-item .item-price {
-        font-weight: 600;
-        color: #1a1a2e;
-        font-size: 13.5px;
-        white-space: nowrap;
-        margin-left: 12px;
+        margin-top: 28px;
+        padding-top: 20px;
+        border-top: 1px solid var(--ink-100);
     }
 
-    /* ── Totals ── */
-    .order-totals-table {
-        width: 100%;
-        margin-top: 14px;
-        border-top: 2px solid #f0f0f0;
+    /* ══════════════════════════════════════════════════════
+       FORM ELEMENTS
+       ══════════════════════════════════════════════════════ */
+    .ck-form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
     }
-    .order-totals-table td {
-        padding: 10px 0;
-        font-size: 14px;
+    .ck-form-row--3 {
+        grid-template-columns: 1fr 1fr 1fr;
     }
-    .order-totals-table .label-col {
-        color: #666;
-        font-weight: 500;
+    .ck-form-group {
+        margin-bottom: 18px;
     }
-    .order-totals-table .value-col {
-        text-align: right;
-        font-weight: 600;
-        color: #333;
-    }
-    .order-totals-table .total-row td {
-        padding-top: 14px;
-        border-top: 2px solid #1a1a2e;
-        font-size: 17px;
-        font-weight: 800;
-        color: #1a1a2e;
-    }
-
-    /* ── Shipping Methods ── */
-    .shipping-methods-section {
-        background: #f8f9fb;
-        border-radius: 10px;
-        padding: 16px;
-        margin-top: 14px;
-    }
-    .shipping-methods-section h5 {
+    .ck-label {
+        display: block;
+        font-family: var(--font-sans);
         font-size: 13px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        color: #888;
-        margin-bottom: 10px;
-    }
-    .shipping-method-option {
-        display: flex;
-        align-items: flex-start;
-        padding: 8px 12px;
-        border-radius: 8px;
-        margin-bottom: 6px;
-        transition: background 0.2s;
-        cursor: pointer;
-    }
-    .shipping-method-option:hover {
-        background: rgba(102,126,234,0.06);
-    }
-    .shipping-method-option:last-child {
-        margin-bottom: 0;
-    }
-    .shipping-method-option .method-name {
         font-weight: 600;
-        font-size: 13.5px;
-        color: #333;
+        color: var(--ink-700);
+        margin-bottom: 7px;
+        letter-spacing: 0.2px;
     }
-    .shipping-method-option .method-price {
+    .ck-label i {
+        margin-right: 4px;
+        color: var(--dv-navy);
+        font-size: 12px;
+    }
+    .ck-required {
+        color: #ef4444;
         font-weight: 700;
-        color: #667eea;
-        margin-left: 6px;
     }
-    .shipping-method-option .method-days {
-        font-size: 11.5px;
-        color: #999;
+    .ck-optional {
+        color: var(--ink-300);
+        font-weight: 400;
+        font-size: 12px;
     }
-
-    /* ── Payment Methods ── */
-    .payment-methods-section {
-        margin-top: 20px;
-    }
-    .payment-methods-section h4 {
-        font-size: 14px;
-        font-weight: 800;
+    .ck-field-label {
+        display: block;
+        font-family: var(--font-sans);
+        font-size: 11px;
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1px;
-        color: #1a1a2e;
-        margin-bottom: 14px;
+        color: var(--ink-500);
+        margin-bottom: 12px;
     }
-    .payment-option {
-        border: 1.5px solid #eee;
-        border-radius: 10px;
-        padding: 14px 16px;
-        margin-bottom: 8px;
-        transition: all 0.25s;
-        cursor: pointer;
-    }
-    .payment-option:hover,
-    .payment-option.selected {
-        border-color: #667eea;
-        background: rgba(102,126,234,0.03);
-    }
-    .payment-option label {
-        margin-bottom: 0;
-        cursor: pointer;
-        width: 100%;
-    }
-    .payment-option .payment-label {
-        font-weight: 700;
-        font-size: 14px;
-        color: #1a1a2e;
-    }
-    .payment-option .payment-desc {
-        font-size: 12px;
-        color: #999;
-        margin-top: 2px;
+    .ck-field-label i {
+        color: var(--dv-orange);
+        margin-right: 4px;
     }
 
-    /* ── Place Order Button ── */
-    .btn-place-order-modern {
+    .ck-input-wrap {
+        position: relative;
+    }
+    .ck-input-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--ink-300);
+        font-size: 14px;
+        pointer-events: none;
+        transition: color 0.2s;
+    }
+    .ck-input-wrap:focus-within .ck-input-icon {
+        color: var(--dv-navy);
+    }
+
+    .ck-input {
         display: block;
         width: 100%;
-        padding: 15px;
-        border: none;
-        border-radius: 10px;
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-        color: #fff;
-        font-size: 15px;
-        font-weight: 700;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-top: 20px;
-        position: relative;
-        overflow: hidden;
+        padding: 12px 14px 12px 42px;
+        font-family: var(--font-sans);
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--ink-900);
+        background: var(--ink-50);
+        border: 1.5px solid var(--ink-100);
+        border-radius: var(--radius-md);
+        outline: none;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
     }
-    .btn-place-order-modern:hover:not(:disabled) {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102,126,234,0.35);
-        color: #fff;
+    .ck-input:focus {
+        border-color: var(--dv-navy);
+        box-shadow: 0 0 0 4px rgba(43, 54, 116, 0.08);
+        background: var(--surface);
     }
-    .btn-place-order-modern:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
+    .ck-input.is-invalid {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.08);
     }
-    .btn-place-order-modern i {
-        margin-left: 8px;
+    .ck-input::placeholder {
+        color: var(--ink-300);
+        font-weight: 400;
     }
 
-    /* ── Secure Badge ── */
-    .secure-badge {
+    .ck-textarea {
+        display: block;
+        width: 100%;
+        padding: 14px 16px;
+        font-family: var(--font-sans);
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--ink-900);
+        background: var(--ink-50);
+        border: 1.5px solid var(--ink-100);
+        border-radius: var(--radius-md);
+        outline: none;
+        min-height: 100px;
+        resize: vertical;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+    .ck-textarea:focus {
+        border-color: var(--dv-navy);
+        box-shadow: 0 0 0 4px rgba(43, 54, 116, 0.08);
+        background: var(--surface);
+    }
+
+    .ck-error {
+        display: block;
+        font-size: 12px;
+        color: #ef4444;
+        margin-top: 5px;
+        font-weight: 500;
+    }
+    .ck-hint {
+        display: block;
+        font-size: 12px;
+        color: var(--ink-500);
+        margin-top: 6px;
+    }
+    .ck-hint i {
+        margin-right: 3px;
+        color: var(--dv-navy);
+    }
+
+    /* ── Custom Radio ── */
+    .ck-radio-input { display: none; }
+    .ck-radio {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--ink-300);
+        border-radius: 50%;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+    .ck-radio.checked,
+    .ck-radio-input:checked + .ck-radio {
+        border-color: var(--dv-navy);
+    }
+    .ck-radio.checked::after,
+    .ck-radio-input:checked + .ck-radio::after {
+        content: '';
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--dv-navy);
+    }
+
+    /* ── Buttons ── */
+    .ck-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        font-family: var(--font-sans);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.25s ease;
+        border: 2px solid transparent;
+        text-decoration: none !important;
+    }
+    .ck-btn--primary {
+        background: var(--dv-navy);
+        color: #fff;
+        border-color: var(--dv-navy);
+    }
+    .ck-btn--primary:hover {
+        background: var(--dv-navy-light);
+        border-color: var(--dv-navy-light);
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(43, 54, 116, 0.25);
+    }
+    .ck-btn--ghost {
+        background: transparent;
+        color: var(--ink-500);
+        border-color: var(--ink-100);
+    }
+    .ck-btn--ghost:hover {
+        background: var(--ink-100);
+        color: var(--ink-700);
+    }
+
+    /* ══════════════════════════════════════════════════════
+       SAVED ADDRESSES
+       ══════════════════════════════════════════════════════ */
+    .ck-saved-addresses {
+        margin-bottom: 24px;
+    }
+    .ck-saved-addresses__grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    .ck-saved-addr {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+        border: 2px solid var(--ink-100);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.25s ease;
+        background: var(--surface);
+    }
+    .ck-saved-addr:hover {
+        border-color: var(--dv-navy);
+        box-shadow: 0 4px 12px rgba(43, 54, 116, 0.08);
+    }
+    .ck-saved-addr.is-selected {
+        border-color: var(--dv-navy);
+        background: rgba(43, 54, 116, 0.02);
+    }
+    .ck-saved-addr__radio {
+        padding-top: 2px;
+    }
+    .ck-saved-addr__name {
+        font-family: var(--font-sans);
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--ink-900);
+    }
+    .ck-saved-addr__detail {
+        font-size: 12.5px;
+        color: var(--ink-500);
+        line-height: 1.5;
+        margin-top: 2px;
+    }
+    .ck-saved-addr__badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 6px;
+        padding: 2px 10px;
+        background: linear-gradient(135deg, var(--dv-navy), var(--dv-navy-light));
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        border-radius: var(--radius-pill);
+        letter-spacing: 0.5px;
+    }
+    .ck-saved-addr__badge i {
+        font-size: 8px;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       SHIP TO DIFFERENT ADDRESS
+       ══════════════════════════════════════════════════════ */
+    .ck-ship-toggle {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    .ck-ship-toggle__option {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 18px;
+        border: 2px solid var(--ink-100);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.25s ease;
+        background: var(--surface);
+    }
+    .ck-ship-toggle__option:hover {
+        border-color: var(--dv-navy);
+    }
+    .ck-ship-toggle__option.is-active {
+        border-color: var(--dv-navy);
+        background: rgba(43, 54, 116, 0.02);
+    }
+    .ck-ship-toggle__option strong {
+        display: block;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--ink-900);
+        margin-bottom: 2px;
+    }
+    .ck-ship-toggle__option strong i {
+        margin-right: 6px;
+        color: var(--dv-navy);
+    }
+    .ck-ship-toggle__option p {
+        font-size: 12.5px;
+        color: var(--ink-500);
+        margin: 0;
+    }
+
+    /* ── Notes Section ── */
+    .ck-notes-section {
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid var(--ink-100);
+    }
+
+    /* ══════════════════════════════════════════════════════
+       SHIPPING METHOD CARDS
+       ══════════════════════════════════════════════════════ */
+    .ck-section-block {}
+    .ck-section-label {
+        font-family: var(--font-sans);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--ink-500);
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .ck-section-label i {
+        color: var(--dv-navy);
+        font-size: 14px;
+    }
+
+    .ck-shipping-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 16px 20px;
+        border: 2px solid var(--ink-100);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.25s ease;
+        background: var(--surface);
+        margin-bottom: 10px;
+    }
+    .ck-shipping-card:hover {
+        border-color: var(--dv-navy);
+        background: rgba(43, 54, 116, 0.01);
+    }
+    .ck-shipping-card.is-selected {
+        border-color: var(--dv-navy);
+        background: rgba(43, 54, 116, 0.02);
+        box-shadow: 0 2px 8px rgba(43, 54, 116, 0.06);
+    }
+    .ck-shipping-card__info {
+        flex: 1;
+    }
+    .ck-shipping-card__name {
+        font-family: var(--font-sans);
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--ink-900);
+    }
+    .ck-shipping-card__eta {
+        font-size: 12px;
+        color: var(--ink-500);
+        margin-top: 2px;
+    }
+    .ck-shipping-card__eta i {
+        margin-right: 3px;
+    }
+    .ck-shipping-card__price {
+        font-family: var(--font-sans);
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--dv-navy);
+        white-space: nowrap;
+    }
+    .ck-free-badge {
+        display: inline-block;
+        padding: 3px 12px;
+        background: #dcfce7;
+        color: #16a34a;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        border-radius: var(--radius-pill);
+    }
+    .ck-free-badge-sm {
+        color: #16a34a;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       PAYMENT METHOD CARDS
+       ══════════════════════════════════════════════════════ */
+    .ck-payment-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 18px 20px;
+        border: 2px solid var(--ink-100);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.25s ease;
+        background: var(--surface);
+        margin-bottom: 10px;
+    }
+    .ck-payment-card:hover {
+        border-color: var(--dv-navy);
+    }
+    .ck-payment-card.is-selected {
+        border-color: var(--dv-navy);
+        background: rgba(43, 54, 116, 0.02);
+        box-shadow: 0 2px 8px rgba(43, 54, 116, 0.06);
+    }
+    .ck-payment-card__icon {
+        width: 42px;
+        height: 42px;
+        border-radius: var(--radius-md);
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 6px;
-        margin-top: 14px;
-        font-size: 12px;
-        color: #aaa;
+        font-size: 20px;
+        flex-shrink: 0;
+        background: var(--ink-50);
+        color: var(--dv-navy);
+        transition: all 0.25s;
     }
-    .secure-badge i {
-        color: #27ae60;
+    .ck-payment-card.is-selected .ck-payment-card__icon {
+        background: var(--dv-navy);
+        color: #fff;
+    }
+    .ck-payment-card__info {
+        flex: 1;
+    }
+    .ck-payment-card__name {
+        font-family: var(--font-sans);
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--ink-900);
+    }
+    .ck-payment-card__desc {
+        font-size: 12.5px;
+        color: var(--ink-500);
+        margin-top: 3px;
+        line-height: 1.5;
     }
 
-    /* ── Animations ── */
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(15px); }
+    .ck-no-payment {
+        text-align: center;
+        padding: 24px;
+        color: var(--ink-500);
+    }
+    .ck-no-payment i {
+        font-size: 28px;
+        color: var(--dv-orange);
+        margin-bottom: 10px;
+    }
+
+    /* ── Stripe ── */
+    .ck-stripe-wrapper {
+        margin: -4px 0 10px;
+        padding: 20px;
+        background: var(--ink-50);
+        border: 1.5px solid var(--ink-100);
+        border-radius: 0 0 var(--radius-md) var(--radius-md);
+        margin-left: 34px;
+    }
+    .ck-stripe-loading {
+        text-align: center;
+        padding: 10px;
+        color: var(--ink-500);
+        font-size: 13px;
+    }
+    .ck-stripe-loading i {
+        color: var(--dv-navy);
+        margin-right: 6px;
+    }
+    .ck-stripe-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ink-500);
+        margin-bottom: 10px;
+    }
+    .ck-stripe-label i {
+        margin-right: 4px;
+        color: #16a34a;
+    }
+    .ck-stripe-element {
+        padding: 14px 16px;
+        border: 1.5px solid var(--ink-100);
+        border-radius: var(--radius-md);
+        background: var(--surface);
+    }
+
+    /* ══════════════════════════════════════════════════════
+       ORDER SUMMARY — STICKY SIDEBAR
+       ══════════════════════════════════════════════════════ */
+    .ck-summary-col {
+        position: sticky;
+        top: 20px;
+        align-self: start;
+    }
+    .ck-summary {
+        background: var(--surface);
+        border: 2px solid var(--ink-100);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        box-shadow: 0 4px 24px rgba(43, 54, 116, 0.06);
+    }
+    .ck-summary__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid var(--ink-100);
+    }
+    .ck-summary__header h3 {
+        font-family: var(--font-sans);
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--dv-navy);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .ck-summary__header h3 i {
+        color: var(--dv-orange);
+    }
+    .ck-summary__count {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ink-500);
+        background: var(--ink-50);
+        padding: 4px 12px;
+        border-radius: var(--radius-pill);
+    }
+
+    /* Items */
+    .ck-summary__items {
+        max-height: 260px;
+        overflow-y: auto;
+        margin-bottom: 4px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--ink-100) transparent;
+    }
+    .ck-summary__items::-webkit-scrollbar {
+        width: 4px;
+    }
+    .ck-summary__items::-webkit-scrollbar-thumb {
+        background: var(--ink-100);
+        border-radius: 4px;
+    }
+    .ck-summary__item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--ink-100);
+    }
+    .ck-summary__item:last-child {
+        border-bottom: none;
+    }
+    .ck-summary__item-info {
+        flex: 1;
+        min-width: 0;
+    }
+    .ck-summary__item-name {
+        display: block;
+        font-family: var(--font-sans);
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--ink-900);
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .ck-summary__item-qty {
+        display: block;
+        font-size: 12px;
+        color: var(--ink-500);
+        margin-top: 2px;
+    }
+    .ck-summary__item-price {
+        font-family: var(--font-sans);
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--dv-navy);
+        white-space: nowrap;
+        margin-left: 16px;
+    }
+
+    /* Dividers */
+    .ck-summary__divider {
+        height: 1px;
+        background: var(--ink-100);
+        margin: 14px 0;
+    }
+    .ck-summary__divider--bold {
+        height: 2px;
+        background: var(--ink-900);
+    }
+
+    /* Totals */
+    .ck-summary__totals {}
+    .ck-summary__row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 0;
+        font-size: 14px;
+        color: var(--ink-500);
+    }
+    .ck-summary__row span:last-child {
+        font-weight: 600;
+        color: var(--ink-700);
+    }
+    .ck-summary__row--discount span:last-child {
+        color: #16a34a;
+        font-weight: 700;
+    }
+
+    /* Grand Total */
+    .ck-summary__grand-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 4px 0 0;
+    }
+    .ck-summary__grand-total span:first-child {
+        font-family: var(--font-sans);
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--ink-900);
+    }
+    .ck-summary__grand-price {
+        font-family: var(--font-sans);
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--dv-navy);
+        letter-spacing: -0.5px;
+    }
+
+    /* Place Order */
+    .ck-place-order {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 16px 24px;
+        margin-top: 24px;
+        border: none;
+        border-radius: var(--radius-md);
+        background: linear-gradient(135deg, var(--dv-navy), var(--dv-navy-dark));
+        color: #fff;
+        font-family: var(--font-sans);
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .ck-place-order::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, var(--dv-orange), var(--dv-orange-dark));
+        opacity: 0;
+        transition: opacity 0.35s ease;
+    }
+    .ck-place-order:hover::before {
+        opacity: 1;
+    }
+    .ck-place-order:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(245, 166, 35, 0.3);
+        color: #fff;
+    }
+    .ck-place-order span {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .ck-place-order:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    .ck-place-order:disabled::before {
+        display: none;
+    }
+
+    /* Trust Indicators */
+    .ck-trust {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid var(--ink-100);
+    }
+    .ck-trust__item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        color: var(--ink-500);
+        font-weight: 500;
+    }
+    .ck-trust__item i {
+        color: #16a34a;
+        font-size: 13px;
+    }
+
+    /* Accepted Payments */
+    .ck-accepted {
+        text-align: center;
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid var(--ink-100);
+    }
+    .ck-accepted span {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--ink-300);
+        display: block;
+        margin-bottom: 8px;
+    }
+    .ck-accepted__icons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+    }
+    .ck-accepted__icons i {
+        font-size: 26px;
+        color: var(--ink-300);
+        transition: color 0.2s;
+    }
+    .ck-accepted__icons i:hover {
+        color: var(--dv-navy);
+    }
+
+    /* ══════════════════════════════════════════════════════
+       ANIMATIONS
+       ══════════════════════════════════════════════════════ */
+    @keyframes ck-slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
         to { opacity: 1; transform: translateY(0); }
     }
-    .checkout-billing-card,
-    .order-summary-card {
-        animation: fadeInUp 0.5s ease forwards;
+
+    .ck-accordion {
+        animation: ck-fadeIn 0.4s ease forwards;
     }
-    .order-summary-card {
-        animation-delay: 0.1s;
+    .ck-accordion:nth-child(2) { animation-delay: 0.08s; }
+    .ck-accordion:nth-child(3) { animation-delay: 0.16s; }
+
+    @keyframes ck-fadeIn {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .ck-summary {
+        animation: ck-fadeIn 0.4s ease 0.1s both;
+    }
+
+    /* Accordion transition */
+    .ck-transition-enter {
+        transition: all 0.35s ease;
+    }
+    .ck-transition-enter-start {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    .ck-transition-enter-end {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    [x-cloak] { display: none !important; }
+
+    /* ══════════════════════════════════════════════════════
+       RESPONSIVE
+       ══════════════════════════════════════════════════════ */
+    @media (max-width: 992px) {
+        .ck-layout {
+            grid-template-columns: 1fr;
+        }
+        .ck-summary-col {
+            position: static;
+            order: -1;
+        }
+        .ck-summary__items {
+            max-height: 180px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .checkout-container {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+        .ck-progress-wrapper {
+            padding: 0;
+        }
+        .ck-progress-step__label {
+            font-size: 9px;
+        }
+        .ck-progress-step__circle {
+            width: 34px;
+            height: 34px;
+            font-size: 12px;
+        }
+        .ck-accordion__header {
+            padding: 16px 18px;
+        }
+        .ck-accordion__content {
+            padding: 18px 18px 22px;
+        }
+        .ck-form-row {
+            grid-template-columns: 1fr;
+        }
+        .ck-form-row--3 {
+            grid-template-columns: 1fr;
+        }
+        .ck-ship-toggle {
+            grid-template-columns: 1fr;
+        }
+        .ck-saved-addresses__grid {
+            grid-template-columns: 1fr;
+        }
+        .ck-summary {
+            padding: 20px;
+        }
+        .ck-trust {
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .ck-accordion__footer {
+            flex-direction: column;
+            gap: 10px;
+        }
+        .ck-accordion__footer .ck-btn {
+            width: 100%;
+            justify-content: center;
+        }
+        .ck-summary__grand-price {
+            font-size: 20px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .ck-accordion__title {
+            font-size: 15px;
+        }
+        .ck-accordion__subtitle {
+            font-size: 12px;
+        }
+        .ck-accordion__step-badge {
+            width: 34px;
+            height: 34px;
+            font-size: 13px;
+        }
     }
 </style>
 @endpush

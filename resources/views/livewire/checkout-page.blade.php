@@ -1,367 +1,519 @@
-{{-- Checkout Page Livewire View - Modern Porto Design --}}
+{{-- Checkout Page Livewire View - DEVOGUE Accordion Checkout Redesign --}}
 <div>
     @if($errorMessage)
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle mr-2"></i>{{ $errorMessage }}
-            <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+        <div class="ck-alert ck-alert--error" role="alert">
+            <div class="ck-alert__icon"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="ck-alert__body">
+                <strong>Oops!</strong> {{ $errorMessage }}
+            </div>
+            <button type="button" class="ck-alert__close" data-dismiss="alert"><i class="fas fa-times"></i></button>
         </div>
     @endif
 
     @if($items->isEmpty())
-        <div class="text-center py-5">
-            <i class="fas fa-shopping-bag" style="font-size: 64px; color: #ddd;"></i>
-            <h3 class="mt-3" style="color: #1a1a2e;">Your cart is empty</h3>
-            <p class="text-muted mb-4">Add some products before proceeding to checkout.</p>
-            <a href="{{ url('/shop') }}" class="btn btn-dark mt-2">Continue Shopping</a>
+        <div class="ck-empty-state">
+            <div class="ck-empty-state__icon">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <h3>Your cart is empty</h3>
+            <p>Looks like you haven't added anything yet.<br>Start shopping and find something you love!</p>
+            <a href="{{ url('/shop') }}" class="btn-luxury btn-luxury--filled">
+                <i class="fas fa-arrow-left"></i> Continue Shopping
+            </a>
         </div>
     @else
-    <div class="row">
-        {{-- ══════ Left Column: Billing & Shipping ══════ --}}
-        <div class="col-lg-7">
+    <div class="ck-layout" x-data="{
+        activeStep: 1,
+        completedSteps: [],
+        openStep(step) {
+            this.activeStep = step;
+        },
+        completeStep(step) {
+            if (!this.completedSteps.includes(step)) {
+                this.completedSteps.push(step);
+            }
+            this.activeStep = step + 1;
+        },
+        isCompleted(step) {
+            return this.completedSteps.includes(step);
+        }
+    }">
+        {{-- ══════ Left Column: Accordion Steps ══════ --}}
+        <div class="ck-steps-col">
 
-            {{-- Billing Details Card --}}
-            <div class="checkout-billing-card">
-                <div class="section-header">
-                    <div class="section-icon billing">
-                        <i class="fas fa-map-marker-alt"></i>
+            {{-- ────── STEP 1: Billing Details ────── --}}
+            <div class="ck-accordion" :class="{ 'is-active': activeStep === 1, 'is-completed': isCompleted(1) }">
+                <button class="ck-accordion__header" @click="openStep(1)" type="button">
+                    <div class="ck-accordion__step-badge" :class="{ 'completed': isCompleted(1) }">
+                        <span x-show="!isCompleted(1)">1</span>
+                        <i class="fas fa-check" x-show="isCompleted(1)" x-cloak></i>
                     </div>
-                    <div>
-                        <h3>Billing Details</h3>
-                        <p>Enter your billing information</p>
+                    <div class="ck-accordion__title-wrap">
+                        <h3 class="ck-accordion__title">Billing Details</h3>
+                        <p class="ck-accordion__subtitle">Where should we send the invoice?</p>
                     </div>
-                </div>
+                    <div class="ck-accordion__toggle">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </button>
 
-                {{-- Saved Addresses --}}
-                @if($savedAddresses->count())
-                <div class="mb-4">
-                    <label class="mb-2" style="font-size:12px;text-transform:uppercase;letter-spacing:0.8px;color:#999;font-weight:700;">
-                        <i class="fas fa-bookmark mr-1"></i> Saved Addresses
-                    </label>
-                    <div class="row">
-                        @foreach($savedAddresses as $addr)
-                            <div class="col-sm-6 mb-2">
-                                <div class="saved-address-card {{ $saved_address_id == $addr->id ? 'selected' : '' }}"
-                                     wire:click="loadSavedAddress({{ $addr->id }})">
-                                    <div class="addr-name">
-                                        <i class="fas fa-user-circle mr-1" style="color:#667eea;"></i>
-                                        {{ $addr->first_name }} {{ $addr->last_name }}
+                <div class="ck-accordion__body" x-show="activeStep === 1" x-cloak x-transition:enter="ck-transition-enter" x-transition:enter-start="ck-transition-enter-start" x-transition:enter-end="ck-transition-enter-end">
+                    <div class="ck-accordion__content">
+
+                        {{-- Saved Addresses --}}
+                        @if($savedAddresses->count())
+                        <div class="ck-saved-addresses">
+                            <label class="ck-field-label">
+                                <i class="fas fa-bookmark"></i> Your Saved Addresses
+                            </label>
+                            <div class="ck-saved-addresses__grid">
+                                @foreach($savedAddresses as $addr)
+                                    <div class="ck-saved-addr {{ $saved_address_id == $addr->id ? 'is-selected' : '' }}"
+                                         wire:click="loadSavedAddress({{ $addr->id }})">
+                                        <div class="ck-saved-addr__radio">
+                                            <span class="ck-radio {{ $saved_address_id == $addr->id ? 'checked' : '' }}"></span>
+                                        </div>
+                                        <div class="ck-saved-addr__info">
+                                            <div class="ck-saved-addr__name">{{ $addr->first_name }} {{ $addr->last_name }}</div>
+                                            <div class="ck-saved-addr__detail">
+                                                {{ $addr->address_line1 }}, {{ $addr->city }}, {{ $addr->state }} {{ $addr->postal_code }}
+                                            </div>
+                                            @if($addr->is_default_shipping)
+                                                <span class="ck-saved-addr__badge">
+                                                    <i class="fas fa-star"></i> Default
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
-                                    <div class="addr-detail mt-1">
-                                        {{ $addr->address_line1 }}, {{ $addr->city }},<br>
-                                        {{ $addr->state }} {{ $addr->postal_code }}
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
+                        <form id="checkout-form">
+                            <div class="ck-form-row">
+                                <div class="ck-form-group">
+                                    <label class="ck-label">First Name <span class="ck-required">*</span></label>
+                                    <div class="ck-input-wrap">
+                                        <i class="fas fa-user ck-input-icon"></i>
+                                        <input type="text" class="ck-input @error('billing_first_name') is-invalid @enderror" wire:model="billing_first_name" placeholder="John" required />
                                     </div>
-                                    @if($addr->is_default_shipping)
-                                        <span class="badge mt-1" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:10px;padding:3px 8px;border-radius:4px;">
-                                            <i class="fas fa-star mr-1" style="font-size:8px;"></i>Default
-                                        </span>
-                                    @endif
+                                    @error('billing_first_name') <span class="ck-error">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="ck-form-group">
+                                    <label class="ck-label">Last Name <span class="ck-required">*</span></label>
+                                    <div class="ck-input-wrap">
+                                        <i class="fas fa-user ck-input-icon"></i>
+                                        <input type="text" class="ck-input @error('billing_last_name') is-invalid @enderror" wire:model="billing_last_name" placeholder="Doe" required />
+                                    </div>
+                                    @error('billing_last_name') <span class="ck-error">{{ $message }}</span> @enderror
                                 </div>
                             </div>
-                        @endforeach
+
+                            <div class="ck-form-group">
+                                <label class="ck-label">Street Address <span class="ck-required">*</span></label>
+                                <div class="ck-input-wrap">
+                                    <i class="fas fa-map-marker-alt ck-input-icon"></i>
+                                    <input type="text" class="ck-input @error('billing_address_line1') is-invalid @enderror" wire:model="billing_address_line1" placeholder="House number and street name" required />
+                                </div>
+                                @error('billing_address_line1') <span class="ck-error">{{ $message }}</span> @enderror
+                                <input type="text" class="ck-input mt-2" wire:model="billing_address_line2" placeholder="Apartment, suite, unit, etc. (optional)" style="padding-left: 14px;" />
+                            </div>
+
+                            <div class="ck-form-row">
+                                <div class="ck-form-group">
+                                    <label class="ck-label">Town / City <span class="ck-required">*</span></label>
+                                    <div class="ck-input-wrap">
+                                        <i class="fas fa-city ck-input-icon"></i>
+                                        <input type="text" class="ck-input @error('billing_city') is-invalid @enderror" wire:model="billing_city" required />
+                                    </div>
+                                    @error('billing_city') <span class="ck-error">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="ck-form-group">
+                                    <label class="ck-label">State <span class="ck-required">*</span></label>
+                                    <div class="ck-input-wrap">
+                                        <i class="fas fa-map ck-input-icon"></i>
+                                        <input type="text" class="ck-input @error('billing_state') is-invalid @enderror" wire:model="billing_state" required />
+                                    </div>
+                                    @error('billing_state') <span class="ck-error">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
+
+                            <div class="ck-form-row">
+                                <div class="ck-form-group">
+                                    <label class="ck-label">Postcode / ZIP <span class="ck-required">*</span></label>
+                                    <div class="ck-input-wrap">
+                                        <i class="fas fa-hashtag ck-input-icon"></i>
+                                        <input type="text" class="ck-input @error('billing_postal_code') is-invalid @enderror" wire:model="billing_postal_code" required />
+                                    </div>
+                                    @error('billing_postal_code') <span class="ck-error">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="ck-form-group">
+                                    <label class="ck-label">Phone</label>
+                                    <div class="ck-input-wrap">
+                                        <i class="fas fa-phone ck-input-icon"></i>
+                                        <input type="tel" class="ck-input" wire:model="billing_phone" placeholder="+1 (234) 567-8900" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ck-form-group">
+                                <label class="ck-label">Email Address <span class="ck-required">*</span></label>
+                                <div class="ck-input-wrap">
+                                    <i class="fas fa-envelope ck-input-icon"></i>
+                                    <input type="email" class="ck-input @error('billing_email') is-invalid @enderror" wire:model="billing_email" placeholder="your@email.com" required />
+                                </div>
+                                @error('billing_email') <span class="ck-error">{{ $message }}</span> @enderror
+                                <span class="ck-hint"><i class="fas fa-info-circle"></i> Order confirmation will be sent to this email</span>
+                            </div>
+                        </form>
+
+                        <div class="ck-accordion__footer">
+                            <button type="button" class="ck-btn ck-btn--primary" @click="completeStep(1)">
+                                Continue to Shipping <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                @endif
-
-                <form id="checkout-form">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>First name <abbr class="required" title="required">*</abbr></label>
-                                <input type="text" class="form-control @error('billing_first_name') is-invalid @enderror" wire:model="billing_first_name" placeholder="John" required />
-                                @error('billing_first_name') <span class="invalid-feedback">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Last name <abbr class="required" title="required">*</abbr></label>
-                                <input type="text" class="form-control @error('billing_last_name') is-invalid @enderror" wire:model="billing_last_name" placeholder="Doe" required />
-                                @error('billing_last_name') <span class="invalid-feedback">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Street address <abbr class="required" title="required">*</abbr></label>
-                        <input type="text" class="form-control @error('billing_address_line1') is-invalid @enderror" wire:model="billing_address_line1" placeholder="House number and street name" required />
-                        @error('billing_address_line1') <span class="invalid-feedback">{{ $message }}</span> @enderror
-                        <input type="text" class="form-control mt-2" wire:model="billing_address_line2" placeholder="Apartment, suite, unit, etc. (optional)" />
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Town / City <abbr class="required" title="required">*</abbr></label>
-                                <input type="text" class="form-control @error('billing_city') is-invalid @enderror" wire:model="billing_city" required />
-                                @error('billing_city') <span class="invalid-feedback">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>State <abbr class="required" title="required">*</abbr></label>
-                                <input type="text" class="form-control @error('billing_state') is-invalid @enderror" wire:model="billing_state" required />
-                                @error('billing_state') <span class="invalid-feedback">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Postcode / ZIP <abbr class="required" title="required">*</abbr></label>
-                                <input type="text" class="form-control @error('billing_postal_code') is-invalid @enderror" wire:model="billing_postal_code" required />
-                                @error('billing_postal_code') <span class="invalid-feedback">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Phone</label>
-                                <input type="tel" class="form-control" wire:model="billing_phone" placeholder="+1 (234) 567-8900" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Email address <abbr class="required" title="required">*</abbr></label>
-                        <input type="email" class="form-control @error('billing_email') is-invalid @enderror" wire:model="billing_email" placeholder="your@email.com" required />
-                        @error('billing_email') <span class="invalid-feedback">{{ $message }}</span> @enderror
-                    </div>
-                </form>
             </div>
 
-            {{-- Ship to Different Address Card --}}
-            <div class="checkout-billing-card">
-                <div class="section-header" style="margin-bottom:0; padding-bottom:0; border-bottom:none;">
-                    <div class="section-icon shipping-icon">
-                        <i class="fas fa-truck"></i>
+            {{-- ────── STEP 2: Shipping ────── --}}
+            <div class="ck-accordion" :class="{ 'is-active': activeStep === 2, 'is-completed': isCompleted(2) }">
+                <button class="ck-accordion__header" @click="openStep(2)" type="button">
+                    <div class="ck-accordion__step-badge" :class="{ 'completed': isCompleted(2) }">
+                        <span x-show="!isCompleted(2)">2</span>
+                        <i class="fas fa-check" x-show="isCompleted(2)" x-cloak></i>
                     </div>
-                    <div style="flex:1;">
-                        <div class="custom-control custom-checkbox" style="margin:0;">
-                            <input type="checkbox" class="custom-control-input" id="different-shipping" wire:model.live="shipToDifferentAddress" />
-                            <label class="custom-control-label" for="different-shipping" style="font-size:15px;font-weight:700;color:#1a1a2e;">
-                                Ship to a different address?
-                            </label>
-                        </div>
+                    <div class="ck-accordion__title-wrap">
+                        <h3 class="ck-accordion__title">Shipping Address</h3>
+                        <p class="ck-accordion__subtitle">Where should we deliver your order?</p>
                     </div>
-                </div>
+                    <div class="ck-accordion__toggle">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </button>
 
-                @if($shipToDifferentAddress)
-                <div class="mt-3 pt-3" style="border-top: 1px solid #f0f0f0;">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>First name <abbr class="required">*</abbr></label>
-                                <input type="text" class="form-control" wire:model="shipping_first_name" required />
+                <div class="ck-accordion__body" x-show="activeStep === 2" x-cloak x-transition:enter="ck-transition-enter" x-transition:enter-start="ck-transition-enter-start" x-transition:enter-end="ck-transition-enter-end">
+                    <div class="ck-accordion__content">
+
+                        {{-- Same as billing toggle --}}
+                        <div class="ck-ship-toggle">
+                            <div class="ck-ship-toggle__option {{ !$shipToDifferentAddress ? 'is-active' : '' }}"
+                                 wire:click="$set('shipToDifferentAddress', false)">
+                                <span class="ck-radio {{ !$shipToDifferentAddress ? 'checked' : '' }}"></span>
+                                <div>
+                                    <strong><i class="fas fa-home"></i> Same as billing address</strong>
+                                    <p>Ship to my billing address above</p>
+                                </div>
+                            </div>
+
+                            <div class="ck-ship-toggle__option {{ $shipToDifferentAddress ? 'is-active' : '' }}"
+                                 wire:click="$set('shipToDifferentAddress', true)">
+                                <span class="ck-radio {{ $shipToDifferentAddress ? 'checked' : '' }}"></span>
+                                <div>
+                                    <strong><i class="fas fa-truck"></i> Ship to a different address</strong>
+                                    <p>Enter a new shipping address</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Last name <abbr class="required">*</abbr></label>
-                                <input type="text" class="form-control" wire:model="shipping_last_name" required />
+
+                        @if($shipToDifferentAddress)
+                        <div class="ck-diff-shipping" style="margin-top: 20px;">
+                            <div class="ck-form-row">
+                                <div class="ck-form-group">
+                                    <label class="ck-label">First Name <span class="ck-required">*</span></label>
+                                    <div class="ck-input-wrap">
+                                        <i class="fas fa-user ck-input-icon"></i>
+                                        <input type="text" class="ck-input" wire:model="shipping_first_name" required />
+                                    </div>
+                                </div>
+                                <div class="ck-form-group">
+                                    <label class="ck-label">Last Name <span class="ck-required">*</span></label>
+                                    <div class="ck-input-wrap">
+                                        <i class="fas fa-user ck-input-icon"></i>
+                                        <input type="text" class="ck-input" wire:model="shipping_last_name" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ck-form-group">
+                                <label class="ck-label">Street Address <span class="ck-required">*</span></label>
+                                <div class="ck-input-wrap">
+                                    <i class="fas fa-map-marker-alt ck-input-icon"></i>
+                                    <input type="text" class="ck-input" wire:model="shipping_address_line1" placeholder="House number and street name" required />
+                                </div>
+                                <input type="text" class="ck-input mt-2" wire:model="shipping_address_line2" placeholder="Apartment, suite, etc. (optional)" style="padding-left: 14px;" />
+                            </div>
+                            <div class="ck-form-row ck-form-row--3">
+                                <div class="ck-form-group">
+                                    <label class="ck-label">City <span class="ck-required">*</span></label>
+                                    <input type="text" class="ck-input" wire:model="shipping_city" required />
+                                </div>
+                                <div class="ck-form-group">
+                                    <label class="ck-label">State <span class="ck-required">*</span></label>
+                                    <input type="text" class="ck-input" wire:model="shipping_state" required />
+                                </div>
+                                <div class="ck-form-group">
+                                    <label class="ck-label">Postcode <span class="ck-required">*</span></label>
+                                    <input type="text" class="ck-input" wire:model="shipping_postal_code" required />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Street address <abbr class="required">*</abbr></label>
-                        <input type="text" class="form-control" wire:model="shipping_address_line1" placeholder="House number and street name" required />
-                        <input type="text" class="form-control mt-2" wire:model="shipping_address_line2" placeholder="Apartment, suite, etc. (optional)" />
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>City <abbr class="required">*</abbr></label>
-                                <input type="text" class="form-control" wire:model="shipping_city" required />
-                            </div>
+                        @endif
+
+                        {{-- Order Notes --}}
+                        <div class="ck-notes-section">
+                            <label class="ck-label"><i class="fas fa-sticky-note"></i> Order Notes <span class="ck-optional">(optional)</span></label>
+                            <textarea class="ck-textarea" wire:model="customer_notes" placeholder="Any special instructions? e.g. Leave at the door, ring doorbell twice..."></textarea>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>State <abbr class="required">*</abbr></label>
-                                <input type="text" class="form-control" wire:model="shipping_state" required />
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Postcode <abbr class="required">*</abbr></label>
-                                <input type="text" class="form-control" wire:model="shipping_postal_code" required />
-                            </div>
+
+                        <div class="ck-accordion__footer">
+                            <button type="button" class="ck-btn ck-btn--ghost" @click="openStep(1)">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button type="button" class="ck-btn ck-btn--primary" @click="completeStep(2)">
+                                Continue to Payment <i class="fas fa-arrow-right"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-                @endif
             </div>
 
-            {{-- Order Notes Card --}}
-            <div class="checkout-billing-card">
-                <div class="section-header">
-                    <div class="section-icon notes-icon">
-                        <i class="fas fa-sticky-note"></i>
+            {{-- ────── STEP 3: Shipping Method & Payment ────── --}}
+            <div class="ck-accordion" :class="{ 'is-active': activeStep === 3, 'is-completed': isCompleted(3) }">
+                <button class="ck-accordion__header" @click="openStep(3)" type="button">
+                    <div class="ck-accordion__step-badge" :class="{ 'completed': isCompleted(3) }">
+                        <span x-show="!isCompleted(3)">3</span>
+                        <i class="fas fa-check" x-show="isCompleted(3)" x-cloak></i>
                     </div>
-                    <div>
-                        <h3>Order Notes</h3>
-                        <p>Any special instructions for delivery</p>
+                    <div class="ck-accordion__title-wrap">
+                        <h3 class="ck-accordion__title">Delivery Method</h3>
+                        <p class="ck-accordion__subtitle">Choose how to get your order delivered</p>
+                    </div>
+                    <div class="ck-accordion__toggle">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </button>
+
+                <div class="ck-accordion__body" x-show="activeStep === 3" x-cloak x-transition:enter="ck-transition-enter" x-transition:enter-start="ck-transition-enter-start" x-transition:enter-end="ck-transition-enter-end">
+                    <div class="ck-accordion__content">
+
+                        {{-- Shipping Methods --}}
+                        <div class="ck-section-block">
+                            <h4 class="ck-section-label"><i class="fas fa-truck"></i> Shipping Method</h4>
+                            <div class="ck-shipping-options">
+                                @if($shippingMethods->count())
+                                    @foreach($shippingMethods as $method)
+                                        <label class="ck-shipping-card {{ $shipping_method_id == $method->id ? 'is-selected' : '' }}" for="shipping-{{ $method->id }}">
+                                            <input type="radio" name="shipping_method" id="shipping-{{ $method->id }}"
+                                                   value="{{ $method->id }}" wire:model.live="shipping_method_id"
+                                                   {{ $shipping_method_id == $method->id ? 'checked' : '' }}
+                                                   class="ck-radio-input">
+                                            <span class="ck-radio"></span>
+                                            <div class="ck-shipping-card__info">
+                                                <div class="ck-shipping-card__name">{{ $method->name }}</div>
+                                                @if($method->estimated_days)
+                                                    <div class="ck-shipping-card__eta">
+                                                        <i class="far fa-clock"></i> {{ $method->estimated_days }} business days
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="ck-shipping-card__price">
+                                                @if($method->type === 'free')
+                                                    <span class="ck-free-badge">FREE</span>
+                                                @else
+                                                    @price($method->price)
+                                                @endif
+                                            </div>
+                                        </label>
+                                    @endforeach
+                                @else
+                                    <label class="ck-shipping-card is-selected">
+                                        <span class="ck-radio checked"></span>
+                                        <div class="ck-shipping-card__info">
+                                            <div class="ck-shipping-card__name">Free Shipping</div>
+                                            <div class="ck-shipping-card__eta"><i class="far fa-clock"></i> Standard delivery</div>
+                                        </div>
+                                        <div class="ck-shipping-card__price">
+                                            <span class="ck-free-badge">FREE</span>
+                                        </div>
+                                    </label>
+                                @endif
+                            </div>
+                        </div>
+
+
+
+                        <div class="ck-accordion__footer">
+                            <button type="button" class="ck-btn ck-btn--ghost" @click="openStep(2)">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <textarea class="form-control" wire:model="customer_notes" placeholder="Notes about your order, e.g. special notes for delivery..."></textarea>
             </div>
+
         </div>
 
-        {{-- ══════ Right Column: Order Summary ══════ --}}
-        <div class="col-lg-5">
-            <div class="order-summary-card">
-                <h3 class="order-title"><i class="fas fa-receipt mr-2" style="font-size:14px;"></i>Your Order</h3>
+        {{-- ══════ Right Column: Sticky Order Summary ══════ --}}
+        <div class="ck-summary-col">
+            <div class="ck-summary">
+                <div class="ck-summary__header">
+                    <h3><i class="fas fa-shopping-bag"></i> Order Summary</h3>
+                    <span class="ck-summary__count">{{ $items->count() }} {{ Str::plural('item', $items->count()) }}</span>
+                </div>
 
                 {{-- Order Items --}}
-                <div class="order-items-list">
+                <div class="ck-summary__items">
                     @foreach($items as $item)
-                        <div class="order-item">
-                            <div class="item-name">
-                                {{ $item->product->name }}
-                                <span class="item-qty">×{{ $item->quantity }}</span>
+                        <div class="ck-summary__item">
+                            <div class="ck-summary__item-info">
+                                <span class="ck-summary__item-name">{{ $item->product->name }}</span>
+                                <span class="ck-summary__item-qty">Qty: {{ $item->quantity }}</span>
                             </div>
-                            <div class="item-price">@price($item->unit_price * $item->quantity)</div>
+                            <span class="ck-summary__item-price">@price($item->unit_price * $item->quantity)</span>
                         </div>
                     @endforeach
                 </div>
 
-                {{-- Shipping Methods --}}
-                <div class="shipping-methods-section">
-                    <h5><i class="fas fa-truck mr-1"></i> Shipping</h5>
-                    @if($shippingMethods->count())
-                        @foreach($shippingMethods as $method)
-                            <div class="shipping-method-option">
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" class="custom-control-input" name="shipping_method"
-                                           id="shipping-{{ $method->id }}" value="{{ $method->id }}"
-                                           wire:model.live="shipping_method_id"
-                                           {{ $shipping_method_id == $method->id ? 'checked' : '' }}>
-                                    <label class="custom-control-label" for="shipping-{{ $method->id }}">
-                                        <span class="method-name">{{ $method->name }}</span>
-                                        @if($method->type === 'free')
-                                            <span class="method-price" style="color:#27ae60;">Free</span>
-                                        @else
-                                            <span class="method-price">@price($method->price)</span>
-                                        @endif
-                                        @if($method->estimated_days)
-                                            <span class="method-days d-block">({{ $method->estimated_days }} days)</span>
-                                        @endif
-                                    </label>
-                                </div>
-                            </div>
-                        @endforeach
-                    @else
-                        <div class="shipping-method-option">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" checked>
-                                <label class="custom-control-label">
-                                    <span class="method-name">Free Shipping</span>
-                                    <span class="method-price" style="color:#27ae60;">Free</span>
-                                </label>
-                            </div>
-                        </div>
-                    @endif
-                </div>
+                {{-- Divider --}}
+                <div class="ck-summary__divider"></div>
 
                 {{-- Totals --}}
-                <table class="order-totals-table">
-                    <tr>
-                        <td class="label-col">Subtotal</td>
-                        <td class="value-col">@price($subtotal)</td>
-                    </tr>
+                <div class="ck-summary__totals">
+                    <div class="ck-summary__row">
+                        <span>Subtotal</span>
+                        <span>@price($subtotal)</span>
+                    </div>
                     @if($discount > 0)
-                        <tr>
-                            <td class="label-col">Discount</td>
-                            <td class="value-col" style="color:#27ae60;">-@price($discount)</td>
-                        </tr>
+                        <div class="ck-summary__row ck-summary__row--discount">
+                            <span><i class="fas fa-tag"></i> Discount</span>
+                            <span>-@price($discount)</span>
+                        </div>
                     @endif
-                    <tr class="total-row">
-                        <td>Total</td>
-                        <td style="text-align:right;">@price($total)</td>
-                    </tr>
-                </table>
-
-                {{-- Payment Methods --}}
-                <div class="payment-methods-section">
-                    <h4><i class="fas fa-lock mr-1" style="font-size:12px;"></i> Payment Method</h4>
-
-                    @forelse($enabledPaymentMethods as $methodKey => $methodLabel)
-                        <div class="payment-option {{ $payment_method === $methodKey ? 'selected' : '' }}">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment_method"
-                                       id="payment-{{ $methodKey }}" value="{{ $methodKey }}"
-                                       wire:model.live="payment_method"
-                                       {{ $loop->first && !$payment_method ? 'checked' : '' }}>
-                                <label class="custom-control-label" for="payment-{{ $methodKey }}">
-                                    <span class="payment-label">
-                                        @if($methodKey === 'cod') <i class="fas fa-money-bill-wave mr-1" style="color:#27ae60;"></i>
-                                        @elseif($methodKey === 'bank_transfer') <i class="fas fa-university mr-1" style="color:#667eea;"></i>
-                                        @elseif($methodKey === 'stripe') <i class="fab fa-cc-stripe mr-1" style="color:#635bff;"></i>
-                                        @elseif($methodKey === 'paypal') <i class="fab fa-cc-paypal mr-1" style="color:#003087;"></i>
-                                        @else <i class="fas fa-credit-card mr-1"></i>
-                                        @endif
-                                        {{ $methodLabel }}
-                                    </span>
-
-                                    @if($methodKey === 'cod' && $codInstructions)
-                                        <span class="payment-desc d-block">{{ $codInstructions }}</span>
-                                    @elseif($methodKey === 'cod')
-                                        <span class="payment-desc d-block">Pay with cash upon delivery.</span>
-                                    @endif
-                                    @if($methodKey === 'bank_transfer' && $bankTransferDetails)
-                                        <span class="payment-desc d-block">{!! nl2br(e($bankTransferDetails)) !!}</span>
-                                    @elseif($methodKey === 'bank_transfer')
-                                        <span class="payment-desc d-block">Make your payment directly into our bank account.</span>
-                                    @endif
-                                    @if($methodKey === 'stripe')
-                                        <span class="payment-desc d-block">Pay securely with your credit or debit card.</span>
-                                    @endif
-                                    @if($methodKey === 'paypal')
-                                        <span class="payment-desc d-block">You will be redirected to PayPal.</span>
-                                    @endif
-                                </label>
-                            </div>
-                        </div>
-
-                        {{-- Stripe Card Element --}}
-                        @if($methodKey === 'stripe')
-                            <div x-data="{ method: $wire.entangle('payment_method') }"
-                                 x-show="method === 'stripe'"
-                                 wire:ignore
-                                 class="p-3 border rounded mt-2" 
-                                 style="background:#f8f9fb;border-radius:10px !important;" 
-                                 id="stripe-card-container">
-                                
-                                <div id="stripe-loading" class="text-center py-2" style="display:none;">
-                                    <i class="fas fa-spinner fa-spin text-primary"></i> <span class="text-muted small">Loading Secure Payment...</span>
-                                </div>
-                                
-                                <div id="stripe-card-element" class="mb-2" style="padding:12px;border:1.5px solid #e8e8ef;border-radius:8px;background:#fff;"></div>
-                                <div id="stripe-card-errors" class="text-danger small"></div>
-                            </div>
-                        @endif
-                    @empty
-                        <div class="text-center py-3">
-                            <i class="fas fa-exclamation-triangle text-warning mb-2" style="font-size:24px;"></i>
-                            <p class="text-muted small mb-0">No payment methods available. Please contact support.</p>
-                        </div>
-                    @endforelse
+                    <div class="ck-summary__row">
+                        <span>Shipping</span>
+                        <span>
+                            @php
+                                $selectedShipping = $shippingMethods->firstWhere('id', $shipping_method_id);
+                            @endphp
+                            @if($selectedShipping && $selectedShipping->type === 'free')
+                                <span class="ck-free-badge-sm">FREE</span>
+                            @elseif($selectedShipping)
+                                @price($selectedShipping->price)
+                            @else
+                                <span class="ck-free-badge-sm">FREE</span>
+                            @endif
+                        </span>
+                    </div>
                 </div>
 
-                {{-- Place Order Button --}}
-                <button type="button" class="btn-place-order-modern"
+                <div class="ck-summary__divider ck-summary__divider--bold"></div>
+
+                {{-- Grand Total --}}
+                <div class="ck-summary__grand-total">
+                    <span>Total</span>
+                    <span class="ck-summary__grand-price">@price($total)</span>
+                </div>
+
+                {{-- Payment Methods --}}
+                <div class="ck-summary__payment">
+                    <h4 class="ck-section-label"><i class="fas fa-shield-alt"></i> Payment Method</h4>
+                    <div class="ck-payment-options">
+                        @forelse($enabledPaymentMethods as $methodKey => $methodLabel)
+                            <label class="ck-payment-card {{ $payment_method === $methodKey ? 'is-selected' : '' }}" for="payment-{{ $methodKey }}">
+                                <input type="radio" name="payment_method" id="payment-{{ $methodKey }}"
+                                       value="{{ $methodKey }}" wire:model.live="payment_method"
+                                       {{ $loop->first && !$payment_method ? 'checked' : '' }}
+                                       class="ck-radio-input">
+                                <span class="ck-radio"></span>
+                                <div class="ck-payment-card__icon">
+                                    @if($methodKey === 'cod') <i class="fas fa-money-bill-wave"></i>
+                                    @elseif($methodKey === 'bank_transfer') <i class="fas fa-university"></i>
+                                    @elseif($methodKey === 'stripe') <i class="fab fa-cc-stripe"></i>
+                                    @elseif($methodKey === 'paypal') <i class="fab fa-cc-paypal"></i>
+                                    @else <i class="fas fa-credit-card"></i>
+                                    @endif
+                                </div>
+                                <div class="ck-payment-card__info">
+                                    <div class="ck-payment-card__name">{{ $methodLabel }}</div>
+                                    <div class="ck-payment-card__desc">
+                                        @if($methodKey === 'cod')
+                                            {{ $codInstructions ?: 'Pay with cash upon delivery.' }}
+                                        @elseif($methodKey === 'bank_transfer')
+                                            {!! nl2br(e($bankTransferDetails ?: 'Make your payment directly into our bank account.')) !!}
+                                        @elseif($methodKey === 'stripe')
+                                            Pay securely with your credit or debit card.
+                                        @elseif($methodKey === 'paypal')
+                                            You will be redirected to PayPal.
+                                        @endif
+                                    </div>
+                                </div>
+                            </label>
+
+                            {{-- Stripe Card Element --}}
+                            @if($methodKey === 'stripe')
+                                <div x-data="{ method: $wire.entangle('payment_method') }"
+                                     x-show="method === 'stripe'"
+                                     wire:ignore
+                                     class="ck-stripe-wrapper"
+                                     id="stripe-card-container">
+                                    <div id="stripe-loading" class="ck-stripe-loading" style="display:none;">
+                                        <i class="fas fa-spinner fa-spin"></i> Loading Secure Payment...
+                                    </div>
+                                    <div class="ck-stripe-label"><i class="fas fa-lock"></i> Card Details</div>
+                                    <div id="stripe-card-element" class="ck-stripe-element"></div>
+                                    <div id="stripe-card-errors" class="ck-error"></div>
+                                </div>
+                            @endif
+                        @empty
+                            <div class="ck-no-payment">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <p>No payment methods available. Please contact support.</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                {{-- Place Order --}}
+                <button type="button" class="ck-place-order"
                         id="checkout-button" onclick="processCheckout()"
                         wire:loading.attr="disabled"
                         {{ $processing ? 'disabled' : '' }}
                         @if(count($enabledPaymentMethods) === 0) disabled @endif>
                     <span wire:loading.remove wire:target="placeOrder">
-                        <i class="fas fa-lock mr-2" style="font-size:13px;"></i>Place Order
+                        <i class="fas fa-lock"></i> Place Order — @price($total)
                     </span>
                     <span wire:loading wire:target="placeOrder">
-                        <i class="fas fa-spinner fa-spin mr-2"></i>Processing...
+                        <i class="fas fa-spinner fa-spin"></i> Processing your order...
                     </span>
                 </button>
 
-                <div class="secure-badge">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>Secure 256-bit SSL Encrypted Checkout</span>
+                {{-- Trust Indicators --}}
+                <div class="ck-trust">
+                    <div class="ck-trust__item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>256-bit SSL Encrypted</span>
+                    </div>
+                    <div class="ck-trust__item">
+                        <i class="fas fa-undo"></i>
+                        <span>Easy Returns</span>
+                    </div>
+                    <div class="ck-trust__item">
+                        <i class="fas fa-headset"></i>
+                        <span>24/7 Support</span>
+                    </div>
+                </div>
+
+                {{-- Accepted Payment Icons --}}
+                <div class="ck-accepted">
+                    <span>We Accept</span>
+                    <div class="ck-accepted__icons">
+                        <i class="fab fa-cc-visa"></i>
+                        <i class="fab fa-cc-mastercard"></i>
+                        <i class="fab fa-cc-paypal"></i>
+                        <i class="fab fa-cc-stripe"></i>
+                        <i class="fab fa-cc-amex"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -391,15 +543,16 @@
                 cardElement = elements.create('card', {
                     style: {
                         base: {
-                            fontSize: '14px',
-                            color: '#333',
-                            fontFamily: '"Open Sans", sans-serif',
-                            '::placeholder': { color: '#aab7c4' }
+                            fontSize: '15px',
+                            color: '#1a1d2e',
+                            fontFamily: '"Inter", "Open Sans", sans-serif',
+                            fontWeight: '500',
+                            '::placeholder': { color: '#b0b4c4' }
                         }
                     }
                 });
                 cardElement.mount('#stripe-card-element');
-                
+
                 cardElement.on('ready', function() {
                     if (loadingEl) loadingEl.style.display = 'none';
                 });
@@ -417,9 +570,8 @@
 
         window.processCheckout = async function() {
             let paymentMethod = await @this.get('payment_method');
-            
+
             if (paymentMethod === 'stripe' && cardElement) {
-                // Let the user know it's processing
                 @this.set('processing', true);
                 @this.set('errorMessage', '');
 
@@ -427,18 +579,16 @@
                     type: 'card',
                     card: cardElement,
                 });
-                
+
                 if (error) {
                     @this.set('errorMessage', error.message);
                     @this.set('processing', false);
                     return false;
                 }
-                
-                // Set the payment method token to the component
+
                 await @this.set('stripe_payment_method_id', pm.id);
             }
-            
-            // Call the backend to finalize the order
+
             @this.call('placeOrder');
         };
     });
