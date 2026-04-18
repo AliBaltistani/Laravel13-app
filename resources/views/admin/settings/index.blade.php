@@ -150,6 +150,9 @@
                             @endforeach
                         @else
                             @foreach($settings[$group] as $setting)
+                                @if(in_array($setting->key, ['about.heading', 'about.description']))
+                                    @continue
+                                @endif
                                 @include('admin.settings._field', ['setting' => $setting])
                             @endforeach
                         @endif

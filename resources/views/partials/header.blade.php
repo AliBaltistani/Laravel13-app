@@ -28,7 +28,6 @@
                 <span class="separator d-none d-xl-block"></span>
                 <ul class="top-links mega-menu show-arrow d-none d-sm-inline-block">
                     <li class="item-menu narrow"><a href="{{ route('account.dashboard') }}">My Account</a></li>
-                    <li class="item-menu narrow"><a href="{{ url('/about') }}">About Us</a></li>
                     <li class="item-menu narrow"><a href="{{ url('/blog') }}">Blog</a></li>
                     <li class="item-menu narrow"><a href="{{ url('/cart') }}">Cart</a></li>
                     <li class="item-menu">
@@ -138,7 +137,7 @@
                     <li class="{{ request()->is('blog*') ? 'active' : '' }}">
                         <a href="{{ url('/blog') }}">BLOG</a>
                     </li>
-                    @foreach(\App\Models\Page::where('is_active', true)->whereNotIn('slug', ['privacy-policy', 'terms-conditions'])->get() as $customPage)
+                    @foreach(\App\Models\Page::where('is_active', true)->whereNotIn('slug', ['privacy-policy', 'terms-conditions', 'about-us'])->get() as $customPage)
                         @php
                             // Handle standard predefined routes vs dynamic pages
                             if ($customPage->slug === 'about-us') {
