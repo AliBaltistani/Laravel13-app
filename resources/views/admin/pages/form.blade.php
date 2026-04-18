@@ -275,8 +275,6 @@
 </form>
 
 @push('scripts')
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
 <script>
 var sectionIndex = {{ $isEdit ? $page->sections->count() : 0 }};
 
@@ -319,23 +317,6 @@ function deleteGalleryImage(pageId, imageId) {
 
 document.getElementById('show_sidebar').addEventListener('change', function() {
     document.getElementById('sidebar-content-group').style.display = this.checked ? '' : 'none';
-});
-
-$(document).ready(function() {
-    if ($('.richtext-editor').length) {
-        $('.richtext-editor').summernote({
-            height: 400,
-            toolbar: [
-                ['style', ['style']],
-                ['font', ['bold', 'italic', 'underline', 'clear']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
-                ['insert', ['link', 'picture', 'video']],
-                ['view', ['fullscreen', 'codeview', 'help']]
-            ]
-        });
-    }
 });
 </script>
 @endpush

@@ -10,7 +10,7 @@
         <div class="form-group"><label>Title <span class="text-danger">*</span></label><input type="text" name="title" class="form-control" value="{{ old('title', $post->title) }}" required></div>
         <div class="form-group"><label>Slug</label><input type="text" name="slug" class="form-control" value="{{ old('slug', $post->slug) }}" placeholder="Auto-generated"></div>
         <div class="form-group"><label>Excerpt</label><textarea name="excerpt" class="form-control" rows="2">{{ old('excerpt', $post->excerpt) }}</textarea></div>
-        <div class="form-group"><label>Content</label><textarea name="content" class="form-control" rows="12">{{ old('content', $post->content) }}</textarea></div>
+        <div class="form-group"><label>Content</label><textarea name="content" class="form-control richtext-editor" rows="12">{{ old('content', $post->content) }}</textarea></div>
     </div></div>
     <div class="admin-card mb-3"><div class="card-header"><h5>SEO</h5></div><div class="card-body">
         <div class="form-group"><label>Meta Title</label><input type="text" name="meta_title" class="form-control" value="{{ old('meta_title', $post->meta_title) }}"></div>

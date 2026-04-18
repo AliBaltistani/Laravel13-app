@@ -100,7 +100,7 @@
                     </div>
                     <div class="form-group mb-0">
                         <label for="description">Full Description</label>
-                        <textarea name="description" id="description" class="form-control" rows="8">{{ old('description', $product->description) }}</textarea>
+                        <textarea name="description" id="description" class="form-control richtext-editor" rows="8">{{ old('description', $product->description) }}</textarea>
                     </div>
                 </div>
             </div>

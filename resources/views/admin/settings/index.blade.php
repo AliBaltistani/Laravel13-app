@@ -186,7 +186,7 @@
 @push('styles')
 <style>
     .richtext-editor {
-        font-family: monospace;
+        font-family: inherit;
         font-size: 13px;
         line-height: 1.5;
         min-height: 300px;
@@ -195,26 +195,7 @@
 @endpush
 
 @push('scripts')
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
 <script>
-    $(document).ready(function() {
-        if ($('.richtext-editor').length) {
-            $('.richtext-editor').summernote({
-                height: 400,
-                toolbar: [
-                    ['style', ['style']],
-                    ['font', ['bold', 'italic', 'underline', 'clear']],
-                    ['color', ['color']],
-                    ['para', ['ul', 'ol', 'paragraph']],
-                    ['table', ['table']],
-                    ['insert', ['link', 'picture', 'video']],
-                    ['view', ['fullscreen', 'codeview', 'help']]
-                ]
-            });
-        }
-    });
-
     // Color picker: sync hex text + preview swatch on change
     document.querySelectorAll('input[type="color"]').forEach(function(picker) {
         picker.addEventListener('input', function() {
