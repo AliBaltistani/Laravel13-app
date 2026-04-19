@@ -547,6 +547,17 @@
             </div>
             @endcan
 
+            <div class="nav-item">
+                <a href="{{ route('admin.contact-messages.index') }}" class="nav-link {{ request()->routeIs('admin.contact-messages*') ? 'active' : '' }}">
+                    <i class="fas fa-envelope"></i>
+                    <span>Messages</span>
+                    @php $unreadContactsCount = \App\Models\ContactMessage::unread()->count(); @endphp
+                    @if($unreadContactsCount > 0)
+                        <span class="badge badge-danger ml-auto" style="border-radius: 4px; padding: 4px 6px;">{{ $unreadContactsCount }}</span>
+                    @endif
+                </a>
+            </div>
+
             @can('manage_reviews')
             <div class="nav-item">
                 <a href="{{ route('admin.reviews.index') }}" class="nav-link {{ request()->routeIs('admin.reviews*') ? 'active' : '' }}">
