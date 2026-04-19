@@ -28,6 +28,7 @@
                 <span class="separator d-none d-xl-block"></span>
                 <ul class="top-links mega-menu show-arrow d-none d-sm-inline-block">
                     <li class="item-menu narrow"><a href="{{ route('account.dashboard') }}">My Account</a></li>
+                    <li class="item-menu narrow"><a href="{{ url('/page/about-us') }}">About Us</a></li>
                     <li class="item-menu narrow"><a href="{{ url('/blog') }}">Blog</a></li>
                     <li class="item-menu narrow"><a href="{{ url('/cart') }}">Cart</a></li>
                     <li class="item-menu">
@@ -137,14 +138,21 @@
                     <li class="{{ request()->is('blog*') ? 'active' : '' }}">
                         <a href="{{ url('/blog') }}">BLOG</a>
                     </li>
-                    @foreach(\App\Models\Page::active()->showInHeader()->orderBy('sort_order')->get() as $customPage)
-                        <li class="{{ request()->fullUrl() == $customPage->frontend_url ? 'active' : '' }}">
-                            <a href="{{ $customPage->frontend_url }}">{{ strtoupper($customPage->title) }}</a>
+                    @foreach(\App\Models\Page::where('is_active', true)->whereNotIn('slug', ['privacy-policy', 'terms-conditions'])->get() as $customPage)
+                        @php
+                            // Handle standard predefined routes vs dynamic pages
+                            if ($customPage->slug === 'about-us') {
+                                $pageUrl = url('/page/about-us');
+                            } elseif ($customPage->slug === 'contact') {
+                                $pageUrl = url('/contact');
+                            } else {
+                                $pageUrl = route('page.show', $customPage->slug);
+                            }
+                        @endphp
+                        <li class="{{ request()->fullUrl() == $pageUrl ? 'active' : '' }}">
+                            <a href="{{ $pageUrl }}">{{ strtoupper($customPage->title) }}</a>
                         </li>
                     @endforeach
-                    <li class="{{ request()->is('contact') ? 'active' : '' }}">
-                        <a href="{{ url('/contact') }}">CONTACT US</a>
-                    </li>
                     @if(Setting::get('header.show_special_offer', '1') === '1' && Setting::get('header.special_offer_text'))
                         <li class="float-right"><a href="{{ Setting::get('header.special_offer_url', '/shop') }}" class="pl-5">{{ Setting::get('header.special_offer_text', 'Special Offer!') }}</a></li>
                     @endif

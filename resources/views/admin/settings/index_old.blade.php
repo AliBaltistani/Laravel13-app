@@ -10,7 +10,7 @@
 
     {{-- Tabs Navigation --}}
     <ul class="nav nav-tabs mb-0" role="tablist">
-        @php $groups = ['general','contact','appearance','seo','social','payment','shipping','mail','auth','legal','promo','custom_code']; @endphp
+        @php $groups = ['general','contact','appearance','seo','social','payment','shipping','mail','auth','legal','promo']; @endphp
         @foreach($groups as $i => $group)
         <li class="nav-item">
             <a class="nav-link {{ $i === 0 ? 'active' : '' }}" data-toggle="tab" href="#tab-{{ $group }}">
@@ -24,12 +24,9 @@
                     @case('mail')
                         <i class="fas fa-envelope mr-1"></i>
                         @break
-                    @case('custom_code')
-                        <i class="fas fa-code mr-1"></i>
-                        @break
                     @default
                 @endswitch
-                {{ $group === 'custom_code' ? 'Custom Code' : ucfirst($group) }}
+                {{ ucfirst($group) }}
             </a>
         </li>
         @endforeach
@@ -73,32 +70,7 @@
                     </div>
                     @endif
 
-                    @if($group === 'custom_code')
-                    <div class="mb-4 p-3" style="background: rgba(0,0,0,0.05); border-radius: 8px; border: 1px solid rgba(0,0,0,0.1);">
-                        <h6 class="mb-1"><i class="fas fa-code mr-1"></i> Custom CSS & JS</h6>
-                        <p class="text-muted mb-0" style="font-size: 13px;">Add custom CSS and Javascript to be loaded on both the storefront and admin panel. This CSS and JS has the highest priority.</p>
-                    </div>
-
-                    <div class="form-group row">
-                        <label class="col-md-3 col-form-label font-weight-bold">
-                            Custom CSS
-                            <br><small class="text-muted font-weight-normal">Without &lt;style&gt; tags.</small>
-                        </label>
-                        <div class="col-md-9">
-                            <textarea name="custom_code__css" class="form-control" rows="12" style="font-family: monospace; background: #2b2b2b; color: #eee;" placeholder="body { background-color: #000; }">{{ \App\Models\Setting::get('custom_code.css') }}</textarea>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-md-3 col-form-label font-weight-bold">
-                            Custom JS
-                            <br><small class="text-muted font-weight-normal">Without &lt;script&gt; tags.</small>
-                        </label>
-                        <div class="col-md-9">
-                            <textarea name="custom_code__js" class="form-control" rows="12" style="font-family: monospace; background: #2b2b2b; color: #eee;" placeholder="console.log('Hello World');">{{ \App\Models\Setting::get('custom_code.js') }}</textarea>
-                        </div>
-                    </div>
-
-                    @elseif(isset($settings[$group]))
+                    @if(isset($settings[$group]))
                         @if($group === 'appearance')
                             {{-- Organized Appearance sections with dividers --}}
                             @php
@@ -183,7 +155,7 @@
 @push('styles')
 <style>
     .richtext-editor {
-        font-family: inherit;
+        font-family: monospace;
         font-size: 13px;
         line-height: 1.5;
         min-height: 300px;
@@ -192,7 +164,30 @@
 @endpush
 
 @push('scripts')
+{{-- TinyMCE CDN for rich text editing --}}
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
+    if (typeof tinymce !== 'undefined') {
+        tinymce.init({
+            selector: '.richtext-editor',
+            height: 400,
+            menubar: true,
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
+                'preview', 'anchor', 'searchreplace', 'visualblocks', 'code',
+                'fullscreen', 'insertdatetime', 'media', 'table', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | code | help',
+            content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; }',
+            promotion: false,
+            branding: false,
+            setup: function(editor) {
+                editor.on('change', function() {
+                    editor.save();
+                });
+            }
+        });
+    }
 
     // Color picker: sync hex text + preview swatch on change
     document.querySelectorAll('input[type="color"]').forEach(function(picker) {

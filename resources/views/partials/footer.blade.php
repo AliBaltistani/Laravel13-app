@@ -9,11 +9,6 @@
                             <div class="widget">
                                 <h4 class="widget-title">{{ Setting::get('footer.col1_title', 'CONTACT INFO') }}</h4>
                                 <ul class="contact-info mb-3">
-                                    @if(Setting::get('contact.address'))
-                                    <li>
-                                        <span class="contact-info-label">Address:</span>{{ Setting::get('contact.address') }}
-                                    </li>
-                                    @endif
                                     @if(Setting::get('contact.phone'))
                                     <li>
                                         <span class="contact-info-label">Phone:</span>Toll Free <a href="tel:{{ Setting::get('contact.phone') }}">{{ Setting::get('contact.phone') }}</a>
@@ -37,9 +32,6 @@
                                     @if(Setting::get('social.twitter'))
                                         <a href="{{ Setting::get('social.twitter') }}" class="social-icon social-twitter icon-twitter" target="_blank"></a>
                                     @endif
-                                    @if(Setting::get('social.instagram'))
-                                        <a href="{{ Setting::get('social.instagram') }}" class="social-icon social-instagram fab fa-instagram" target="_blank"></a>
-                                    @endif
                                     @if(Setting::get('social.linkedin'))
                                         <a href="{{ Setting::get('social.linkedin') }}" class="social-icon social-linkedin fab fa-linkedin-in" target="_blank"></a>
                                     @endif
@@ -47,30 +39,38 @@
                             </div>
                         </div>
 
-                        {{-- Column 2: Quick Links --}}
+                        {{-- Column 2: Customer Service --}}
                         <div class="col-sm-4">
                             <div class="widget pl-sm-1">
                                 <h4 class="widget-title">{{ Setting::get('footer.col2_title', 'CUSTOMER SERVICE') }}</h4>
                                 <ul class="links">
+                                    <li><a href="{{ url('/about') }}">About Us</a></li>
+                                    <li><a href="{{ url('/contact') }}">Contact Us</a></li>
                                     <li><a href="{{ route('account.dashboard') }}">My Account</a></li>
                                     <li><a href="{{ url('/account/orders') }}">Orders History</a></li>
-                                    <li><a href="{{ url('/wishlist') }}">Wishlist</a></li>
-                                    <li><a href="{{ url('/cart') }}">Shopping Cart</a></li>
-                                    <li><a href="{{ url('/shop') }}">Shop</a></li>
+                                    <li><a href="{{ url('/shop') }}">Advanced Search</a></li>
                                 </ul>
                             </div>
                         </div>
 
-                        {{-- Column 3: Dynamic Pages (show_in_footer) --}}
+                        {{-- Column 3: About Us --}}
                         <div class="col-sm-4">
                             <div class="widget pl-sm-2">
-                                <h4 class="widget-title">{{ Setting::get('footer.col3_title', 'INFORMATION') }}</h4>
+                                <h4 class="widget-title">{{ Setting::get('footer.col3_title', 'ABOUT US') }}</h4>
                                 <ul class="links">
                                     @php
-                                        $footerPages = \App\Models\Page::active()->showInFooter()->orderBy('sort_order')->get();
+                                        $footerAboutLinks = [
+                                            ['label' => Setting::get('footer.about_link1_label', 'About Us'), 'url' => Setting::get('footer.about_link1_url', url('/about'))],
+                                            ['label' => Setting::get('footer.about_link2_label', 'Contact Us'), 'url' => Setting::get('footer.about_link2_url', url('/contact'))],
+                                            ['label' => Setting::get('footer.about_link3_label', 'Our Story'), 'url' => Setting::get('footer.about_link3_url', url('/about'))],
+                                            ['label' => Setting::get('footer.about_link4_label', 'Privacy Policy'), 'url' => Setting::get('footer.about_link4_url', url('/page/privacy-policy'))],
+                                            ['label' => Setting::get('footer.about_link5_label', 'Terms of Service'), 'url' => Setting::get('footer.about_link5_url', url('/page/terms-of-service'))],
+                                        ];
                                     @endphp
-                                    @foreach($footerPages as $fPage)
-                                        <li><a href="{{ $fPage->frontend_url }}">{{ $fPage->title }}</a></li>
+                                    @foreach($footerAboutLinks as $link)
+                                        @if($link['label'])
+                                        <li><a href="{{ $link['url'] }}">{{ $link['label'] }}</a></li>
+                                        @endif
                                     @endforeach
                                 </ul>
                             </div>

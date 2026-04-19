@@ -252,30 +252,6 @@
                         <label class="custom-control-label" for="is_active">Active (Published)</label>
                     </div>
 
-                    <hr>
-                    <h6 class="font-weight-bold mb-3"><i class="fas fa-map-signs mr-1"></i> Display Location</h6>
-                    <p class="text-muted mb-3" style="font-size: 13px;">Choose where this page link appears on the frontend storefront.</p>
-
-                    <div class="custom-control custom-checkbox mb-3">
-                        <input type="hidden" name="show_in_header" value="0">
-                        <input type="checkbox" class="custom-control-input" id="show_in_header" name="show_in_header" value="1" {{ old('show_in_header', $page->show_in_header) ? 'checked' : '' }}>
-                        <label class="custom-control-label" for="show_in_header">
-                            <i class="fas fa-arrow-up text-primary mr-1"></i> Show in Header Navigation
-                            <br><small class="text-muted font-weight-normal">Page link will appear in the main navigation bar</small>
-                        </label>
-                    </div>
-
-                    <div class="custom-control custom-checkbox mb-3">
-                        <input type="hidden" name="show_in_footer" value="0">
-                        <input type="checkbox" class="custom-control-input" id="show_in_footer" name="show_in_footer" value="1" {{ old('show_in_footer', $page->show_in_footer) ? 'checked' : '' }}>
-                        <label class="custom-control-label" for="show_in_footer">
-                            <i class="fas fa-arrow-down text-success mr-1"></i> Show in Footer Links
-                            <br><small class="text-muted font-weight-normal">Page link will appear in the footer pages column</small>
-                        </label>
-                    </div>
-
-                    <hr>
-
                     <div class="custom-control custom-checkbox mb-3">
                         <input type="hidden" name="show_sidebar" value="0">
                         <input type="checkbox" class="custom-control-input" id="show_sidebar" name="show_sidebar" value="1" {{ old('show_sidebar', $page->show_sidebar) ? 'checked' : '' }}>
@@ -299,6 +275,7 @@
 </form>
 
 @push('scripts')
+
 <script>
 var sectionIndex = {{ $isEdit ? $page->sections->count() : 0 }};
 
@@ -342,6 +319,7 @@ function deleteGalleryImage(pageId, imageId) {
 document.getElementById('show_sidebar').addEventListener('change', function() {
     document.getElementById('sidebar-content-group').style.display = this.checked ? '' : 'none';
 });
+
 </script>
 @endpush
 @endsection

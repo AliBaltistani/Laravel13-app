@@ -16,7 +16,6 @@ class Page extends Model
         'banner_image', 'video_url', 'video_file',
         'meta_title', 'meta_description', 'is_active', 'sort_order', 'template',
         'custom_css', 'custom_js', 'layout', 'show_sidebar', 'sidebar_content',
-        'show_in_header', 'show_in_footer',
     ];
 
     protected function casts(): array
@@ -24,8 +23,6 @@ class Page extends Model
         return [
             'is_active' => 'boolean',
             'show_sidebar' => 'boolean',
-            'show_in_header' => 'boolean',
-            'show_in_footer' => 'boolean',
             'sort_order' => 'integer',
         ];
     }
@@ -38,30 +35,6 @@ class Page extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
-    }
-
-    public function scopeShowInHeader($query)
-    {
-        return $query->where('show_in_header', true);
-    }
-
-    public function scopeShowInFooter($query)
-    {
-        return $query->where('show_in_footer', true);
-    }
-
-    /**
-     * Get the correct frontend URL for this page.
-     */
-    public function getFrontendUrlAttribute(): string
-    {
-        return match ($this->slug) {
-            'about-us' => url('/about'),
-            'contact' => url('/contact'),
-            'terms-conditions' => url('/terms'),
-            'privacy-policy' => url('/privacy'),
-            default => route('page.show', $this->slug),
-        };
     }
 
     /**

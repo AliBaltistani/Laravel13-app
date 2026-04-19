@@ -36,8 +36,6 @@ class AdminPageController extends Controller
         $data = $this->validatePage($request);
         $data['is_active'] = $request->boolean('is_active');
         $data['show_sidebar'] = $request->boolean('show_sidebar');
-        $data['show_in_header'] = $request->boolean('show_in_header');
-        $data['show_in_footer'] = $request->boolean('show_in_footer');
 
         // Handle file uploads
         $data = $this->handleFileUploads($request, $data);
@@ -64,8 +62,6 @@ class AdminPageController extends Controller
         $data = $this->validatePage($request, $page->id);
         $data['is_active'] = $request->boolean('is_active');
         $data['show_sidebar'] = $request->boolean('show_sidebar');
-        $data['show_in_header'] = $request->boolean('show_in_header');
-        $data['show_in_footer'] = $request->boolean('show_in_footer');
 
         // Handle file uploads
         $data = $this->handleFileUploads($request, $data, $page);

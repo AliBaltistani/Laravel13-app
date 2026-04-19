@@ -31,7 +31,15 @@
                     <td>{{ $order->created_at->format('M d, Y') }}</td>
                     <td><span class="badge badge-{{ $order->status_badge_color }}">{{ ucfirst($order->status) }}</span></td>
                     <td>@price($order->total)</td>
-                    <td><a href="#" class="btn btn-sm btn-primary">View</a></td>
+                    <td>
+                        <a href="{{ route('account.orders.show', $order->order_number) }}" class="btn btn-sm btn-outline-primary">View</a>
+                        @if($order->status === 'pending')
+                            <form action="{{ route('account.orders.cancel', $order) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this order?')">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+                            </form>
+                        @endif
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
