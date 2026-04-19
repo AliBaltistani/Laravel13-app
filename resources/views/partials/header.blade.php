@@ -137,19 +137,9 @@
                     <li class="{{ request()->is('blog*') ? 'active' : '' }}">
                         <a href="{{ url('/blog') }}">BLOG</a>
                     </li>
-                    @foreach(\App\Models\Page::where('is_active', true)->whereNotIn('slug', ['privacy-policy', 'terms-conditions', 'about-us'])->get() as $customPage)
-                        @php
-                            // Handle standard predefined routes vs dynamic pages
-                            if ($customPage->slug === 'about-us') {
-                                $pageUrl = url('/about');
-                            } elseif ($customPage->slug === 'contact') {
-                                $pageUrl = url('/contact');
-                            } else {
-                                $pageUrl = route('page.show', $customPage->slug);
-                            }
-                        @endphp
-                        <li class="{{ request()->fullUrl() == $pageUrl ? 'active' : '' }}">
-                            <a href="{{ $pageUrl }}">{{ strtoupper($customPage->title) }}</a>
+                    @foreach(\App\Models\Page::active()->showInHeader()->orderBy('sort_order')->get() as $customPage)
+                        <li class="{{ request()->fullUrl() == $customPage->frontend_url ? 'active' : '' }}">
+                            <a href="{{ $customPage->frontend_url }}">{{ strtoupper($customPage->title) }}</a>
                         </li>
                     @endforeach
                     @if(Setting::get('header.show_special_offer', '1') === '1' && Setting::get('header.special_offer_text'))

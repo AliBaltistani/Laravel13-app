@@ -26,7 +26,7 @@
 </div>
 
 <div class="admin-card"><div class="card-body p-0"><table class="admin-table">
-<thead><tr><th style="width:40px;"></th><th>Title</th><th>Slug</th><th>Template</th><th>Media</th><th>Sections</th><th>Status</th><th>Actions</th></tr></thead>
+<thead><tr><th style="width:40px;"></th><th>Title</th><th>Slug</th><th>Template</th><th>Location</th><th>Media</th><th>Sections</th><th>Status</th><th>Actions</th></tr></thead>
 <tbody>
 @forelse($pages as $p)
 <tr>
@@ -40,6 +40,11 @@
     <td><a href="{{ route('admin.pages.edit', $p) }}" class="text-dark font-weight-bold">{{ $p->title }}</a></td>
     <td class="text-muted">/{{ $p->slug }}</td>
     <td><span class="badge badge-light">{{ ucfirst($p->template ?? 'default') }}</span></td>
+    <td>
+        @if($p->show_in_header)<span class="badge badge-primary" title="Shows in header"><i class="fas fa-arrow-up mr-1"></i>Header</span>@endif
+        @if($p->show_in_footer)<span class="badge badge-success" title="Shows in footer"><i class="fas fa-arrow-down mr-1"></i>Footer</span>@endif
+        @if(!$p->show_in_header && !$p->show_in_footer)<span class="badge badge-light text-muted">None</span>@endif
+    </td>
     <td><span class="badge badge-info">{{ $p->images_count ?? 0 }} <i class="fas fa-image ml-1"></i></span></td>
     <td><span class="badge badge-secondary">{{ $p->sections_count ?? 0 }}</span></td>
     <td>{!! $p->is_active ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-secondary">Inactive</span>' !!}</td>
@@ -49,7 +54,7 @@
         <form method="POST" action="{{ route('admin.pages.destroy', $p) }}" class="d-inline" onsubmit="return confirm('Delete this page?')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></form>
     </td>
 </tr>
-@empty<tr><td colspan="8" class="text-center text-muted py-4">No pages found.</td></tr>@endforelse
+@empty<tr><td colspan="9" class="text-center text-muted py-4">No pages found.</td></tr>@endforelse
 </tbody></table></div></div>
 <div class="mt-3">{{ $pages->links() }}</div>
 @endsection
