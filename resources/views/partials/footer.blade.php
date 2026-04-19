@@ -57,7 +57,6 @@
                                     <li><a href="{{ url('/wishlist') }}">Wishlist</a></li>
                                     <li><a href="{{ url('/cart') }}">Shopping Cart</a></li>
                                     <li><a href="{{ url('/shop') }}">Shop</a></li>
-                                    <li><a href="{{ url('/contact') }}">Contact Us</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -70,16 +69,9 @@
                                     @php
                                         $footerPages = \App\Models\Page::active()->showInFooter()->orderBy('sort_order')->get();
                                     @endphp
-                                    @forelse($footerPages as $fPage)
+                                    @foreach($footerPages as $fPage)
                                         <li><a href="{{ $fPage->frontend_url }}">{{ $fPage->title }}</a></li>
-                                    @empty
-                                        {{-- Fallback links if no pages are configured --}}
-                                        <li><a href="{{ url('/about') }}">About Us</a></li>
-                                        <li><a href="{{ url('/contact') }}">Contact Us</a></li>
-                                    @endforelse
-                                    {{-- Always show legal pages --}}
-                                    <li><a href="{{ url('/terms') }}">Terms & Conditions</a></li>
-                                    <li><a href="{{ url('/privacy') }}">Privacy Policy</a></li>
+                                    @endforeach
                                 </ul>
                             </div>
                         </div>

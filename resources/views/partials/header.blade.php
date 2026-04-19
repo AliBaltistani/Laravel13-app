@@ -142,6 +142,9 @@
                             <a href="{{ $customPage->frontend_url }}">{{ strtoupper($customPage->title) }}</a>
                         </li>
                     @endforeach
+                    <li class="{{ request()->is('contact') ? 'active' : '' }}">
+                        <a href="{{ url('/contact') }}">CONTACT US</a>
+                    </li>
                     @if(Setting::get('header.show_special_offer', '1') === '1' && Setting::get('header.special_offer_text'))
                         <li class="float-right"><a href="{{ Setting::get('header.special_offer_url', '/shop') }}" class="pl-5">{{ Setting::get('header.special_offer_text', 'Special Offer!') }}</a></li>
                     @endif
