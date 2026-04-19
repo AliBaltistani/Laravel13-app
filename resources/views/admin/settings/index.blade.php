@@ -10,7 +10,7 @@
 
     {{-- Tabs Navigation --}}
     <ul class="nav nav-tabs mb-0" role="tablist">
-        @php $groups = ['general','contact','appearance','seo','social','payment','shipping','mail','auth','legal','promo','custom_code']; @endphp
+        @php $groups = ['general','appearance','seo','social','payment','shipping','mail','auth','promo','custom_code']; @endphp
         @foreach($groups as $i => $group)
         <li class="nav-item">
             <a class="nav-link {{ $i === 0 ? 'active' : '' }}" data-toggle="tab" href="#tab-{{ $group }}">
@@ -54,14 +54,6 @@
                     <div class="mb-4 p-3" style="background: rgba(13,110,253,0.05); border-radius: 8px; border: 1px solid rgba(13,110,253,0.1);">
                         <h6 class="mb-1"><i class="fas fa-shield-alt text-primary mr-1"></i> Authentication Settings</h6>
                         <p class="text-muted mb-0" style="font-size: 13px;">Configure registration, login security, OTP settings, and password policies.</p>
-                    </div>
-                    @endif
-
-                    {{-- Legal tab special header --}}
-                    @if($group === 'legal')
-                    <div class="mb-4 p-3" style="background: rgba(25,135,84,0.05); border-radius: 8px; border: 1px solid rgba(25,135,84,0.1);">
-                        <h6 class="mb-1"><i class="fas fa-gavel text-success mr-1"></i> Legal Pages Content</h6>
-                        <p class="text-muted mb-0" style="font-size: 13px;">Manage Terms & Conditions, Privacy Policy, and Cookie Consent content. These are displayed on your storefront.</p>
                     </div>
                     @endif
 

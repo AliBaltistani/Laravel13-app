@@ -46,13 +46,15 @@ class PageController extends Controller
      */
     public function contact()
     {
+        $page = Page::where('slug', 'contact')->where('is_active', true)->first();
+
         // SEO — Phase 9-A/9-B: LocalBusiness JSON-LD
         app(SeoService::class)
-            ->setTitle('Contact Us')
-            ->setDescription('Get in touch with us for questions, support, or feedback')
+            ->setTitle($page?->meta_title ?? 'Contact Us')
+            ->setDescription($page?->meta_description ?? 'Get in touch with us for questions, support, or feedback')
             ->setJsonLd(SeoService::localBusinessSchema());
 
-        return view('pages.contact');
+        return view('pages.contact', compact('page'));
     }
 
     /**
@@ -73,11 +75,13 @@ class PageController extends Controller
      */
     public function terms()
     {
-        app(SeoService::class)
-            ->setTitle('Terms & Conditions')
-            ->setDescription('Read our terms and conditions before using our website and services.');
+        $page = Page::where('slug', 'terms-conditions')->where('is_active', true)->firstOrFail();
 
-        return view('pages.terms');
+        app(SeoService::class)
+            ->setTitle($page->meta_title ?: 'Terms & Conditions')
+            ->setDescription($page->meta_description ?: 'Read our terms and conditions before using our website and services.');
+
+        return view('pages.terms', compact('page'));
     }
 
     /**
@@ -85,11 +89,13 @@ class PageController extends Controller
      */
     public function privacy()
     {
-        app(SeoService::class)
-            ->setTitle('Privacy Policy')
-            ->setDescription('Read our privacy policy to understand how we collect, use, and protect your personal data.');
+        $page = Page::where('slug', 'privacy-policy')->where('is_active', true)->firstOrFail();
 
-        return view('pages.privacy');
+        app(SeoService::class)
+            ->setTitle($page->meta_title ?: 'Privacy Policy')
+            ->setDescription($page->meta_description ?: 'Read our privacy policy to understand how we collect, use, and protect your personal data.');
+
+        return view('pages.privacy', compact('page'));
     }
 
     /**

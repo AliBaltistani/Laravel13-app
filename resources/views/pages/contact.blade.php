@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-@section('meta_title', 'Contact Us - ' . Setting::get('general.site_name', 'Porto Shop'))
+@section('meta_title', ($page?->meta_title ?? 'Contact Us') . ' - ' . Setting::get('general.site_name', 'Porto Shop'))
+@section('meta_description', $page?->meta_description ?? 'Get in touch with us for questions, support, or feedback')
 
 @push('styles')
 <style>
@@ -38,10 +39,10 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb custom-breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ url('/') }}">HOME</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">CONTACT US</li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ $page?->title ?? 'CONTACT US' }}</li>
                 </ol>
             </nav>
-            <h1 class="page-hero-title mx-auto">Contact Us</h1>
+            <h1 class="page-hero-title mx-auto">{{ $page?->title ?? 'Contact Us' }}</h1>
         </div>
     </div>
 
