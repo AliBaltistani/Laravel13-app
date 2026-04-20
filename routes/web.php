@@ -84,15 +84,16 @@ Route::get('/blog/category/{slug}', [BlogController::class, 'category'])->name('
 Route::get('/blog/tag/{slug}', [BlogController::class, 'tag'])->name('blog.tag');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
-// Static Pages
-Route::get('/about', [PageController::class, 'about'])->name('about');
+// Contact Page (dedicated — has special form logic)
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [PageController::class, 'submitContact'])->name('contact.submit');
 Route::get('/promotions', [PageController::class, 'promotions'])->name('promotions');
 
-// Legal Pages
-Route::get('/terms', [PageController::class, 'terms'])->name('terms');
-Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
+// CMS Pages — all dynamic pages use the same show() method
+// Named routes kept for backward compatibility (used in register, footer, etc.)
+Route::get('/about', fn () => app(PageController::class)->show('about-us'))->name('about');
+Route::get('/terms', fn () => app(PageController::class)->show('terms'))->name('terms');
+Route::get('/privacy', fn () => app(PageController::class)->show('privacy'))->name('privacy');
 
 // CMS Pages (catch-all for dynamic pages)
 Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.show');
