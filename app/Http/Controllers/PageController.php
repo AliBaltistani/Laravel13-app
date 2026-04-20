@@ -46,15 +46,13 @@ class PageController extends Controller
      */
     public function contact()
     {
-        $page = Page::where('slug', 'contact')->where('is_active', true)->first();
-
         // SEO — Phase 9-A/9-B: LocalBusiness JSON-LD
         app(SeoService::class)
-            ->setTitle($page?->meta_title ?? 'Contact Us')
-            ->setDescription($page?->meta_description ?? 'Get in touch with us for questions, support, or feedback')
+            ->setTitle('Contact Us')
+            ->setDescription('Get in touch with us for questions, support, or feedback')
             ->setJsonLd(SeoService::localBusinessSchema());
 
-        return view('pages.contact', compact('page'));
+        return view('pages.contact');
     }
 
     /**
@@ -75,13 +73,11 @@ class PageController extends Controller
      */
     public function terms()
     {
-        $page = Page::where('slug', 'terms-conditions')->where('is_active', true)->firstOrFail();
-
         app(SeoService::class)
-            ->setTitle($page->meta_title ?: 'Terms & Conditions')
-            ->setDescription($page->meta_description ?: 'Read our terms and conditions before using our website and services.');
+            ->setTitle('Terms & Conditions')
+            ->setDescription('Read our terms and conditions before using our website and services.');
 
-        return view('pages.terms', compact('page'));
+        return view('pages.terms');
     }
 
     /**
@@ -89,13 +85,11 @@ class PageController extends Controller
      */
     public function privacy()
     {
-        $page = Page::where('slug', 'privacy-policy')->where('is_active', true)->firstOrFail();
-
         app(SeoService::class)
-            ->setTitle($page->meta_title ?: 'Privacy Policy')
-            ->setDescription($page->meta_description ?: 'Read our privacy policy to understand how we collect, use, and protect your personal data.');
+            ->setTitle('Privacy Policy')
+            ->setDescription('Read our privacy policy to understand how we collect, use, and protect your personal data.');
 
-        return view('pages.privacy', compact('page'));
+        return view('pages.privacy');
     }
 
     /**

@@ -32,7 +32,7 @@
                         <li><a href="{{ url('/cart') }}">Shopping Cart</a></li>
                         <li><a href="{{ url('/checkout') }}">Checkout</a></li>
                         <li><a href="{{ route('account.dashboard') }}">Dashboard</a></li>
-                        <li><a href="{{ url('/about') }}">About Us</a></li>
+                        <li><a href="{{ url('/page/about-us') }}">About Us</a></li>
                         <li><a href="{{ url('/contact') }}">Contact Us</a></li>
                         @guest
                             <li><a href="{{ route('login') }}">Login</a></li>

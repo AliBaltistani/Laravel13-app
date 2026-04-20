@@ -465,17 +465,8 @@
         }
     </style>
 
-    {{-- Summernote Rich Text Editor (Free) --}}
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
     @livewireStyles
     @stack('styles')
-
-    {{-- Custom CSS --}}
-    @if(\App\Models\Setting::get('custom_code.css'))
-        <style>
-            {!! \App\Models\Setting::get('custom_code.css') !!}
-        </style>
-    @endif
 </head>
 
 <body class="admin-body">
@@ -792,44 +783,7 @@
         }, 4000);
     </script>
 
-
     @livewireScripts
-    
-     {{-- Summernote Rich Text Editor (Free) --}}
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            if ($('.richtext-editor').length) {
-                $('.richtext-editor').summernote({
-                    height: 300,
-                    toolbar: [
-                        ['style', ['style']],
-                        ['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
-                        ['fontsize', ['fontsize']],
-                        ['color', ['color']],
-                        ['para', ['ul', 'ol', 'paragraph']],
-                        ['table', ['table']],
-                        ['insert', ['link', 'picture', 'video', 'hr']],
-                        ['view', ['fullscreen', 'codeview', 'help']]
-                    ],
-                    callbacks: {
-                        onInit: function() {
-                            // Style the editor to match admin theme
-                            $(this).closest('.note-editor').css('border-radius', '6px');
-                        }
-                    }
-                });
-            }
-        });
-    </script>
-
     @stack('scripts')
-
-    {{-- Custom JS --}}
-    @if(\App\Models\Setting::get('custom_code.js'))
-        <script>
-            {!! \App\Models\Setting::get('custom_code.js') !!}
-        </script>
-    @endif
 </body>
 </html>

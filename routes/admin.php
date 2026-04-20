@@ -22,7 +22,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\HomepageSectionController;
-use App\Http\Controllers\Admin\ContactMessageController;
+
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
@@ -67,9 +67,6 @@ Route::get('customers', [CustomerController::class, 'index'])->name('customers.i
 Route::get('customers/{user}', [CustomerController::class, 'show'])->name('customers.show');
 Route::put('customers/{user}/toggle', [CustomerController::class, 'toggleStatus'])->name('customers.toggle');
 Route::post('customers/{user}/email', [CustomerController::class, 'sendEmail'])->name('customers.email');
-
-// Contact Messages
-Route::resource('contact-messages', ContactMessageController::class)->only(['index', 'show', 'destroy']);
 
 // Coupons
 Route::resource('coupons', CouponController::class);

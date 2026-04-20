@@ -1,0 +1,1 @@
+[13-Apr-2026 09:58:07 UTC] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 58094160 bytes) in /home/buyonlin/demo.buyonlineskd.com/vendor/laravel/framework/src/Illuminate/Support/helpers.php on line 138
