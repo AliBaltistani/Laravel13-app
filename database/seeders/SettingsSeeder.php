@@ -83,13 +83,6 @@ class SettingsSeeder extends Seeder
             ['key' => 'product.tab_shipping_content', 'value' => '<p>We deliver to over 100 countries around the world. Standard shipping takes 5-10 business days.</p>', 'group' => 'general', 'type' => 'textarea', 'label' => 'Shipping Tab Content'],
             ['key' => 'product.tab_return_content', 'value' => '<p>You may return most new, unopened items within 30 days of delivery for a full refund.</p>', 'group' => 'general', 'type' => 'textarea', 'label' => 'Returns Tab Content'],
 
-            // About page
-            ['key' => 'about.heading', 'value' => 'About Us', 'group' => 'general', 'type' => 'text', 'label' => 'About Heading'],
-            ['key' => 'about.description', 'value' => 'We are a team of passionate individuals dedicated to bringing you the best online shopping experience.', 'group' => 'general', 'type' => 'textarea', 'label' => 'About Description'],
-
-            // Blog
-            ['key' => 'blog.auto_approve_comments', 'value' => '0', 'group' => 'general', 'type' => 'boolean', 'label' => 'Auto Approve Comments'],
-
             // Newsletter
             ['key' => 'footer.newsletter_title', 'value' => 'Subscribe Newsletter', 'group' => 'footer', 'type' => 'text', 'label' => 'Newsletter Title'],
             ['key' => 'footer.newsletter_description', 'value' => 'Get all the latest information on events, sales and offers. Sign up for newsletter today.', 'group' => 'footer', 'type' => 'textarea', 'label' => 'Newsletter Description'],
@@ -97,9 +90,6 @@ class SettingsSeeder extends Seeder
             // Contact auto-reply
             ['key' => 'contact.auto_reply_subject', 'value' => 'Thank you for contacting us', 'group' => 'contact', 'type' => 'text', 'label' => 'Auto Reply Subject'],
             ['key' => 'contact.auto_reply_body', 'value' => 'Thank you for reaching out. We have received your message and will get back to you within 24-48 hours.', 'group' => 'contact', 'type' => 'textarea', 'label' => 'Auto Reply Body'],
-
-            // Asset versioning
-            ['key' => 'appearance.asset_version', 'value' => '1.0', 'group' => 'appearance', 'type' => 'text', 'label' => 'Asset Version'],
         ];
 
         foreach ($settings as $setting) {

@@ -1,6 +1,17 @@
 <footer class="footer appear-animate">
     <div class="footer-middle">
         <div class="container">
+            {{-- Footer Logo --}}
+            <div class="footer-logo mb-3">
+                <a href="{{ url('/') }}">
+                    @if(Setting::get('appearance.logo'))
+                        <img src="{{ asset('storage/' . Setting::get('appearance.logo')) }}" alt="{{ Setting::get('general.site_name', 'Porto Shop') }}" class="logo" style="max-height: 45px; filter: brightness(0) invert(1);">
+                    @else
+                        <img src="{{ asset('themes/porto/images/logo.png') }}" alt="{{ Setting::get('general.site_name', 'Porto Shop') }}" class="logo" style="max-height: 45px; filter: brightness(0) invert(1);">
+                    @endif
+                </a>
+            </div>
+
             <div class="row">
                 <div class="col-lg-9">
                     <div class="row row-sm">
@@ -44,33 +55,22 @@
                             <div class="widget pl-sm-1">
                                 <h4 class="widget-title">{{ Setting::get('footer.col2_title', 'CUSTOMER SERVICE') }}</h4>
                                 <ul class="links">
-                                    <li><a href="{{ url('/about') }}">About Us</a></li>
-                                    <li><a href="{{ url('/contact') }}">Contact Us</a></li>
                                     <li><a href="{{ route('account.dashboard') }}">My Account</a></li>
+                                    <li><a href="{{ url('/contact') }}">Contact Us</a></li>
                                     <li><a href="{{ url('/account/orders') }}">Orders History</a></li>
                                     <li><a href="{{ url('/shop') }}">Advanced Search</a></li>
                                 </ul>
                             </div>
                         </div>
 
-                        {{-- Column 3: About Us --}}
+                        {{-- Column 3: Legal & Pages --}}
                         <div class="col-sm-4">
                             <div class="widget pl-sm-2">
-                                <h4 class="widget-title">{{ Setting::get('footer.col3_title', 'ABOUT US') }}</h4>
+                                <h4 class="widget-title">{{ Setting::get('footer.col3_title', 'INFORMATION') }}</h4>
                                 <ul class="links">
-                                    @php
-                                        $footerAboutLinks = [
-                                            ['label' => Setting::get('footer.about_link1_label', 'About Us'), 'url' => Setting::get('footer.about_link1_url', url('/about'))],
-                                            ['label' => Setting::get('footer.about_link2_label', 'Contact Us'), 'url' => Setting::get('footer.about_link2_url', url('/contact'))],
-                                            ['label' => Setting::get('footer.about_link3_label', 'Our Story'), 'url' => Setting::get('footer.about_link3_url', url('/about'))],
-                                            ['label' => Setting::get('footer.about_link4_label', 'Privacy Policy'), 'url' => Setting::get('footer.about_link4_url', url('/page/privacy-policy'))],
-                                            ['label' => Setting::get('footer.about_link5_label', 'Terms of Service'), 'url' => Setting::get('footer.about_link5_url', url('/page/terms-of-service'))],
-                                        ];
-                                    @endphp
-                                    @foreach($footerAboutLinks as $link)
-                                        @if($link['label'])
-                                        <li><a href="{{ $link['url'] }}">{{ $link['label'] }}</a></li>
-                                        @endif
+                                    {{-- Dynamic footer pages from CMS --}}
+                                    @foreach(\App\Models\Page::footerMenu()->active()->get() as $footerPage)
+                                        <li><a href="{{ route('page.show', $footerPage->slug) }}">{{ $footerPage->footer_label ?? $footerPage->title }}</a></li>
                                     @endforeach
                                 </ul>
                             </div>

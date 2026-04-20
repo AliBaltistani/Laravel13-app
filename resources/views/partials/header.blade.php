@@ -28,7 +28,10 @@
                 <span class="separator d-none d-xl-block"></span>
                 <ul class="top-links mega-menu show-arrow d-none d-sm-inline-block">
                     <li class="item-menu narrow"><a href="{{ route('account.dashboard') }}">My Account</a></li>
-                    <li class="item-menu narrow"><a href="{{ url('/page/about-us') }}">About Us</a></li>
+                    {{-- Dynamic header pages from CMS --}}
+                    @foreach(\App\Models\Page::headerMenu()->active()->get() as $headerPage)
+                        <li class="item-menu narrow"><a href="{{ route('page.show', $headerPage->slug) }}">{{ $headerPage->header_label ?? $headerPage->title }}</a></li>
+                    @endforeach
                     <li class="item-menu narrow"><a href="{{ url('/blog') }}">Blog</a></li>
                     <li class="item-menu narrow"><a href="{{ url('/cart') }}">Cart</a></li>
                     <li class="item-menu">
@@ -138,19 +141,10 @@
                     <li class="{{ request()->is('blog*') ? 'active' : '' }}">
                         <a href="{{ url('/blog') }}">BLOG</a>
                     </li>
-                    @foreach(\App\Models\Page::where('is_active', true)->whereNotIn('slug', ['privacy-policy', 'terms-conditions'])->get() as $customPage)
-                        @php
-                            // Handle standard predefined routes vs dynamic pages
-                            if ($customPage->slug === 'about-us') {
-                                $pageUrl = url('/page/about-us');
-                            } elseif ($customPage->slug === 'contact') {
-                                $pageUrl = url('/contact');
-                            } else {
-                                $pageUrl = route('page.show', $customPage->slug);
-                            }
-                        @endphp
-                        <li class="{{ request()->fullUrl() == $pageUrl ? 'active' : '' }}">
-                            <a href="{{ $pageUrl }}">{{ strtoupper($customPage->title) }}</a>
+                    {{-- Dynamic header pages from CMS --}}
+                    @foreach(\App\Models\Page::headerMenu()->active()->get() as $customPage)
+                        <li class="{{ request()->is('page/' . $customPage->slug) || request()->is($customPage->slug) ? 'active' : '' }}">
+                            <a href="{{ route('page.show', $customPage->slug) }}">{{ strtoupper($customPage->header_label ?? $customPage->title) }}</a>
                         </li>
                     @endforeach
                     @if(Setting::get('header.show_special_offer', '1') === '1' && Setting::get('header.special_offer_text'))

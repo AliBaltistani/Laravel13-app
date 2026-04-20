@@ -36,6 +36,12 @@ class AdminPageController extends Controller
         $data = $this->validatePage($request);
         $data['is_active'] = $request->boolean('is_active');
         $data['show_sidebar'] = $request->boolean('show_sidebar');
+        $data['show_in_header'] = $request->boolean('show_in_header');
+        $data['show_in_footer'] = $request->boolean('show_in_footer');
+        $data['header_label'] = $request->input('header_label') ?: null;
+        $data['footer_label'] = $request->input('footer_label') ?: null;
+        $data['header_order'] = $request->integer('header_order') ?? 0;
+        $data['footer_order'] = $request->integer('footer_order') ?? 0;
 
         // Handle file uploads
         $data = $this->handleFileUploads($request, $data);
@@ -62,6 +68,12 @@ class AdminPageController extends Controller
         $data = $this->validatePage($request, $page->id);
         $data['is_active'] = $request->boolean('is_active');
         $data['show_sidebar'] = $request->boolean('show_sidebar');
+        $data['show_in_header'] = $request->boolean('show_in_header');
+        $data['show_in_footer'] = $request->boolean('show_in_footer');
+        $data['header_label'] = $request->input('header_label') ?: null;
+        $data['footer_label'] = $request->input('footer_label') ?: null;
+        $data['header_order'] = $request->integer('header_order') ?? 0;
+        $data['footer_order'] = $request->integer('footer_order') ?? 0;
 
         // Handle file uploads
         $data = $this->handleFileUploads($request, $data, $page);
@@ -140,6 +152,12 @@ class AdminPageController extends Controller
             'image' => 'nullable|image|max:2048',
             'banner_image' => 'nullable|image|max:4096',
             'video_file' => 'nullable|mimes:mp4,webm,ogg|max:51200',
+            'show_in_header' => 'boolean',
+            'show_in_footer' => 'boolean',
+            'header_label' => 'nullable|string|max:255',
+            'footer_label' => 'nullable|string|max:255',
+            'header_order' => 'nullable|integer|min:0|max:10',
+            'footer_order' => 'nullable|integer|min:0|max:10',
         ]);
     }
 

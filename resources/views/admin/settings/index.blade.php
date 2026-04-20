@@ -10,7 +10,7 @@
 
     {{-- Tabs Navigation --}}
     <ul class="nav nav-tabs mb-0" role="tablist">
-        @php $groups = ['general','contact','appearance','seo','social','payment','shipping','mail','auth','legal','promo','custom_code']; @endphp
+        @php $groups = ['general','contact','appearance','footer','seo','social','payment','shipping','mail','auth','promo','custom_code']; @endphp
         @foreach($groups as $i => $group)
         <li class="nav-item">
             <a class="nav-link {{ $i === 0 ? 'active' : '' }}" data-toggle="tab" href="#tab-{{ $group }}">
@@ -18,8 +18,8 @@
                     @case('auth')
                         <i class="fas fa-user-shield mr-1"></i>
                         @break
-                    @case('legal')
-                        <i class="fas fa-gavel mr-1"></i>
+                    @case('footer')
+                        <i class="fas fa-shoe-prints mr-1"></i>
                         @break
                     @case('mail')
                         <i class="fas fa-envelope mr-1"></i>
@@ -57,11 +57,11 @@
                     </div>
                     @endif
 
-                    {{-- Legal tab special header --}}
-                    @if($group === 'legal')
-                    <div class="mb-4 p-3" style="background: rgba(25,135,84,0.05); border-radius: 8px; border: 1px solid rgba(25,135,84,0.1);">
-                        <h6 class="mb-1"><i class="fas fa-gavel text-success mr-1"></i> Legal Pages Content</h6>
-                        <p class="text-muted mb-0" style="font-size: 13px;">Manage Terms & Conditions, Privacy Policy, and Cookie Consent content. These are displayed on your storefront.</p>
+                    {{-- Footer tab special header --}}
+                    @if($group === 'footer')
+                    <div class="mb-4 p-3" style="background: rgba(108,117,125,0.05); border-radius: 8px; border: 1px solid rgba(108,117,125,0.12);">
+                        <h6 class="mb-1"><i class="fas fa-shoe-prints mr-1" style="color:#6c757d;"></i> Footer Configuration</h6>
+                        <p class="text-muted mb-0" style="font-size: 13px;">Customize footer column titles and newsletter section. Footer page links are managed via <a href="{{ route('admin.pages.index') }}">Pages CMS</a> (Show in Footer option).</p>
                     </div>
                     @endif
 

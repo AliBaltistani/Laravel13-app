@@ -262,6 +262,47 @@
                         <label>Sidebar Content (HTML)</label>
                         <textarea name="sidebar_content" class="form-control" rows="6" style="font-family:monospace;font-size:13px;">{{ old('sidebar_content', $page->sidebar_content) }}</textarea>
                     </div>
+
+                    <hr>
+
+                    {{-- Header/Footer Navigation Settings --}}
+                    <h6 class="font-weight-bold mb-3"><i class="fas fa-sitemap mr-1"></i> Navigation & Menu</h6>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="custom-control custom-checkbox mb-2">
+                                <input type="hidden" name="show_in_header" value="0">
+                                <input type="checkbox" class="custom-control-input" id="show_in_header" name="show_in_header" value="1" {{ old('show_in_header', $page->show_in_header ?? false) ? 'checked' : '' }}>
+                                <label class="custom-control-label" for="show_in_header"><strong>Show in Header Navigation</strong></label>
+                            </div>
+                            <div class="form-group ml-4">
+                                <label>Header Label <small class="text-muted">(leave empty to use page title)</small></label>
+                                <input type="text" name="header_label" class="form-control" value="{{ old('header_label', $page->header_label) }}" placeholder="e.g., About, FAQ, Help">
+                            </div>
+                            <div class="form-group ml-4">
+                                <label>Header Display Order <small class="text-muted">(0-10)</small></label>
+                                <input type="number" name="header_order" class="form-control" value="{{ old('header_order', $page->header_order ?? 0) }}" min="0" max="10">
+                                <small class="text-muted">Lower numbers appear first. Leave as 0 to use default.</small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="custom-control custom-checkbox mb-2">
+                                <input type="hidden" name="show_in_footer" value="0">
+                                <input type="checkbox" class="custom-control-input" id="show_in_footer" name="show_in_footer" value="1" {{ old('show_in_footer', $page->show_in_footer ?? false) ? 'checked' : '' }}>
+                                <label class="custom-control-label" for="show_in_footer"><strong>Show in Footer Navigation</strong></label>
+                            </div>
+                            <div class="form-group ml-4">
+                                <label>Footer Label <small class="text-muted">(leave empty to use page title)</small></label>
+                                <input type="text" name="footer_label" class="form-control" value="{{ old('footer_label', $page->footer_label) }}" placeholder="e.g., Terms & Conditions, Privacy">
+                            </div>
+                            <div class="form-group ml-4">
+                                <label>Footer Display Order <small class="text-muted">(0-10)</small></label>
+                                <input type="number" name="footer_order" class="form-control" value="{{ old('footer_order', $page->footer_order ?? 0) }}" min="0" max="10">
+                                <small class="text-muted">Lower numbers appear first. Leave as 0 to use default.</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

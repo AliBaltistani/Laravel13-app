@@ -16,6 +16,7 @@ class Page extends Model
         'banner_image', 'video_url', 'video_file',
         'meta_title', 'meta_description', 'is_active', 'sort_order', 'template',
         'custom_css', 'custom_js', 'layout', 'show_sidebar', 'sidebar_content',
+        'show_in_header', 'show_in_footer', 'header_label', 'footer_label', 'header_order', 'footer_order',
     ];
 
     protected function casts(): array
@@ -23,7 +24,11 @@ class Page extends Model
         return [
             'is_active' => 'boolean',
             'show_sidebar' => 'boolean',
+            'show_in_header' => 'boolean',
+            'show_in_footer' => 'boolean',
             'sort_order' => 'integer',
+            'header_order' => 'integer',
+            'footer_order' => 'integer',
         ];
     }
 
@@ -35,6 +40,16 @@ class Page extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    public function scopeHeaderMenu($query)
+    {
+        return $query->where('show_in_header', true)->orderBy('header_order');
+    }
+
+    public function scopeFooterMenu($query)
+    {
+        return $query->where('show_in_footer', true)->orderBy('footer_order');
     }
 
     /**

@@ -9,30 +9,35 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-10 mx-auto py-4">
-                <div class="mb-4">
-                    @php
-                        $updatedAt = Setting::get('legal.privacy_updated_at');
-                    @endphp
-                    @if($updatedAt)
+                @php
+                    $page = \App\Models\Page::where('slug', 'privacy')->where('is_active', true)->first();
+                @endphp
+
+                @if($page)
+                    <div class="mb-4">
                         <p class="text-muted" style="font-size: 13px;">
-                            <i class="fas fa-clock mr-1"></i> Last updated: {{ \Carbon\Carbon::parse($updatedAt)->format('F d, Y') }}
+                            <i class="fas fa-clock mr-1"></i> Last updated: {{ $page->updated_at->format('F d, Y') }}
                         </p>
-                    @endif
-                </div>
+                    </div>
 
-                <div class="legal-content">
-                    {!! Setting::get('legal.privacy_content', '<p>Privacy Policy content has not been configured yet. Please contact the administrator.</p>') !!}
-                </div>
+                    <div class="legal-content">
+                        {!! $page->content !!}
+                    </div>
 
-                <div class="mt-4 pt-3 border-top">
-                    <p class="text-muted" style="font-size: 13px;">
-                        If you have any questions about this Privacy Policy, please
-                        <a href="{{ route('contact') }}" class="text-primary">contact us</a>.
-                    </p>
-                    <a href="{{ route('terms') }}" class="text-primary">
-                        <i class="fas fa-arrow-right mr-1"></i> Read our Terms & Conditions
-                    </a>
-                </div>
+                    <div class="mt-4 pt-3 border-top">
+                        <p class="text-muted" style="font-size: 13px;">
+                            If you have any questions about this Privacy Policy, please
+                            <a href="{{ route('contact') }}" class="text-primary">contact us</a>.
+                        </p>
+                        <a href="{{ route('terms') }}" class="text-primary">
+                            <i class="fas fa-arrow-right mr-1"></i> Read our Terms & Conditions
+                        </a>
+                    </div>
+                @else
+                    <div class="alert alert-warning">
+                        <p>Privacy Policy page has not been configured yet. Please contact the administrator.</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
