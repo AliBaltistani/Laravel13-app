@@ -3,24 +3,30 @@
 @section('meta_title', (isset($category) ? $category->name . ' - ' : (isset($tag) ? 'Tag: ' . $tag->name . ' - ' : '')) . 'Blog - ' . Setting::get('general.site_name', 'Porto Shop'))
 
 @section('content')
-    @include('partials.breadcrumb', [
-        'title' => isset($category) ? $category->name : (isset($tag) ? 'Tag: ' . $tag->name : 'Blog'),
-        'items' => [['label' => 'Blog', 'url' => url('/blog')]]
-    ])
-
-    <section class="blog-hero-section">
-        <div class="container">
-            <div class="blog-hero-inner">
-                <span class="blog-hero-badge"><i class="fas fa-blog"></i> Our Blog</span>
-                <h2 class="blog-hero-title">
-                    @if(isset($category)) {{ $category->name }}
-                    @elseif(isset($tag)) Posts tagged: {{ $tag->name }}
-                    @else Latest Articles & Insights @endif
-                </h2>
-                <p class="blog-hero-desc">Discover tips, guides, and stories curated just for you.</p>
-            </div>
+    <div class="page-header page-header-custom">
+        <div class="container d-flex flex-column align-items-center">
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
+                        <li class="breadcrumb-item {{ !isset($category) && !isset($tag) ? 'active' : '' }}"><a href="{{ url('/blog') }}">Blog</a></li>
+                        @if(isset($category))
+                            <li class="breadcrumb-item active" aria-current="page">{{ $category->name }}</li>
+                        @elseif(isset($tag))
+                            <li class="breadcrumb-item active" aria-current="page">{{ $tag->name }}</li>
+                        @endif
+                    </ol>
+                </div>
+            </nav>
+            <span class="page-header-badge"><i class="fas fa-blog"></i> Our Blog</span>
+            <h1>
+                @if(isset($category)) {{ $category->name }}
+                @elseif(isset($tag)) Posts tagged: {{ $tag->name }}
+                @else Latest Articles & Insights @endif
+            </h1>
+            <p class="page-header-desc">Discover tips, guides, and stories curated just for you.</p>
         </div>
-    </section>
+    </div>
 
     <div class="container blog-main-container">
         <div class="row">
@@ -110,11 +116,7 @@
 
 @push('styles')
 <style>
-.blog-hero-section{background:linear-gradient(135deg,rgba(var(--porto-primary-rgb,0,136,204),.07) 0%,rgba(var(--porto-primary-rgb,0,136,204),.02) 100%);padding:45px 0 35px;text-align:center}
-.blog-hero-inner{max-width:600px;margin:0 auto}
-.blog-hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--porto-primary);color:#fff;padding:6px 18px;border-radius:50px;font-size:13px;font-weight:600;margin-bottom:16px}
-.blog-hero-title{font-size:34px;font-weight:800;color:var(--porto-heading);margin-bottom:10px;line-height:1.2;font-family:'Poppins',sans-serif}
-.blog-hero-desc{font-size:15px;color:#777;line-height:1.6}
+
 .blog-main-container{padding:40px 0 60px}
 .blog-posts-grid{display:flex;flex-direction:column;gap:30px}
 .blog-card{background:#fff;border-radius:16px;border:1px solid #eef1f5;box-shadow:0 4px 20px rgba(0,0,0,.04);overflow:hidden;transition:all .35s cubic-bezier(.4,0,.2,1)}

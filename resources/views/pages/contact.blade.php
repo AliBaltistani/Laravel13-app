@@ -3,18 +3,21 @@
 @section('meta_title', 'Contact Us - ' . Setting::get('general.site_name', 'Porto Shop'))
 
 @section('content')
-    @include('partials.breadcrumb', ['title' => 'Contact Us'])
-
-    {{-- Hero Section --}}
-    <section class="contact-hero-section">
-        <div class="container">
-            <div class="contact-hero-inner">
-                <span class="contact-hero-badge"><i class="fas fa-headset"></i> We'd Love to Hear From You</span>
-                <h2 class="contact-hero-title">Get in Touch With Us</h2>
-                <p class="contact-hero-desc">Have a question, feedback, or need assistance? Our team is here to help. Reach out and we'll get back to you as soon as possible.</p>
-            </div>
+    <div class="page-header page-header-custom">
+        <div class="container d-flex flex-column align-items-center">
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Contact Us</li>
+                    </ol>
+                </div>
+            </nav>
+            <span class="page-header-badge"><i class="fas fa-headset"></i> We'd Love to Hear From You</span>
+            <h1>Get in Touch With Us</h1>
+            <p class="page-header-desc">Have a question, feedback, or need assistance? Our team is here to help. Reach out and we'll get back to you as soon as possible.</p>
         </div>
-    </section>
+    </div>
 
     {{-- Contact Info Cards --}}
     <section class="contact-cards-section">
@@ -136,28 +139,7 @@
        CONTACT PAGE — MODERN REDESIGN
        ============================================ */
 
-    /* Hero Section */
-    .contact-hero-section {
-        background: linear-gradient(135deg, rgba(var(--porto-primary-rgb, 0,136,204), 0.06) 0%, rgba(var(--porto-primary-rgb, 0,136,204), 0.02) 100%);
-        padding: 50px 0 40px;
-        text-align: center;
-    }
-    .contact-hero-inner { max-width: 640px; margin: 0 auto; }
-    .contact-hero-badge {
-        display: inline-flex; align-items: center; gap: 8px;
-        background: var(--porto-primary); color: #fff;
-        padding: 6px 18px; border-radius: 50px;
-        font-size: 13px; font-weight: 600; letter-spacing: 0.3px;
-        margin-bottom: 18px;
-    }
-    .contact-hero-title {
-        font-size: 36px; font-weight: 800; color: var(--porto-heading);
-        margin-bottom: 12px; line-height: 1.2;
-        font-family: 'Poppins', sans-serif;
-    }
-    .contact-hero-desc {
-        font-size: 16px; color: #666; line-height: 1.7;
-    }
+
 
     /* Info Cards */
     .contact-cards-section { padding: 40px 0 20px; }
