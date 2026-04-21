@@ -32,8 +32,10 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="blog-posts-grid">
+                    <div class="row">
                     @forelse($posts as $post)
-                        <article class="blog-card" id="post-{{ $post->id }}">
+                       <div class="col-md-6 mb-4 d-flex">
+                         <article class="blog-card w-100 d-flex flex-column" id="post-{{ $post->id }}">
                             @if($post->image)
                                 <div class="blog-card-image">
                                     <a href="{{ url('/blog/' . $post->slug) }}">
@@ -45,17 +47,20 @@
                                     @endif
                                 </div>
                             @endif
-                            <div class="blog-card-body">
+                            <div class="blog-card-body d-flex flex-column flex-grow-1">
                                 <div class="blog-card-meta">
                                     <span class="blog-card-meta-item"><i class="far fa-calendar-alt"></i> {{ $post->published_at?->format('M d, Y') }}</span>
                                     <span class="blog-card-meta-divider"></span>
                                     <span class="blog-card-meta-item"><i class="far fa-comment-alt"></i> {{ $post->approved_comments_count ?? 0 }} Comments</span>
                                 </div>
                                 <h2 class="blog-card-title"><a href="{{ url('/blog/' . $post->slug) }}">{{ $post->title }}</a></h2>
-                                <p class="blog-card-excerpt">{{ $post->excerpt ?? Str::limit(strip_tags($post->content), 180) }}</p>
-                                <a href="{{ url('/blog/' . $post->slug) }}" class="blog-card-readmore"><span>Read Article</span> <i class="fas fa-arrow-right"></i></a>
+                                <p class="blog-card-excerpt">{{ $post->excerpt ?? Str::limit(strip_tags($post->content), 120) }}</p>
+                                <div class="mt-auto">
+                                    <a href="{{ url('/blog/' . $post->slug) }}" class="blog-card-readmore"><span>Read Details</span> <i class="fas fa-angle-double-right"></i></a>
+                                </div>
                             </div>
                         </article>
+                       </div>
                     @empty
                         <div class="blog-empty-state">
                             <div class="blog-empty-icon"><i class="far fa-newspaper"></i></div>
@@ -64,6 +69,7 @@
                             <a href="{{ url('/blog') }}" class="blog-empty-btn"><i class="fas fa-arrow-left"></i> View All Posts</a>
                         </div>
                     @endforelse
+                    </div>
                 </div>
                 @if($posts->hasPages())
                     <nav class="blog-pagination">{{ $posts->links() }}</nav>
