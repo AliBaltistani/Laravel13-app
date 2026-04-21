@@ -14,6 +14,7 @@ use App\Services\CartService;
 use App\Services\DynamicMailService;
 use App\Services\SeoService;
 use App\Services\SettingService;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -46,6 +47,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Use Bootstrap 5 pagination views globally
+        Paginator::useBootstrapFive();
         Schema::defaultStringLength(195);
 
         // Register Setting as a global alias for Blade templates

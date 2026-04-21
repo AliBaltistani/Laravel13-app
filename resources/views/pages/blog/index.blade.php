@@ -145,9 +145,11 @@
 .blog-empty-btn{display:inline-flex;align-items:center;gap:8px;background:var(--porto-primary);color:#fff;padding:10px 24px;border-radius:10px;font-weight:600;text-decoration:none;transition:all .3s ease}
 .blog-empty-btn:hover{filter:brightness(1.08);color:#fff}
 .blog-pagination{margin-top:40px;display:flex;justify-content:center}
-.blog-pagination .pagination{gap:6px}
-.blog-pagination .page-link{border-radius:10px!important;border:1px solid #eee;color:#555;font-weight:600;padding:8px 16px;transition:all .25s ease}
+.blog-pagination .pagination{gap:6px;flex-wrap:wrap;justify-content:center;margin:0;padding:0}
+.blog-pagination .page-item{list-style:none}
+.blog-pagination .page-link{border-radius:10px!important;border:1px solid #eee;color:#555;font-weight:600;padding:8px 16px;transition:all .25s ease;font-size:14px;line-height:1.5;display:inline-block;text-decoration:none;background:#fff}
 .blog-pagination .page-item.active .page-link,.blog-pagination .page-link:hover{background:var(--porto-primary);border-color:var(--porto-primary);color:#fff}
+.blog-pagination .page-item.disabled .page-link{color:#ccc;pointer-events:none;background:#f9f9f9}
 .blog-sidebar{display:flex;flex-direction:column;gap:28px;position:sticky;top:20px}
 .sidebar-widget{background:#fff;border-radius:16px;padding:24px;border:1px solid #eef1f5;box-shadow:0 4px 20px rgba(0,0,0,.04)}
 .sidebar-widget-title{font-size:17px;font-weight:700;color:var(--porto-heading);margin-bottom:18px;display:flex;align-items:center;gap:8px;padding-bottom:14px;border-bottom:2px solid #f0f2f5;font-family:'Poppins',sans-serif}
