@@ -36,9 +36,9 @@
                         <div class="row">
                             <div class="col-md-4"><div class="form-group"><label>Banner Position</label><input type="text" name="settings[banner_position]" class="form-control" value="{{ $s['banner_position'] ?? 'home-mid' }}"></div></div>
                             <div class="col-md-4"><div class="form-group"><label>Max Banners</label><input type="number" name="settings[max_banners]" class="form-control" value="{{ $s['max_banners'] ?? 3 }}"></div></div>
-                            <div class="col-md-4"><div class="form-group"><label>Column Class</label><input type="text" name="settings[col_class]" class="form-control" value="{{ $s['col_class'] ?? 'col-md-4 col-sm-6' }}" placeholder="e.g. col-md-4 col-sm-6"></div></div>
+                            <div class="col-md-4"><div class="form-group"><label>Column Class</label><input type="text" name="settings[col_class]" class="form-control" value="{{ !empty($s['col_class']) ? $s['col_class'] : 'col-md-4 col-sm-6' }}" placeholder="e.g. col-md-4 col-sm-6"></div></div>
                         </div>
-                        <div class="form-group"><label>Container Class</label><input type="text" name="settings[container_class]" class="form-control" value="{{ $s['container_class'] ?? 'container' }}"></div>
+                        <div class="form-group"><label>Container Class</label><input type="text" name="settings[container_class]" class="form-control" value="{{ !empty($s['container_class']) ? $s['container_class'] : 'container' }}"></div>
 
                     @elseif($section->type === 'products')
                         <div class="row">
@@ -50,10 +50,10 @@
                                 </select>
                             </div></div>
                             <div class="col-md-4"><div class="form-group"><label>Limit</label><input type="number" name="settings[limit]" class="form-control" value="{{ $s['limit'] ?? 8 }}"></div></div>
-                            <div class="col-md-4"><div class="form-group"><label>Column Class</label><input type="text" name="settings[col_class]" class="form-control" value="{{ $s['col_class'] ?? 'col-6 col-sm-4 col-md-3' }}"></div></div>
+                            <div class="col-md-4"><div class="form-group"><label>Column Class</label><input type="text" name="settings[col_class]" class="form-control" value="{{ !empty($s['col_class']) ? $s['col_class'] : 'col-6 col-sm-4 col-md-3' }}"></div></div>
                         </div>
                         <div class="form-group"><label>Section Title</label><input type="text" name="settings[section_title]" class="form-control" value="{{ $s['section_title'] ?? 'Featured Products' }}"></div>
-                        <div class="form-group"><label>Container Class</label><input type="text" name="settings[container_class]" class="form-control" value="{{ $s['container_class'] ?? 'container' }}"></div>
+                        <div class="form-group"><label>Container Class</label><input type="text" name="settings[container_class]" class="form-control" value="{{ !empty($s['container_class']) ? $s['container_class'] : 'container' }}"></div>
 
                         {{-- Product Source --}}
                         <hr>
@@ -99,7 +99,7 @@
                         </div>
 
                     @elseif($section->type === 'widgets')
-                        <div class="form-group"><label>Column Class</label><input type="text" name="settings[col_class]" class="form-control" value="{{ $s['col_class'] ?? 'col-md-4 col-sm-6' }}"></div>
+                        <div class="form-group"><label>Column Class</label><input type="text" name="settings[col_class]" class="form-control" value="{{ !empty($s['col_class']) ? $s['col_class'] : 'col-md-4 col-sm-6' }}"></div>
                         <div class="form-group"><label>Widget Limit (per column)</label><input type="number" name="settings[widget_limit]" class="form-control" value="{{ $s['widget_limit'] ?? 3 }}"></div>
                         <div class="row">
                             <div class="col-md-4">
@@ -141,10 +141,10 @@
 
                     @elseif($section->type === 'slider')
                         <div class="form-group"><label>Slider Position</label><input type="text" name="settings[slider_position]" class="form-control" value="{{ $s['slider_position'] ?? 'hero' }}"></div>
-                        <div class="form-group"><label>Container Class</label><input type="text" name="settings[container_class]" class="form-control" value="{{ $s['container_class'] ?? 'container' }}"></div>
+                        <div class="form-group"><label>Container Class</label><input type="text" name="settings[container_class]" class="form-control" value="{{ !empty($s['container_class']) ? $s['container_class'] : 'container' }}"></div>
 
                     @elseif($section->type === 'brands')
-                        <div class="form-group"><label>Container Class</label><input type="text" name="settings[container_class]" class="form-control" value="{{ $s['container_class'] ?? 'container' }}"></div>
+                        <div class="form-group"><label>Container Class</label><input type="text" name="settings[container_class]" class="form-control" value="{{ !empty($s['container_class']) ? $s['container_class'] : 'container' }}"></div>
 
                     @elseif($section->type === 'custom_html')
                         <div class="form-group"><label>Custom HTML Content</label><textarea name="settings[custom_html]" class="form-control" rows="12" style="font-family:monospace;font-size:13px;">{{ $s['custom_html'] ?? '' }}</textarea></div>

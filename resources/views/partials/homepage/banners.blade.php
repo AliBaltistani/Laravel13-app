@@ -3,7 +3,7 @@
 <div class="{{ $s['container_class'] ?? 'container' }} banner-container">
     <div class="row justify-content-center">
         @foreach($banners as $index => $banner)
-        <div class="{{ $s['col_class'] ?? 'col-md-4 col-sm-6' }} mt-3 mt-md-0 appear-animate"
+        <div class="{{ !empty($s['col_class']) ? $s['col_class'] : 'col-md-4 col-sm-6' }} mt-3 mt-md-0 appear-animate"
             @if($index === 0) data-animation-name="fadeInRightShorter" @elseif($index === 2) data-animation-name="fadeInLeftShorter" @endif
             data-animation-duration="1500">
             @if($banner->title)

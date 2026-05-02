@@ -5,7 +5,7 @@
     <div class="heading-spacer"></div>
     <div class="row">
         @foreach($products as $product)
-        <div class="{{ $s['col_class'] ?? 'col-6 col-sm-4 col-md-3' }} appear-animate" data-animation-delay="100" data-animation-duration="1500">
+        <div class="{{ !empty($s['col_class']) ? $s['col_class'] : 'col-6 col-sm-4 col-md-3' }} appear-animate" data-animation-delay="100" data-animation-duration="1500">
             @include('partials.product-card', ['product' => $product])
         </div>
         @endforeach

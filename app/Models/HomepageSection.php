@@ -34,7 +34,8 @@ class HomepageSection extends Model
      */
     public function getSetting(string $key, mixed $default = null): mixed
     {
-        return $this->settings[$key] ?? $default;
+        $value = $this->settings[$key] ?? null;
+        return $value === '' ? $default : ($value ?? $default);
     }
 
     /**
